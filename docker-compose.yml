@@ -1,0 +1,60 @@
+version: '3.4'
+
+networks:
+  identity-network:
+    name: identity-network
+    driver: bridge
+
+services:
+  k8sDemo-app:
+    container_name: k8sdemoappcontainer
+    image: k8sdemoapp
+    #build: K8sDemoApi/
+    restart: always
+    networks: 
+      - identity-network
+    ports:
+      - 4200:80
+    depends_on:
+      - k8sDemo-api
+      - k8sDemo-rabbitMq
+
+
+  k8sDemo-api:
+    container_name: k8sdemoapicontainer
+    image: k8sdemoapi
+    #build: K8sDemoApi/
+    restart: always
+    networks: 
+      - identity-network
+    ports:
+      - 80:80
+    depends_on:
+      - k8sDemo-database
+      - k8sDemo-rabbitMq
+
+  k8sDemo-database:
+    container_name: k8sdemoapidbcontainer
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    networks: 
+      - identity-network
+    ports:
+      - 1433:1433
+    restart: always
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Pass@Word1
+    volumes:
+      - D:\Code\K8sDemo\DbMount\:/var/opt/mssql
+
+  k8sDemo-rabbitMq:
+    container_name: k8sdemorabbitmqcontainer
+    image: rabbitmq:3-management
+    networks: 
+      - identity-network
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+    hostname: host.docker.internal
+
