@@ -12,6 +12,7 @@ namespace K8sBackendShared.Data
 
         public DbSet<TestData> Data {get;set;}
         public DbSet<TestJob> Jobs {get;set;}
+        public DbSet<AppUser> Users { get; set; }
         
     }
 }

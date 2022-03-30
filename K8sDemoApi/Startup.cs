@@ -1,5 +1,8 @@
 using K8sBackendShared.Data;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Settings;
+using K8sDemoApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +11,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace K8sDemoApi
@@ -29,13 +34,13 @@ namespace K8sDemoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-                //Connection string for production SERVER = k8sDemo-database (name defined in docker-compose.yml)
-                services.AddDbContext<DataContext>(options =>
-                        {
-                            options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
-                                sqlServerOptions => sqlServerOptions.CommandTimeout(180));
-                        });
-            
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddDbContext<DataContext>(options =>
+                {
+                    options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
+                            sqlServerOptions => sqlServerOptions.CommandTimeout(180));
+                });
             services.AddControllers();
             services.AddCors(options =>
             {
@@ -60,6 +65,16 @@ namespace K8sDemoApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "K8sDemoApi", Version = "v1" });
             });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,6 +92,7 @@ namespace K8sDemoApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
