@@ -56,5 +56,5 @@ services:
       - 5672:5672
       - 15672:15672
     restart: always
-    hostname: host.docker.internal
+    hostname: k8sDemo-rabbitMq
 

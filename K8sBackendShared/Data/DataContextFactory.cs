@@ -1,3 +1,4 @@
+using K8sBackendShared.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +10,9 @@ public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
     public DataContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-        optionsBuilder.UseSqlServer("server=host.docker.internal;initial catalog=TestDatabase;persist security info=True;user id=sa;password=Pass@Word1;MultipleActiveResultSets=True;App=EntityFramework",
+        optionsBuilder.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                     sqlServerOptions => sqlServerOptions.CommandTimeout(180));
+                    
 
         return new DataContext(optionsBuilder.Options);
     }

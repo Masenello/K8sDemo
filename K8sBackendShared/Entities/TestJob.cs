@@ -17,7 +17,5 @@ namespace K8sBackendShared.Entities
         public JobStatus Status { get; set; }
 
         public string Errors { get; set; }
-
-        public string Notes { get; set; }
     }
 }

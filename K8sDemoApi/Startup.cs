@@ -1,4 +1,5 @@
 using K8sBackendShared.Data;
+using K8sBackendShared.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,9 @@ namespace K8sDemoApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration,IWebHostEnvironment env)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -29,27 +29,13 @@ namespace K8sDemoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (CurrentEnvironment.IsDevelopment())
-            {
-                //Connection string for debug SERVER = host.docker.internal
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseSqlServer(Configuration.GetConnectionString("SqlServerDebugConnection"),
-                        sqlServerOptions => sqlServerOptions.CommandTimeout(180));
-                });
-            }
-            else
-            {
                 //Connection string for production SERVER = k8sDemo-database (name defined in docker-compose.yml)
                 services.AddDbContext<DataContext>(options =>
                         {
-                            options.UseSqlServer(Configuration.GetConnectionString("SqlServerDockerConnection"),
+                            options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                                 sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                         });
-            }
-
-
-
+            
             services.AddControllers();
             services.AddCors(options =>
             {

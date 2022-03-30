@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Messages;
+using K8sBackendShared.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace K8sDemoApi.Controllers
@@ -22,7 +23,7 @@ namespace K8sDemoApi.Controllers
         [HttpPost("SendTestRabbitMessage")]
         public async Task<ActionResult> SendTestRabbitMessage()
         {
-            using (var bus = RabbitHutch.CreateBus("host=host.docker.internal")) 
+            using (var bus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver())) 
             {
                 await bus.PubSub.PublishAsync(new TestMessage { Text = "Test message content" });
                 Console.WriteLine("Message published!");
