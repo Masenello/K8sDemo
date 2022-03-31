@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">K8sDemoApp</a>
-            <ul class="navbar-nav me-auto" *ngIf="loggedIn">
+            <ul class="navbar-nav me-auto" *ngIf="accountService.currentUser$ | async">
             <li class="nav-item">
                 <a class="nav-link"  href="#">Home</a>
             </li>
@@ -18,21 +18,23 @@
                     [(ngModel)]="model.username"
                     class="form-control mr-sm-2" 
                     type="text" 
-                    placeholder="Username">
+                    placeholder="Username"
+                    *ngIf="(accountService.currentUser$ | async) == undefined">
                 <input 
                     name="password"
                     [(ngModel)]="model.password"
                     class="form-control mr-sm-2" 
                     type="password" 
-                    placeholder="Password">
+                    placeholder="Password"
+                    *ngIf="(accountService.currentUser$  | async) == undefined">
                 <button class="btn btn-success" 
                     type="submit"
-                    *ngIf="loggedIn==false">Login</button>
+                    *ngIf="(accountService.currentUser$  | async) == undefined">Login</button>
                 
                 <button class="btn btn-warning"  
                     type="button"  
                     (click)="logout()"
-                    *ngIf="loggedIn">Logout</button>
+                    *ngIf="accountService.currentUser$  | async">Logout</button>
             </form>
     </div>   
 

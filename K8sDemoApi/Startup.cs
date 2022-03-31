@@ -65,7 +65,8 @@ namespace K8sDemoApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "K8sDemoApi", Version = "v1" });
             });
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options=>
             {
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {

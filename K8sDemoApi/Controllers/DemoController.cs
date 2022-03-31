@@ -27,7 +27,7 @@ namespace K8sDemoApi.Controllers
             {
                 await bus.PubSub.PublishAsync(new TestMessage { Text = "Test message content" });
                 Console.WriteLine("Message published!");
-                return Ok("Message published");
+                return Ok();
             }
         }
     }
