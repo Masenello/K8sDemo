@@ -11,8 +11,7 @@ namespace K8sDemoApi.Controllers
 {
 
     [ApiController]
-    [Route("demo")]
-    public class DemoController : ControllerBase
+    public class DemoController :BaseApiController
     {
         [HttpGet]
         public String Get()

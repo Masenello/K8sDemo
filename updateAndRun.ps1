@@ -5,6 +5,9 @@ docker-compose rm -f
 #Build .Net API image
 Set-Location D:\Code\K8sDemo
 docker build -t k8sdemoapi:latest -f k8sdemoapi/Dockerfile .
+#Build .Net HUB image
+Set-Location D:\Code\K8sDemo
+docker build -t k8sdemohubmanager:latest -f k8sdemohubmanager/Dockerfile .
 #Build Angular APP image
 Set-Location D:\Code\K8sDemo\K8sDemoApp
 docker build -t k8sdemoapp:latest .

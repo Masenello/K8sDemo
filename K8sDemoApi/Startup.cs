@@ -36,31 +36,14 @@ namespace K8sDemoApi
         {
 
             services.AddScoped<ITokenService, TokenService>();
+
+            Console.WriteLine($"Db connection string: {NetworkSettings.DatabaseConnectionStringResolver()}");
             services.AddDbContext<DataContext>(options =>
                 {
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                 });
             services.AddControllers();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngularDevClient",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost:4200")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-                options.AddPolicy("AllowAngularClient",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "K8sDemoApi", Version = "v1" });
@@ -81,8 +64,14 @@ namespace K8sDemoApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("AllowAngularDevClient");
-            app.UseCors("AllowAngularClient");
+    
+            app.UseCors(builder =>
+                    {
+                        builder
+                            .WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
 
             if (env.IsDevelopment())
             {

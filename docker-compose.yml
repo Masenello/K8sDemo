@@ -18,6 +18,7 @@ services:
     depends_on:
       - k8sDemo-api
       - k8sDemo-rabbitMq
+      - k8sDemo-hub-manager
 
 
   k8sDemo-api:
@@ -28,10 +29,34 @@ services:
     networks: 
       - identity-network
     ports:
-      - 80:80
+      - 5501:5501
     depends_on:
       - k8sDemo-database
       - k8sDemo-rabbitMq
+      - k8sDemo-hub-manager
+    environment:
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/Infrastructure/Certificate/certificate.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: Password
+    volumes:
+      - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
+
+  k8sDemo-hub-manager:
+    container_name: k8sdemohubmanagercontainer
+    image: k8sdemohubmanager
+    #build: K8sDemoApi/
+    restart: always
+    networks: 
+      - identity-network
+    ports:
+      - 5001:5001
+    depends_on:
+      - k8sDemo-database
+      - k8sDemo-rabbitMq
+    environment:
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/Infrastructure/Certificate/certificate.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: Password
+    volumes:
+      - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
   k8sDemo-database:
     container_name: k8sdemoapidbcontainer

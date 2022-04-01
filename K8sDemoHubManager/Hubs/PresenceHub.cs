@@ -29,13 +29,13 @@ namespace K8sDemoHubManager.Hubs
         public void UserAppLogIn(string username)
         {
             Clients.Others.SendAsync("UserIsOnLine",username);
-            Console.WriteLine($"User {username} connected");
+            Console.WriteLine($"User {username} logged in");
         }
 
         public void UserAppLogOff(string username)
         {
             Clients.Others.SendAsync("UserIsOffLine",username);
-            Console.WriteLine($"User {username} disconnected");
+            Console.WriteLine($"User {username} logged out");
         }
 
 

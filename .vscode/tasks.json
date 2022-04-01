@@ -36,6 +36,62 @@
                 "${workspaceFolder}/K8sDemoApi/K8sDemoApi.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: debug",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "k8sdemo:dev",
+                "target": "base",
+                "dockerfile": "${workspaceFolder}/K8sDemoHubManager/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/K8sDemoHubManager/K8sDemoHubManager.csproj"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: release",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "k8sdemo:latest",
+                "dockerfile": "${workspaceFolder}/K8sDemoHubManager/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/K8sDemoHubManager/K8sDemoHubManager.csproj"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build: debug"
+            ],
+            "dockerRun": {},
+            "netCore": {
+                "appProject": "${workspaceFolder}/K8sDemoHubManager/K8sDemoHubManager.csproj",
+                "enableDebugging": true
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: release",
+            "dependsOn": [
+                "docker-build: release"
+            ],
+            "dockerRun": {},
+            "netCore": {
+                "appProject": "${workspaceFolder}/K8sDemoHubManager/K8sDemoHubManager.csproj"
+            }
         }
     ]
 }

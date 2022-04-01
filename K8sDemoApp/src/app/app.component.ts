@@ -6,6 +6,7 @@ import { User } from './_models/user';
 import { AccountService } from './services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { PresenceService } from './services/presence.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ import { PresenceService } from './services/presence.service';
 export class AppComponent {
   title = 'K8sDemoApp';
   response = "No data loaded, yet";
+  baseUrl = environment.apiUrl;
 
   users: any = undefined;
 
@@ -22,11 +24,9 @@ export class AppComponent {
 
   constructor(private http: HttpClient, private demoService: DemoService, private accountService: AccountService, private toastr: ToastrService, private presence:PresenceService) 
   { 
-    //this.http.get('http://localhost/demo', {responseType: 'text'}).subscribe((response: any) => {
-    //  console.log(response);
-	  //this.response = response;		
 
-    this.http.get('http://localhost/GetTestData', {responseType: 'text'}).subscribe((response: any) => {
+
+    this.http.get(this.baseUrl + "DemoDatabase/GetTestData", {responseType: 'text'}).subscribe((response: any) => {
       console.log(response);
 	  this.response = response;	
 

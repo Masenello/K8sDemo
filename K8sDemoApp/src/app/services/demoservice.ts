@@ -9,10 +9,11 @@ import { Observable } from 'rxjs';
 })
 
 export class DemoService {
+    baseUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) { }
 
     sendDemoRabbitMessage(): Observable<any>{
-        return this.http.post('http://localhost/demo/SendTestRabbitMessage', {});
+        return this.http.post(this.baseUrl + "demo/SendTestRabbitMessage", {});
     }
 }

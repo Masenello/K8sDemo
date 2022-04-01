@@ -62,34 +62,20 @@ namespace K8sDemoHubManager
                 };
             });
             services.AddSignalR();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngularDevClient",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost:4200")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
-                    });
-                options.AddPolicy("AllowAngularClient",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
-                    });
-            });
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("AllowAngularDevClient");
-            app.UseCors("AllowAngularClient");
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .WithMethods("GET", "POST")
+                    .AllowCredentials();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

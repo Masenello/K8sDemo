@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace K8sDemoApi.Controllers
 {
-    public class DemoDatabaseController
+    public class DemoDatabaseController:BaseApiController
     {
         private readonly DataContext _context;
 
