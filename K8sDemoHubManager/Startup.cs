@@ -70,7 +70,7 @@ namespace K8sDemoHubManager
         {
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:4200")
+                builder.WithOrigins("https://localhost:4200")
                     .AllowAnyHeader()
                     .WithMethods("GET", "POST")
                     .AllowCredentials();

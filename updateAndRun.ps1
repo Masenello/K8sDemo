@@ -10,6 +10,7 @@ Set-Location D:\Code\K8sDemo
 docker build -t k8sdemohubmanager:latest -f k8sdemohubmanager/Dockerfile .
 #Build Angular APP image
 Set-Location D:\Code\K8sDemo\K8sDemoApp
+#docker build --no-cache -t k8sdemoapp:latest .
 docker build -t k8sdemoapp:latest .
 #Start dockers from docker compose file
 Set-Location D:\Code\K8sDemo
