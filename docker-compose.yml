@@ -14,11 +14,15 @@ services:
     networks: 
       - identity-network
     ports:
-      - 4200:80
+      - 80:80
+      - 443:443
+      - 8080:8080
     depends_on:
       - k8sDemo-api
       - k8sDemo-rabbitMq
       - k8sDemo-hub-manager
+    volumes: 
+      - D:\Code\K8sDemo\Certificates\:/etc/nginx/certs
 
 
   k8sDemo-api:
