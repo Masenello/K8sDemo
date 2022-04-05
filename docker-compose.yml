@@ -9,7 +9,7 @@ services:
   k8sDemo-app:
     container_name: k8sdemoappcontainer
     image: k8sdemoapp
-    #build: K8sDemoApi/
+    #build: .
     restart: always
     networks: 
       - identity-network
@@ -28,7 +28,7 @@ services:
   k8sDemo-api:
     container_name: k8sdemoapicontainer
     image: k8sdemoapi
-    #build: K8sDemoApi/
+    #build: .
     restart: always
     networks: 
       - identity-network
