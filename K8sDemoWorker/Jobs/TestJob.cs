@@ -24,7 +24,7 @@ namespace K8sDemoWorker.Jobs
                     TestJobEntity targetJob = _context.Jobs.Where(x=>x.Status == JobStatus.created).OrderBy(y=>y.CreationDate).Include(u=>u.User).FirstOrDefault();
                     if (targetJob != null)
                     {
-                        Console.WriteLine($"Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
+                        Console.WriteLine($"{DateTime.Now}: Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
                         //Set job to running status
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
@@ -56,7 +56,7 @@ namespace K8sDemoWorker.Jobs
                         targetJob.Status = JobStatus.completed;
                         targetJob.EndDate = DateTime.Now;
                         _context.SaveChanges();
-                        Console.WriteLine($"Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
+                        Console.WriteLine($"{DateTime.Now}: Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
                     }
                 }
             }     

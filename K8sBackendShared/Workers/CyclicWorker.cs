@@ -11,13 +11,16 @@ namespace K8sBackendShared.Workers
 {
     public class CyclicWorker
     {
+        //Defines pause between consecutive _workerJob.DoWork runs
         private int _cycleTime = 500;
+
 
         private AbstractWorkerJob _workerJob = null;
 
+        //Used to report progress through Rabbit messages
         private IBus _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
 
-
+        
         private BackgroundWorker _bw = new BackgroundWorker();
         public CyclicWorker(int cycleTime, AbstractWorkerJob workerJob)
         {

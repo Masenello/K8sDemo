@@ -1,5 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using K8sBackendShared.Enums;
+using K8sDemoHubManager.Interfaces;
+using K8sDemoHubManager.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,7 +12,13 @@ namespace K8sDemoHubManager.Hubs
     public class PresenceHub:Hub
     {
 
-  
+        private readonly IConnectedAppsService _connectedAppsService;
+        public PresenceHub(IConnectedAppsService connectedAppsService)
+        {
+            _connectedAppsService = connectedAppsService;
+        }
+
+
         //public override async Task OnConnectedAsync()
         //{
             //await Clients.Others.SendAsync("UserIsOnLine",Context.User.Identity.Name);
@@ -28,16 +37,21 @@ namespace K8sDemoHubManager.Hubs
 
         public void UserAppLogIn(string username)
         {
+            //Notify other users of this user log in
             Clients.Others.SendAsync("UserIsOnLine",username);
+            _connectedAppsService.AddAppToTableAsync(username, ApplicationType.client,  Context.ConnectionId);
+
+            
             Console.WriteLine($"User {username} logged in");
         }
 
         public void UserAppLogOff(string username)
         {
+            //Notify other users of this user log off
             Clients.Others.SendAsync("UserIsOffLine",username);
+            _connectedAppsService.RemoveAppFromTableAsync(username);
+
             Console.WriteLine($"User {username} logged out");
         }
-
-
     }
 }

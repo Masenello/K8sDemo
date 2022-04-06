@@ -15,6 +15,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using K8sDemoHubManager.Hubs;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using K8sBackendShared.Data;
+using Microsoft.EntityFrameworkCore;
+using K8sBackendShared.Settings;
+using K8sDemoHubManager.Interfaces;
+using K8sDemoHubManager.Services;
 
 namespace K8sDemoHubManager
 {
@@ -31,6 +36,12 @@ namespace K8sDemoHubManager
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddDbContext<DataContext>(options =>
+                {
+                    options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
+                            sqlServerOptions => sqlServerOptions.CommandTimeout(180));
+                });
+            services.AddScoped<IConnectedAppsService, ConnectedAppsService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -95,6 +106,7 @@ namespace K8sDemoHubManager
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapHub<JobStatusHub>("hubs/jobstatus");
             });
         }
     }
