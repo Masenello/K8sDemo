@@ -26,14 +26,14 @@ namespace K8sDemoApi.Controllers
         public async Task<ActionResult<RequestJobMessageResult>> RequestNewJob(RequestJobMessage requestFromClient)
         {
             //Retrieve user entity from database
-            AppUser jobUser =await _context.Users.FirstOrDefaultAsync(x=>x.UserName== requestFromClient.User);
+            AppUserEntity jobUser =await _context.Users.FirstOrDefaultAsync(x=>x.UserName== requestFromClient.User);
             if (jobUser is null)
             {
                 return BadRequest($"User:{requestFromClient.User} not found on database");
             }
 
             //Add new job in Jobs database table with status INSERTED
-            TestJob newJob = new TestJob();
+            TestJobEntity newJob = new TestJobEntity();
             newJob.CreationDate = DateTime.Now;
             newJob.Descritpion= requestFromClient.RequestedJobType.ToString();
             newJob.Status = K8sBackendShared.Enums.JobStatus.created;

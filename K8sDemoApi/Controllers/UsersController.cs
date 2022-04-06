@@ -17,13 +17,13 @@ namespace K8sDemoApi.Controllers
         } 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<AppUserEntity>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        public async Task<ActionResult<AppUserEntity>> GetUser(int id)
         {
             return await _context.Users.FindAsync(id);
         }

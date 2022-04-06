@@ -18,9 +18,9 @@ namespace K8sDemoApi.Controllers
 
         [HttpGet("GetTestData")]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<TestData>>> GetTestData()
+        public async Task<ActionResult<IEnumerable<TestDataEntity>>> GetTestData()
         {
-            List<TestData> data = new List<TestData>();
+            List<TestDataEntity> data = new List<TestDataEntity>();
 
             return await _context.Data.ToListAsync();
         }

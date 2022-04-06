@@ -2,25 +2,40 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyNetQ;
+using K8sBackendShared.Jobs;
+using K8sBackendShared.Messages;
+using K8sBackendShared.Settings;
 
 namespace K8sBackendShared.Workers
 {
     public class CyclicWorker
     {
         private int _cycleTime = 500;
-        private Action _doWorkAction = null;
+
+        private AbstractWorkerJob _workerJob = null;
+
+        private IBus _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
+
 
         private BackgroundWorker _bw = new BackgroundWorker();
-        public CyclicWorker(int cycleTime, Action doWorkAction)
+        public CyclicWorker(int cycleTime, AbstractWorkerJob workerJob)
         {
             _cycleTime = cycleTime;
             _bw.WorkerReportsProgress = false;
             _bw.WorkerSupportsCancellation = true;
             _bw.DoWork += BackgroundWorkerOnDoWork;
-            //_bw.ProgressChanged += BackgroundWorkerOnProgressChanged;
             _bw.RunWorkerCompleted += BackgroundWorkerOnWorkCompleted;
-            _doWorkAction = doWorkAction;
+
+            _workerJob = workerJob;
+            _workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
+
             _bw.RunWorkerAsync();
+        }
+
+        private void JobProgressChanged(object sender, JobProgressEventArgs e)
+        {
+            _rabbitBus.PubSub.Publish(e.Status);
         }
 
         private void BackgroundWorkerOnWorkCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -29,13 +44,6 @@ namespace K8sBackendShared.Workers
             _bw.RunWorkerAsync();
         }
 
-        //private void BackgroundWorkerOnProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //    object userObject = e.UserState;
-        //    int percentage = e.ProgressPercentage;
-            //Report progress action
-        //}
-
         private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
         {
             while (!_bw.CancellationPending)
@@ -43,12 +51,14 @@ namespace K8sBackendShared.Workers
                 Thread.Sleep(_cycleTime);   // If you need to make a pause between runs
                 //Console.WriteLine("Worker run started");
                 //Do Work!
-                _doWorkAction();
+                _workerJob.DoWork();
                 //Console.WriteLine("Worker run completed");
             } 
         
         }
 
+
+        //TODO complete and test!
         public void CancelWork()
         {
             _bw.CancelAsync();

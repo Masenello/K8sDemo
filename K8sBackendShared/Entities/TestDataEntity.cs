@@ -1,6 +1,6 @@
 namespace K8sBackendShared.Entities
 {
-    public class TestData
+    public class TestDataEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

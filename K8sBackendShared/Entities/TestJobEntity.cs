@@ -5,7 +5,8 @@ using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Entities
 {
-    public class TestJob
+    public class TestJobEntity
+
     {
         public int Id { get; set; }
         [Required]
@@ -17,7 +18,7 @@ namespace K8sBackendShared.Entities
         [Required]
         public JobStatus Status { get; set; }
         public string Errors { get; set; }
-        public virtual AppUser User {get; set;}
+        public virtual AppUserEntity User {get; set;}
         [Required]
         [ForeignKey(nameof(User))]
         public int UserId {get; set;}
