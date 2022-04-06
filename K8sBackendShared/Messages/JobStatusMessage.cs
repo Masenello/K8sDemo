@@ -4,8 +4,11 @@ namespace K8sBackendShared.Messages
 {
     public class JobStatusMessage
     {
+        public int JobId { get; set; }
+        public JobType StatusJobType { get; set; }
         public JobStatus Status { get; set; }
-        public string ApplicationGuid { get; set; }
+        public string User { get; set; }
         public double ProgressPercentage { get; set; }
+        public string UserMessage { get; set; }
     }
 }

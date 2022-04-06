@@ -2,10 +2,11 @@ using System;
 
 namespace K8sBackendShared.Messages
 {
-    public class JobCreatedMessage
+    public class RequestJobMessageResult
     {
         public int JobId { get; set; }
         public DateTime CreationTime { get; set; }
-        public string ApplicationGuid { get; set; }
+        public string User { get; set; }
+        public string UserMessage { get; set; }
     }
 }

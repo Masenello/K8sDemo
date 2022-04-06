@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Entities
@@ -15,7 +16,11 @@ namespace K8sBackendShared.Entities
         public string Descritpion { get; set; }
         [Required]
         public JobStatus Status { get; set; }
-
         public string Errors { get; set; }
+        public virtual AppUser User {get; set;}
+        [Required]
+        [ForeignKey(nameof(User))]
+        public int UserId {get; set;}
+        
     }
 }

@@ -13,12 +13,14 @@ namespace K8sDemoApi.Controllers
     [ApiController]
     public class DemoController :BaseApiController
     {
+        //Test communication with API
         [HttpGet]
         public String Get()
         {
             return "Hello World";
         }
 
+        //Test communication between API and Rabbit
         [HttpPost("SendTestRabbitMessage")]
         public async Task<ActionResult> SendTestRabbitMessage()
         {
