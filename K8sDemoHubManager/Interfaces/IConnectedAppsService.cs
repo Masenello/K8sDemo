@@ -6,8 +6,8 @@ namespace K8sDemoHubManager.Interfaces
 {
     public interface IConnectedAppsService
     {
-        void AddAppToTableAsync(string username, ApplicationType appType, string connectionId);
-        void RemoveAppFromTableAsync(string username);
-        Task<ConnectedAppEntity> GetAppAsync(string username);
+        void AddAppToTable(string username, ApplicationType appType, string connectionId);
+        void RemoveAppFromTable(string username);
+        ConnectedAppEntity GetApp(string username);
     }
 }

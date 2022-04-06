@@ -39,7 +39,7 @@ namespace K8sDemoHubManager.Hubs
         {
             //Notify other users of this user log in
             Clients.Others.SendAsync("UserIsOnLine",username);
-            _connectedAppsService.AddAppToTableAsync(username, ApplicationType.client,  Context.ConnectionId);
+            _connectedAppsService.AddAppToTable(username, ApplicationType.client,  Context.ConnectionId);
 
             
             Console.WriteLine($"User {username} logged in");
@@ -49,7 +49,7 @@ namespace K8sDemoHubManager.Hubs
         {
             //Notify other users of this user log off
             Clients.Others.SendAsync("UserIsOffLine",username);
-            _connectedAppsService.RemoveAppFromTableAsync(username);
+            _connectedAppsService.RemoveAppFromTable(username);
 
             Console.WriteLine($"User {username} logged out");
         }

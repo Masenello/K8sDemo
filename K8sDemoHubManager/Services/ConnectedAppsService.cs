@@ -16,9 +16,9 @@ namespace K8sDemoHubManager.Services
         {
             _context = context;
         }
-        public async void AddAppToTableAsync(string username, ApplicationType appType, string connectionId)
+        public void AddAppToTable(string username, ApplicationType appType, string connectionId)
         {
-            AppUserEntity targetUser = await _context.Users.FirstOrDefaultAsync(x=>x.UserName == username);
+            AppUserEntity targetUser =  _context.Users.FirstOrDefault(x=>x.UserName == username);
             if (targetUser is null)
             {
                 throw new System.Exception($"User: {username} not found on database");
@@ -31,23 +31,23 @@ namespace K8sDemoHubManager.Services
                     ConnectionId = connectionId,
                     AppType = appType
                 });
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
 
-        public async Task<ConnectedAppEntity> GetAppAsync(string username)
+        public  ConnectedAppEntity GetApp(string username)
         {
-            return await _context.ConnectedApps.Include(u=>u.User).FirstOrDefaultAsync(x=>x.User.UserName == username);
+            return  _context.ConnectedApps.Include(u=>u.User).FirstOrDefault(x=>x.User.UserName == username);
         }
 
-        public async void RemoveAppFromTableAsync(string username)
+        public  void RemoveAppFromTable(string username)    
         {
-            ConnectedAppEntity targetApp = await _context.ConnectedApps.Include(u=>u.User).FirstOrDefaultAsync(x=>x.User.UserName == username);
+            ConnectedAppEntity targetApp =  _context.ConnectedApps.Include(u=>u.User).FirstOrDefault(x=>x.User.UserName == username);
 
             if (targetApp != null)
             {
                 _context.ConnectedApps.Remove(targetApp);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
             }
         }
