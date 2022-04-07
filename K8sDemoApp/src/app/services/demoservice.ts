@@ -19,16 +19,4 @@ export class DemoService {
         return this.http.post(this.baseUrl + "demo/SendTestRabbitMessage", {});
     }
 
-    sendTestJobRequest() : Observable<TestJobCreationResult>{
-        
-    return this.http.post<TestJobCreationResult>(this.baseUrl + "job/RequestNewJob", 
-    {
-        "user": "pimpi",
-        "requestDateTime": new Date(),
-        "requestedJobType": 0
-    });
-    }
-
-
-
 }

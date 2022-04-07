@@ -1,47 +1,41 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">K8sDemoApp</a>
-            <ul class="navbar-nav me-auto" *ngIf="(accountService.currentUser$  | async)!=undefined">
-            <li class="nav-item">
-                <a class="nav-link"  href="#">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Disabled</a>
-            </li>
-            </ul>
-            <form #loginForm="ngForm" class="form-inline" (ngSubmit)="login()" autocomplete="off">
-                <input 
-                    name="username"
-                    [(ngModel)]="model.username"
-                    class="form-control mr-sm-2" 
-                    type="text" 
-                    placeholder="Username"
-                    *ngIf="(accountService.currentUser$ | async) == undefined">
-                <input 
-                    name="password"
-                    [(ngModel)]="model.password"
-                    class="form-control mr-sm-2" 
-                    type="password" 
-                    placeholder="Password"
-                    *ngIf="(accountService.currentUser$  | async) == undefined">
-                <button class="btn btn-success" 
-                    type="submit"
-                    *ngIf="(accountService.currentUser$  | async) == undefined">Login</button>
-                
-                <button class="btn btn-warning"  
-                    type="button"  
-                    (click)="logout()"
-                    *ngIf="(accountService.currentUser$  | async)!=undefined">Logout</button>
+  <div class="container">
+    <a class="navbar-brand" href="#">K8sDemoApp</a>
+    <ul class="navbar-nav me-auto" *ngIf="(accountService.currentUser$  | async)!=undefined">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Disabled</a>
+      </li>
+    </ul>
+    <form #loginForm="ngForm" class="form-inline" (ngSubmit)="login()" autocomplete="off">
+      <input name="username" [(ngModel)]="model.username" class="form-control mr-sm-2" type="text"
+        placeholder="Username" *ngIf="(accountService.currentUser$ | async) == undefined">
+      <input name="password" [(ngModel)]="model.password" class="form-control mr-sm-2" type="password"
+        placeholder="Password" *ngIf="(accountService.currentUser$  | async) == undefined">
+      <button class="btn btn-success" type="submit"
+        *ngIf="(accountService.currentUser$  | async) == undefined">Login</button>
 
-                <ng-container *ngIf="(accountService.currentUser$  | async) as currentUser">
-                    <h3>{{currentUser.username}}</h3>
-                </ng-container>
+      <button class="btn btn-warning" type="button" (click)="logout()"
+        *ngIf="(accountService.currentUser$  | async)!=undefined">Logout</button>
 
-            </form>
-    </div>   
-
-
+    </form>
+  </div>
 </nav>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-bottom bg-dark">
+    <div class="fs-4">
+        <ng-container *ngIf="(accountService.currentUser$  | async) as currentUser">
+            <svg id="userIcon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg>
+            <a class="navbar-brand"  href="#">{{currentUser.username}}</a>
+        </ng-container>
+    </div>
+</nav>
+

@@ -15,6 +15,7 @@ export class AccountService {
   baseUrl = environment.apiUrl;
   private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
+  userPressedLogOutButton:boolean = false;
 
   hubUrl  = environment.hubUrl;
   private hubConnection: HubConnection | undefined;
@@ -55,12 +56,18 @@ export class AccountService {
       
   }
 
-  logout()
+  userLogOutCommand()
   {
-    var savedUser = localStorage.getItem("user");
+    this.userPressedLogOutButton = true;
+    this.logout();
+  }
+
+  private logout()
+  {
+    var savedUser = this.getStoredUserData();
     if (savedUser != null)
     {
-      this.stopHubConnection(<User>JSON.parse(savedUser));
+      this.stopHubConnection(savedUser);
     }
     this.clearStoredUserData();
   }
@@ -124,7 +131,7 @@ export class AccountService {
 
         this.hubConnection?.onreconnecting(()=>
         {
-          this.toastr.warning("Hub connection lost: trying to reconnect to server");
+          this.toastr.warning("Hub connection lost: trying to reconnect to server...");
         });
 
         this.hubConnection?.onreconnected(()=>
@@ -156,9 +163,13 @@ export class AccountService {
 
   private manageHubDisconnection()
   {
-    this.hubConnectionStatus.next(false)
-    this.toastr.error("SignalR hub has disconnected, user will be logged out");
-    this.logout();
+    this.hubConnectionStatus.next(false);
+    if (!this.userPressedLogOutButton)
+    {
+      this.toastr.error("Hub has disconnected, user will be logged out");
+      this.logout();
+    }
+    this.userPressedLogOutButton = false; 
   }
 
   private stopHubConnection(user: User)

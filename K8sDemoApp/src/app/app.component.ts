@@ -6,6 +6,9 @@ import { User } from './_models/user';
 import { AccountService } from './services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
+import { JobService } from './services/job.service';
+import { TestJobCreationRequest } from './_models/TestJobCreationRequest';
+
 
 @Component({
   selector: 'app-root',
@@ -17,7 +20,11 @@ export class AppComponent {
   response = "No data loaded, yet";
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private demoService: DemoService, private accountService: AccountService, private toastr: ToastrService) 
+  constructor(private http: HttpClient, 
+    private demoService: DemoService, 
+    private accountService: AccountService, 
+    private toastr: ToastrService,
+    private jobService: JobService) 
   { 
 
 
@@ -44,8 +51,18 @@ export class AppComponent {
   }
 
   sendTestJobRequest() {
-    this.demoService.sendTestJobRequest().subscribe(result =>{
-      this.toastr.info("Request Sent");
+    let jobRequest:TestJobCreationRequest =  
+    {
+      user:"pimpi",
+      requestDateTime: new Date(),
+      requestJobType:0
+
+    };
+  
+
+
+    this.jobService.sendTestJobRequest(jobRequest).subscribe(result =>{
+      this.toastr.info("Job creation request sent");
     },error=>{
       console.log(error);
       this.toastr.error(error.error);
