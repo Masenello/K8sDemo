@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using K8sBackendShared.Data;
@@ -24,15 +25,23 @@ namespace K8sDemoHubManager.Services
                 throw new System.Exception($"User: {username} not found on database");
             }
 
-            if (_context.ConnectedApps.Include(u=>u.User).Where(x=>x.User.UserName == targetUser.UserName).Count()== 0)
+            ConnectedAppEntity targetUserConnection = _context.ConnectedApps.FirstOrDefault(x=>x.UserId == targetUser.Id);
+
+            //User connection not found -> Add
+            if (targetUserConnection is null)
             {
                 _context.ConnectedApps.Add(new ConnectedAppEntity(){
                     UserId= targetUser.Id,
                     ConnectionId = connectionId,
                     AppType = appType
                 });
-                _context.SaveChanges();
+                
             }
+            else
+            {
+                targetUserConnection.ConnectionId = connectionId;
+            }
+            _context.SaveChanges();
         }
 
         public  ConnectedAppEntity GetApp(string username)

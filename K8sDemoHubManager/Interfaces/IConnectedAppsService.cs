@@ -9,5 +9,6 @@ namespace K8sDemoHubManager.Interfaces
         void AddAppToTable(string username, ApplicationType appType, string connectionId);
         void RemoveAppFromTable(string username);
         ConnectedAppEntity GetApp(string username);
+
     }
 }

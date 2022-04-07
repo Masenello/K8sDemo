@@ -19,6 +19,8 @@ namespace K8sDemoHubManager.Hubs
         }
 
 
+
+
         //public override async Task OnConnectedAsync()
         //{
             //await Clients.Others.SendAsync("UserIsOnLine",Context.User.Identity.Name);

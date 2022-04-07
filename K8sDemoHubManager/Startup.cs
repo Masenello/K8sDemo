@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using K8sBackendShared.Settings;
 using K8sDemoHubManager.Interfaces;
 using K8sDemoHubManager.Services;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace K8sDemoHubManager
 {
@@ -77,7 +78,7 @@ namespace K8sDemoHubManager
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
             app.UseCors(builder =>
             {
@@ -108,6 +109,14 @@ namespace K8sDemoHubManager
                 endpoints.MapHub<PresenceHub>("hubs/presence");
                 endpoints.MapHub<JobStatusHub>("hubs/jobstatus");
             });
+
+            //Register event of application shutdown
+            applicationLifetime.ApplicationStopped.Register(()=>OnShutdown(app.ApplicationServices));
+        }
+
+        private void OnShutdown(IServiceProvider serviceProvider)
+        {
+        
         }
     }
 }

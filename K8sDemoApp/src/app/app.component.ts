@@ -30,6 +30,8 @@ export class AppComponent {
       console.log(response);
 	  this.response = response;	
 
+    
+
 	});
   }  
 
@@ -40,9 +42,9 @@ export class AppComponent {
   setCurrentUser(){
     
     this.user = JSON.parse(localStorage.getItem('user')|| '{}');
-    
-    if (this.user == null){
-      console.log("DEBUG: Loaded user from localstorage" + this.user.username);
+    console.log(this.user);
+    if (this.user != null && this.user.username != undefined){
+      console.log("DEBUG: Loaded user from localstorage: " + this.user.username);
       this.accountService.setCurrentUser(this.user);
       this.presence.createHubConnection(this.user);
     }
@@ -59,6 +61,17 @@ export class AppComponent {
       this.toastr.error(error.error);
     });
   }
+
+  sendTestJobRequest() {
+    this.demoService.sendTestJobRequest().subscribe(result =>{
+      this.toastr.info("Request Sent");
+    },error=>{
+      console.log(error);
+      this.toastr.error(error.error);
+    });
+  }
+
+
 
 
 }

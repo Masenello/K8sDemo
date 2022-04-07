@@ -22,5 +22,7 @@ namespace K8sDemoApi
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+
     }
 }
