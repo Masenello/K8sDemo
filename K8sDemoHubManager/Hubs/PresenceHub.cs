@@ -37,6 +37,7 @@ namespace K8sDemoHubManager.Hubs
         //    Console.WriteLine($"User {Context.User.Identity.Name} disconnected");
         //}
 
+
         public void UserAppLogIn(string username)
         {
             //Notify other users of this user log in

@@ -5,7 +5,6 @@ import { DemoService } from './services/demoservice';
 import { User } from './_models/user';
 import { AccountService } from './services/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { PresenceService } from './services/presence.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -18,40 +17,22 @@ export class AppComponent {
   response = "No data loaded, yet";
   baseUrl = environment.apiUrl;
 
-  user: any = undefined;
-
-
-
-  constructor(private http: HttpClient, private demoService: DemoService, private accountService: AccountService, private toastr: ToastrService, private presence:PresenceService) 
+  constructor(private http: HttpClient, private demoService: DemoService, private accountService: AccountService, private toastr: ToastrService) 
   { 
 
 
-    this.http.get(this.baseUrl + "DemoDatabase/GetTestData", {responseType: 'text'}).subscribe((response: any) => {
+    this.http.get(this.baseUrl + "DemoDatabase/GetTestData", {responseType: 'text'}).subscribe((response: any) => 
+    {
       console.log(response);
-	  this.response = response;	
-
-    
-
-	});
+	    this.response = response;	
+	  });
   }  
 
   ngOnInit(){
-    this.setCurrentUser();
+    //When application is loaded try to restore current user 
+    //if existing user data is present in localstorage
+    this.accountService.tryRestoreCurrentUser();
   }
-
-  setCurrentUser(){
-    
-    this.user = JSON.parse(localStorage.getItem('user')|| '{}');
-    console.log(this.user);
-    if (this.user != null && this.user.username != undefined){
-      console.log("DEBUG: Loaded user from localstorage: " + this.user.username);
-      this.accountService.setCurrentUser(this.user);
-      this.presence.createHubConnection(this.user);
-    }
-
-  }
-
-  
 
   sendRabbitMessageApi() {
     this.demoService.sendDemoRabbitMessage().subscribe(result =>{

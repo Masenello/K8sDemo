@@ -111,11 +111,35 @@ namespace K8sDemoHubManager
             });
 
             //Register event of application shutdown
-            applicationLifetime.ApplicationStopped.Register(()=>OnShutdown(app.ApplicationServices));
+            //applicationLifetime.ApplicationStopped.Register(()=>OnShutdown(app.ApplicationServices));
+            applicationLifetime.ApplicationStopping.Register(()=>OnStopping(app.ApplicationServices));
         }
 
-        private void OnShutdown(IServiceProvider serviceProvider)
+        private void OnStopping(IServiceProvider serviceProvider)
         {
+            // try 
+            // {
+                
+            //     // var context = (DataContext)serviceProvider.CreateScope().ServiceProvider.GetService(typeof(DataContext));
+            //     // Console.WriteLine("Application stopping");
+        
+            //     Console.WriteLine($"Chiudo Evento mode");
+                
+            //     var _context = (new DataContextFactory()).CreateDbContext(null);
+                
+            //         Console.WriteLine($"Rows { _context.ConnectedApps.Count()}");
+            //         foreach (var connection in _context.ConnectedApps)
+            //         {
+            //             Console.WriteLine("Sono nel for each");
+            //             _context.ConnectedApps.Remove(connection);
+            //         }
+            //         _context.SaveChanges();
+                
+            // }
+            // catch (Exception e)
+            //  {
+            //      Console.WriteLine(e.Message);
+            //  }
         
         }
     }

@@ -22,9 +22,10 @@ export class NavComponent implements OnInit {
   login(){
     this.accountService.login(this.model).subscribe(response => {
       console.log(response);
-    }, error=>{
+    }, error=>
+    {
       console.log(error)
-      this.toastr.error(error.error);
+      this.toastr.error("Login failed");
     });
     
   }
