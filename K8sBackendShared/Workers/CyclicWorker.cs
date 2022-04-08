@@ -39,6 +39,7 @@ namespace K8sBackendShared.Workers
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
         {
             _rabbitBus.PubSub.Publish(e.Status);
+            Console.WriteLine($"{DateTime.Now}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
         }
 
         private void BackgroundWorkerOnWorkCompleted(object sender, RunWorkerCompletedEventArgs e)

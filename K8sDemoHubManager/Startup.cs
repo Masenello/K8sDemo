@@ -43,6 +43,7 @@ namespace K8sDemoHubManager
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                 });
             services.AddScoped<IConnectedAppsService, ConnectedAppsService>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -74,10 +75,12 @@ namespace K8sDemoHubManager
                 };
             });
             services.AddSignalR();
+            services.AddTransient<SignalRbrokerService>();
+            services.AddTransient<DataBaseSpecialOperationsService>();
+            services.AddHostedService<RabbitConnectorService>();
         
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
             app.UseCors(builder =>
@@ -106,8 +109,7 @@ namespace K8sDemoHubManager
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<PresenceHub>("hubs/presence");
-                endpoints.MapHub<JobStatusHub>("hubs/jobstatus");
+                endpoints.MapHub<ClientHub>("hubs/client");
             });
 
             //Register event of application shutdown
@@ -117,29 +119,14 @@ namespace K8sDemoHubManager
 
         private void OnStopping(IServiceProvider serviceProvider)
         {
-            // try 
+            //NON VA!
+            // Console.WriteLine($"{nameof(RabbitConnectorService)} cleaning connections table");
+            // using (var scope = serviceProvider.CreateScope())
             // {
-                
-            //     // var context = (DataContext)serviceProvider.CreateScope().ServiceProvider.GetService(typeof(DataContext));
-            //     // Console.WriteLine("Application stopping");
-        
-            //     Console.WriteLine($"Chiudo Evento mode");
-                
-            //     var _context = (new DataContextFactory()).CreateDbContext(null);
-                
-            //         Console.WriteLine($"Rows { _context.ConnectedApps.Count()}");
-            //         foreach (var connection in _context.ConnectedApps)
-            //         {
-            //             Console.WriteLine("Sono nel for each");
-            //             _context.ConnectedApps.Remove(connection);
-            //         }
-            //         _context.SaveChanges();
-                
+            //     var transientService = scope.ServiceProvider.GetRequiredService<DataBaseSpecialOperationsService>();
+            //     transientService.CleanConnectionsTable();
             // }
-            // catch (Exception e)
-            //  {
-            //      Console.WriteLine(e.Message);
-            //  }
+            // Console.WriteLine($"Cleaned my shit");
         
         }
     }

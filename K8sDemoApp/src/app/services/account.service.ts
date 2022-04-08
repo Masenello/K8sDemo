@@ -13,8 +13,7 @@ import { User } from '../_models/user';
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  private currentUserSource = new ReplaySubject<User>(1);
-  currentUser$ = this.currentUserSource.asObservable();
+  currentUser : BehaviorSubject<User | null>;
   userPressedLogOutButton:boolean = false;
 
   hubUrl  = environment.hubUrl;
@@ -22,6 +21,7 @@ export class AccountService {
   public hubConnectionStatus: BehaviorSubject<boolean>;
 
   constructor(private http: HttpClient, private toastr: ToastrService) {
+    this.currentUser = new BehaviorSubject<User | null>(null); 
     this.hubConnectionStatus = new BehaviorSubject<boolean>(false);
 
   }
@@ -46,7 +46,7 @@ export class AccountService {
     try
     {
       await this.createHubConnection(user);
-      this.currentUserSource.next(user);
+      this.currentUser.next(user);
     }
     catch
     {
@@ -95,14 +95,14 @@ export class AccountService {
   private clearStoredUserData()
   {
     localStorage.removeItem("user");
-    this.currentUserSource.next(undefined);
+    this.currentUser.next(null);
   }
 
   private async createHubConnection(user: User)
   {
     //Create connection
     this.hubConnection = new HubConnectionBuilder()
-    .withUrl(this.hubUrl + "presence", {
+    .withUrl(this.hubUrl + "client", {
       accessTokenFactory:()=>user.token})
       .withAutomaticReconnect()
       .build()
