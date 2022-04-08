@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
@@ -16,16 +16,13 @@ export class HubService {
   hubUrl  = environment.hubUrl;
   private hubConnection: HubConnection | undefined;
   public hubConnectionStatus: BehaviorSubject<boolean>;
-  public logoutRequestEvent: BehaviorSubject<number>;
-  public c_event :CustomEvent;
+  public logoutRequestEvent =new EventEmitter();
+
 
 
   constructor(private toastr: ToastrService) 
   {
     this.hubConnectionStatus = new BehaviorSubject<boolean>(false);
-    this.logoutRequestEvent = new BehaviorSubject<number>(0);
-
-    this.c_event = new CustomEvent("evaluateUserLogOut",{});
   }
 
   public async createHubConnection(user: User)
@@ -111,7 +108,7 @@ export class HubService {
   {
     this.hubConnectionStatus.next(false);
     //Trigger a reuqest to evaluate the hub close event
-    this.logoutRequestEvent.next(this.logoutRequestEvent.value + 1);
+    this.logoutRequestEvent.emit();
   }
 
 

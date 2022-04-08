@@ -23,7 +23,7 @@ export class AccountService {
     {
       this.currentUser = new BehaviorSubject<User | null>(null);
       
-      this.hubService.logoutRequestEvent.subscribe((newValue)=>
+      this.hubService.logoutRequestEvent.subscribe(()=>
       {
         //Evaluate if Hub closed is intentional (baecause user logged out) or unexpected (hub disconnection)
           this.evaluateUserLogOut();
