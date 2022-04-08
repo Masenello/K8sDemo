@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TestJobCreationResult } from '../_models/TestJobCreationResult';
 import { TestJobCreationRequest} from '../_models/TestJobCreationRequest';
+import { AccountService } from './account.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,12 @@ export class JobService {
 
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, 
+    private toastr: ToastrService) 
+  {
+
+  }
+  
 
   sendTestJobRequest(jobRequest: TestJobCreationRequest) : Observable<TestJobCreationResult>{
         

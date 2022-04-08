@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
+import { JobStatusEnum } from '../_enum/JobStatusEnum';
+import { JobStatusMessage } from '../_models/JobStatusMessage';
 import { User } from '../_models/user';
 
 @Injectable({
@@ -140,11 +142,15 @@ export class AccountService {
           this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
         });
 
-
-
         this.hubConnection?.onclose(()=>
         {
           this.manageHubDisconnection();
+        });
+
+        this.hubConnection?.on("ReportJobProgress",(data:JobStatusMessage) => 
+        {
+          this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+          console.log(data);
         });
 
         //Notify to Hub user has logged in (to pass user name)

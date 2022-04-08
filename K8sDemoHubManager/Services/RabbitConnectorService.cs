@@ -30,7 +30,7 @@ namespace K8sDemoHubManager.Services
 
         private async void HandleJobStatusMessage(JobStatusMessage msg)
         {
-            // Console.WriteLine($"{DateTime.Now}: Job Id:{msg.JobId} Status: {msg.Status} Progress: {msg.ProgressPercentage}% ");
+            Console.WriteLine($"{DateTime.Now}: {nameof(RabbitConnectorService)}: Job Id:{msg.JobId} Status: {msg.Status} Progress: {msg.ProgressPercentage}% ");
 
             using (var scope = _serviceProvider.CreateScope())
             {

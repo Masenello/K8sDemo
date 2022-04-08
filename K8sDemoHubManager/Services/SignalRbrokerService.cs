@@ -22,15 +22,13 @@ namespace K8sDemoHubManager.Services
         }
 
         public async Task ForwardJobStatusMessage(JobStatusMessage msg)
-        {
-            Console.WriteLine($"{DateTime.Now}: {nameof(SignalRbrokerService)} Job Id:{msg.JobId} Status: {msg.Status} Progress: {msg.ProgressPercentage}% ");
-
-        
+        {        
                 ConnectedAppEntity connectedClient = await _context.ConnectedApps.FirstOrDefaultAsync(x=>x.User.UserName == msg.User);
                 if (connectedClient != null)
                 {
-                    await 
-                    _hub.Clients.Clients(connectedClient.ConnectionId).SendAsync("ReportJobProgress", msg);
+                    Console.WriteLine($"{DateTime.Now}: {nameof(SignalRbrokerService)}: Forwarding message: {nameof(JobStatusMessage)} to client with connection id: {connectedClient.Id}");
+                    await _hub.Clients.Clients(connectedClient.ConnectionId).SendAsync("ReportJobProgress", msg);
+                    
                 }
             
         }
