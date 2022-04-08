@@ -24,9 +24,14 @@ namespace K8sDemoHubManager.Services
         {          
 
             _serviceProvider = serviceProvider;
+            
+            DateTime start = DateTime.Now;
+            
+        
             _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
-            _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);             
+            _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
         }
+
 
         private async void HandleJobStatusMessage(JobStatusMessage msg)
         {

@@ -35,7 +35,10 @@ namespace K8sDemoWorker
 
 
             //Keep main running
-            Console.ReadLine();
+            while(true)
+            {
+                Thread.Sleep(100);
+            }
         }
 
 

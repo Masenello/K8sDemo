@@ -62,6 +62,17 @@ services:
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
+  k8sDemo-worker:
+    container_name: k8sdemoworkercontainer
+    image: k8sdemoworker
+    restart: always
+    networks: 
+      - identity-network
+    depends_on:
+      - k8sDemo-database
+      - k8sDemo-rabbitMq
+      - k8sDemo-hub-manager
+
   k8sDemo-database:
     container_name: k8sdemoapidbcontainer
     image: mcr.microsoft.com/mssql/server:2017-latest
