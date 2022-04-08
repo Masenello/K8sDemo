@@ -25,11 +25,8 @@ export class AccountService {
       
       this.hubService.logoutRequestEvent.subscribe((newValue)=>
       {
-        if (newValue)
-        {
+        //Evaluate if Hub closed is intentional (baecause user logged out) or unexpected (hub disconnection)
           this.evaluateUserLogOut();
-          this.hubService.logoutRequestEvent.next(false);
-        }
       });
 
     }
