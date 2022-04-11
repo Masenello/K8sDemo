@@ -11,35 +11,23 @@ using System.Linq;
 using K8sBackendShared.Enums;
 using Microsoft.EntityFrameworkCore;
 using K8sDemoWorker.Jobs;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using K8sBackendShared.Extensions;
 
 namespace K8sDemoWorker
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("K8sDemoWorker Started!");
-            Console.WriteLine($"Rabbit Host: {NetworkSettings.RabbitHostResolver()}");
-
-            var services = new ServiceCollection();
-
-            var cyclicWorker = new CyclicWorker(3000, new TestJob());
-
-
-
-            //Keep main running
-            while(true)
-            {
-                Thread.Sleep(100);
-            }
+            var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseStartup<Startup>(); 
 
-        static void HandleTextMessage(TestMessage textMessage) 
-        {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine($"{DateTime.Now.ToString()} Got message: {textMessage.Text}");
-            Console.ResetColor();
-        }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Messages;
 using K8sBackendShared.RabbitConnector;
@@ -9,15 +11,18 @@ namespace K8sDemoHubManager.Services
     public class RabbitConnectorServiceHub:RabbitConnectorService
     {
 
-        public RabbitConnectorServiceHub(IServiceProvider serviceProvider):base(serviceProvider)
+        protected readonly IServiceProvider _serviceProvider;   
+        public RabbitConnectorServiceHub(IServiceProvider serviceProvider):base()
         {
-
+            _serviceProvider= serviceProvider;
         }
 
-    
+
+
         public override async void Subscribe()
         {
             await  _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
+            Console.WriteLine($"Subscribed to message: {nameof (JobStatusMessage)}");
         }
 
         private async void HandleJobStatusMessage(JobStatusMessage msg)
@@ -30,6 +35,13 @@ namespace K8sDemoHubManager.Services
                 await transientService.ForwardJobStatusMessage(msg);
             }
         }
-        
+
+        public override Task StartAsync(CancellationToken stoppingToken)
+        {
+            Console.WriteLine($"Service {nameof(RabbitConnectorServiceHub)} started");
+            return Task.CompletedTask;
+        }
+
+                
     }
 }
