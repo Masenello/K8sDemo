@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ;
+using EasyNetQ.Logging;
 using K8sBackendShared.Data;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Messages;
@@ -21,15 +22,21 @@ namespace K8sDemoHubManager.Services
         private readonly IBus _rabbitBus;
         private readonly IServiceProvider _serviceProvider;
         public RabbitConnectorService(IServiceProvider serviceProvider)
-        {          
+        {    
+            try 
+            {
+                _serviceProvider = serviceProvider;
+                LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
+                NetworkSettings.WaitForRabbitDependancy();
+                _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
+                _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
+            }     
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to start {nameof(RabbitConnectorService)} {e.Message}");
+                throw;
+            }
 
-            _serviceProvider = serviceProvider;
-            
-            DateTime start = DateTime.Now;
-            
-        
-            _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
-            _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
         }
 
 
@@ -55,7 +62,7 @@ namespace K8sDemoHubManager.Services
             return;
         }
 
-        private void DoWork(object? state)
+        private void DoWork(object state)
         {
             // var count = Interlocked.Increment(ref executionCount);
 
