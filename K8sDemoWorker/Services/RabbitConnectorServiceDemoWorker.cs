@@ -37,11 +37,6 @@ namespace K8sDemoHubWorker.Services
         //     }
         // }
 
-        public override Task StartAsync(CancellationToken stoppingToken)
-        {
-            Console.WriteLine($"Service {nameof(RabbitConnectorServiceDemoWorker)} started");
-            return Task.CompletedTask;
-        }
 
                 
     }

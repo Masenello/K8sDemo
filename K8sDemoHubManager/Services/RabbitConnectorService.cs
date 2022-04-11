@@ -36,12 +36,6 @@ namespace K8sDemoHubManager.Services
             }
         }
 
-        public override Task StartAsync(CancellationToken stoppingToken)
-        {
-            Console.WriteLine($"Service {nameof(RabbitConnectorServiceHub)} started");
-            return Task.CompletedTask;
-        }
-
                 
     }
 }

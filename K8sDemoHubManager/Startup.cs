@@ -21,6 +21,7 @@ using K8sBackendShared.Settings;
 using K8sDemoHubManager.Interfaces;
 using K8sDemoHubManager.Services;
 using Microsoft.Extensions.Hosting.Internal;
+using K8sBackendShared.Utils;
 
 namespace K8sDemoHubManager
 {
@@ -77,6 +78,7 @@ namespace K8sDemoHubManager
             services.AddSignalR();
             services.AddTransient<SignalRbrokerService>();
             services.AddTransient<DataBaseSpecialOperationsService>();
+
             services.AddHostedService<RabbitConnectorServiceHub>();
         
         }

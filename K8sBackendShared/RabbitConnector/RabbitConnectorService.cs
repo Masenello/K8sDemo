@@ -43,7 +43,10 @@ namespace K8sBackendShared.RabbitConnector
             _rabbitBus.PubSub.Publish<T>(message);
         }
 
-        public abstract Task StartAsync(CancellationToken stoppingToken);
+        public Task StartAsync(CancellationToken stoppingToken)
+        {
+            return Task.CompletedTask;
+        }
    
 
         public Task StopAsync(CancellationToken stoppingToken)

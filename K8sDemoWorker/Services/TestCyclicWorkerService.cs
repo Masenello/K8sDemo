@@ -10,8 +10,8 @@ namespace K8sDemoWorker.Services
 {
     public class TestCyclicWorkerService:CyclicWorkerService
     {
-        public TestCyclicWorkerService(RabbitConnectorServiceDemoWorker rabbitService)
-        :base(rabbitService,3000, new TestJob())
+        public TestCyclicWorkerService(RabbitConnectorService rabbitService, int cycleTime, AbstractWorkerJob workerJob)
+        :base(rabbitService,cycleTime, workerJob)
         {
             if (rabbitService is null) throw new Exception("rabbit is null");
         }
