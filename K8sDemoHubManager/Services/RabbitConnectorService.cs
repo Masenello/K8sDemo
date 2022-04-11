@@ -1,18 +1,8 @@
 using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyNetQ;
-using EasyNetQ.Logging;
-using K8sBackendShared.Data;
-using K8sBackendShared.Entities;
 using K8sBackendShared.Messages;
 using K8sBackendShared.RabbitConnector;
-using K8sBackendShared.Settings;
-using K8sDemoHubManager.Hubs;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace K8sDemoHubManager.Services
 {

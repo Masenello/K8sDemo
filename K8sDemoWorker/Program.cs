@@ -20,15 +20,8 @@ namespace K8sDemoWorker
         {
             Console.WriteLine("K8sDemoWorker Started!");
             Console.WriteLine($"Rabbit Host: {NetworkSettings.RabbitHostResolver()}");
-            //Console.WriteLine(NetworkSettings.DatabaseConnectionStringResolver());
 
             var services = new ServiceCollection();
-            //using (var bus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver())) 
-            //{
-            //    bus.PubSub.Subscribe<TestMessage>("test", HandleTextMessage);
-            //    Console.WriteLine("Listening for messages. Hit <return> to quit.");
-            //    Console.ReadLine();
-            //}
 
             var cyclicWorker = new CyclicWorker(3000, new TestJob());
 

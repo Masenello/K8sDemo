@@ -38,6 +38,11 @@ namespace K8sBackendShared.RabbitConnector
 
         public abstract void Subscribe();
 
+        public void Publish(object message)
+        {
+            _rabbitBus.PubSub.Publish(message);
+        }
+
         public async Task StartAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine($"{nameof(RabbitConnectorService)} started");
