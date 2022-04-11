@@ -77,7 +77,7 @@ namespace K8sDemoHubManager
             services.AddSignalR();
             services.AddTransient<SignalRbrokerService>();
             services.AddTransient<DataBaseSpecialOperationsService>();
-            services.AddHostedService<RabbitConnectorService>();
+            services.AddHostedService<RabbitConnectorServiceHub>();
         
         }
 

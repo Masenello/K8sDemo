@@ -7,6 +7,7 @@ using EasyNetQ.Logging;
 using K8sBackendShared.Data;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Messages;
+using K8sBackendShared.RabbitConnector;
 using K8sBackendShared.Settings;
 using K8sDemoHubManager.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -15,30 +16,19 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sDemoHubManager.Services
 {
-    public class RabbitConnectorService:IHostedService
+    public class RabbitConnectorServiceHub:RabbitConnectorService
     {
 
-    
-        private readonly IBus _rabbitBus;
-        private readonly IServiceProvider _serviceProvider;
-        public RabbitConnectorService(IServiceProvider serviceProvider)
-        {    
-            try 
-            {
-                _serviceProvider = serviceProvider;
-                LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
-                NetworkSettings.WaitForRabbitDependancy();
-                _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
-                _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
-            }     
-            catch (Exception e)
-            {
-                Console.WriteLine($"Failed to start {nameof(RabbitConnectorService)} {e.Message}");
-                throw;
-            }
+        public RabbitConnectorServiceHub(IServiceProvider serviceProvider):base(serviceProvider)
+        {
 
         }
 
+    
+        public override async void Subscribe()
+        {
+            await  _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
+        }
 
         private async void HandleJobStatusMessage(JobStatusMessage msg)
         {
@@ -50,47 +40,6 @@ namespace K8sDemoHubManager.Services
                 await transientService.ForwardJobStatusMessage(msg);
             }
         }
-
-        public async Task StartAsync(CancellationToken stoppingToken)
-        {
-            Console.WriteLine($"{nameof(RabbitConnectorService)} started");
-            // _logger.LogInformation("Timed Hosted Service running.");
-
-            // _timer = new Timer(DoWork, null, TimeSpan.Zero, 
-            //     TimeSpan.FromSeconds(5));
-            await Task.Delay(0);
-            return;
-        }
-
-        private void DoWork(object state)
-        {
-            // var count = Interlocked.Increment(ref executionCount);
-
-            // _logger.LogInformation(
-            //     "Timed Hosted Service is working. Count: {Count}", count);
-        }
-
-        public async Task StopAsync(CancellationToken stoppingToken)
-        {
-            // Console.WriteLine($"{nameof(RabbitConnectorService)} cleaning connections table");
-
-            // using (var _context = (new DataContextFactory()).CreateDbContext(null))
-            // {
-            //     foreach(var connection in _context.ConnectedApps)
-            //         {
-            //             Console.WriteLine($"Sono nel for each");
-            //             _context.ConnectedApps.Remove(connection);
-            //         }
-            //         await _context.SaveChangesAsync();
-            // }
-
-    
-            // Console.WriteLine($"{nameof(RabbitConnectorService)} stopped");
-            await Task.Delay(0);
-            return;
-        }
-
-
         
     }
 }

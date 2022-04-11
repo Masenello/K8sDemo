@@ -8,7 +8,6 @@ namespace K8sBackendShared.Settings
 {
     public class NetworkSettings
     {
-        private static readonly string RabbitContainerName = "k8sdemorabbitmqcontainer";
         private static readonly int RabbitBootTimeoutSeconds = 30;
 
         private static readonly string RabbitDockerHost = "k8sDemo-rabbitMq";
@@ -48,7 +47,7 @@ namespace K8sBackendShared.Settings
             
         }
 
-        //Returns true if rabbit management web page  is available, this meand that boot phase is completed
+        //Returns true if rabbit management web page  is available, this means that boot phase is completed
         public static async Task<bool> IsRabbitUp()
         {
 
