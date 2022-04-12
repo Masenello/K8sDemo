@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Data;
 using K8sBackendShared.Entities;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace K8sDemoApi.Controllers
     {
         private readonly DataContext _context;
 
-        public JobController(DataContext context)
+        public JobController(DataContext context, ILogger logger):base(logger)
         {
             _context = context;
         }

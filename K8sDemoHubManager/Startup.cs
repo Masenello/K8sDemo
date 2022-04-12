@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using K8sDemoHubManager.Hubs;
@@ -22,6 +21,9 @@ using K8sDemoHubManager.Interfaces;
 using K8sDemoHubManager.Services;
 using Microsoft.Extensions.Hosting.Internal;
 using K8sBackendShared.Utils;
+using K8sBackendShared.Logging;
+using K8sBackendShared.Interfaces;
+using K8sBackendShared.RabbitConnector;
 
 namespace K8sDemoHubManager
 {
@@ -77,11 +79,11 @@ namespace K8sDemoHubManager
             });
             services.AddSignalR();
             services.AddTransient<SignalRbrokerService>();
-            services.AddTransient<DataBaseSpecialOperationsService>();
 
-            //Note: BackgroundServiceStarter is used to create instance of RabbitConnectorServiceHub
-            services.AddSingleton<RabbitConnectorServiceHub>();
-            services.AddHostedService<BackgroundServiceStarter<RabbitConnectorServiceHub>>();
+            services.AddSingleton<ILogger,RabbitLoggerService>();
+            services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
+            services.AddSingleton<RabbitForwarderService>();
+            services.AddHostedService<BackgroundServiceStarter<RabbitForwarderService>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)

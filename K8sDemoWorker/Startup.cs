@@ -1,7 +1,7 @@
 using System.Threading;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
-using K8sDemoHubWorker.Services;
+using K8sBackendShared.RabbitConnector;
 using K8sDemoWorker.Jobs;
 using K8sDemoWorker.Services;
 using Microsoft.Extensions.Configuration;
@@ -21,10 +21,10 @@ namespace K8sDemoWorker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILogger,RabbitLoggerService>();
-            services.AddSingleton<IRabbitPublisher, RabbitConnectorServiceDemoWorker>();
+            services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
             services.AddHostedService<TestCyclicWorkerService>(x =>
                 new TestCyclicWorkerService(
-                        x.GetRequiredService<IRabbitPublisher>(),
+                        x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
                         1000,
                         new TestJob(x.GetRequiredService<ILogger>())  

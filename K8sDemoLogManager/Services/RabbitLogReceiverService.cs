@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Enums;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.RabbitConnector;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,21 +12,19 @@ using NLog;
 
 namespace K8sDemoLogManager.Services
 {
-    public class RabbitConnectorServiceDemoLogManager:RabbitConnectorService
+    public class RabbitLogReceiverService
     {
         private readonly  Logger _nlogger; 
+        private readonly  IRabbitConnector _rabbitConnector; 
 
-        public RabbitConnectorServiceDemoLogManager():base()
+        public RabbitLogReceiverService(IRabbitConnector rabbitConnector):base()
         {
+            _rabbitConnector = rabbitConnector;
             _nlogger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+            _rabbitConnector.Subscribe<LogMessage>(HandleLogMessage);
         }
 
 
-
-        public override async void Subscribe()
-        {
-            await  _rabbitBus.PubSub.SubscribeAsync<LogMessage>("",HandleLogMessage);  
-        }
 
         private async void HandleLogMessage(LogMessage msg)
         {
@@ -49,10 +48,6 @@ namespace K8sDemoLogManager.Services
                     break;
             }
             Console.WriteLine(msg.ToString());
-
-            
-
-
             await Task.Delay(0);
         }
 

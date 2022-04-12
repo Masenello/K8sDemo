@@ -1,5 +1,7 @@
 using K8sBackendShared.Data;
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.Logging;
+using K8sBackendShared.RabbitConnector;
 using K8sBackendShared.Settings;
 using K8sDemoApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -59,6 +60,9 @@ namespace K8sDemoApi
                     ValidateAudience = false,
                 };
             });
+
+            services.AddSingleton<ILogger,RabbitLoggerService>();
+            services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

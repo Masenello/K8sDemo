@@ -1,5 +1,6 @@
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
+using K8sBackendShared.RabbitConnector;
 using K8sBackendShared.Utils;
 using K8sDemoLogManager.Services;
 using Microsoft.Extensions.Configuration;
@@ -19,8 +20,9 @@ namespace K8sDemoLogManager
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILogger,RabbitLoggerService>();
-            services.AddSingleton<RabbitConnectorServiceDemoLogManager>();
-            services.AddHostedService<BackgroundServiceStarter<RabbitConnectorServiceDemoLogManager>>();
+            services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
+            services.AddSingleton<RabbitLogReceiverService>();
+            services.AddHostedService<BackgroundServiceStarter<RabbitLogReceiverService>>();
         }
     }
     

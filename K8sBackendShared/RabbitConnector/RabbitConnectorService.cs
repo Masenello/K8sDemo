@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.RabbitConnector
 {
-    public abstract class RabbitConnectorService:IRabbitPublisher
+    public class RabbitConnectorService:IRabbitConnector
     {
 
         protected readonly IBus _rabbitBus;
@@ -27,7 +27,6 @@ namespace K8sBackendShared.RabbitConnector
                 //LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
                 NetworkSettings.WaitForRabbitDependancy();
                 _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
-                Subscribe();
 
             }     
             catch (Exception e)
@@ -38,11 +37,14 @@ namespace K8sBackendShared.RabbitConnector
 
         }
 
-        public abstract void Subscribe();
-
-        public void Publish<T>(T message)
+        public async void Subscribe<T>(Action<T> subscribeAction)
         {
-            _rabbitBus.PubSub.Publish<T>(message);
+            await  _rabbitBus.PubSub.SubscribeAsync<T>("",subscribeAction);  
+        }
+
+        public async void Publish<T>(T message)
+        {
+            await _rabbitBus.PubSub.PublishAsync<T>(message);
         }
         
     }

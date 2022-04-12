@@ -15,8 +15,9 @@ namespace K8sDemoApi.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
+        
 
-        public AccountController(DataContext context, ITokenService tokenService)
+        public AccountController(DataContext context, ITokenService tokenService, ILogger logger):base(logger)
         {
             _context = context;
             _tokenService = tokenService;

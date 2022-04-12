@@ -9,11 +9,11 @@ namespace K8sBackendShared.Logging
 {
     public class RabbitLoggerService : ILogger
     {
-        private readonly IRabbitPublisher _rabbitSender;
+        private readonly IRabbitConnector _rabbitConnector;
 
-        public RabbitLoggerService(IRabbitPublisher rabbitSender)
+        public RabbitLoggerService(IRabbitConnector rabbitConnector)
         {
-            _rabbitSender = rabbitSender;
+            _rabbitConnector = rabbitConnector;
         }
 
         private LogMessage BuildLogMessage(string message, LogType messageType)
@@ -51,7 +51,7 @@ namespace K8sBackendShared.Logging
 
         private void SendLogMessage (LogMessage logmessage)
         {
-            _rabbitSender.Publish<LogMessage>(logmessage);
+            _rabbitConnector.Publish<LogMessage>(logmessage);
         }
 
         public void LogError(string errorMessage)

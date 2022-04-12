@@ -14,15 +14,15 @@ namespace K8sBackendShared.Workers
         private AbstractWorkerJob _workerJob = null;
         private BackgroundWorker _bw = new BackgroundWorker();
 
-        private readonly IRabbitPublisher _rabbitSender;
+        private readonly IRabbitConnector _rabbitConnector;
 
         private readonly ILogger _logger;
 
         private int _cycleTime = 500;
 
-        public CyclicWorkerService(IRabbitPublisher rabbitSender, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
+        public CyclicWorkerService(IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
         {
-            _rabbitSender = rabbitSender;
+            _rabbitConnector = rabbitConnector;
             _logger=logger;
 
             _cycleTime = cycleTime;
@@ -41,9 +41,9 @@ namespace K8sBackendShared.Workers
 
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
         { 
-            if (_rabbitSender is null) throw new Exception("rabbit is null");
+            if (_rabbitConnector is null) throw new Exception("rabbit is null");
             
-            _rabbitSender.Publish(e.Status);
+            _rabbitConnector.Publish(e.Status);
             _logger.LogInfo($"Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
         }
 
