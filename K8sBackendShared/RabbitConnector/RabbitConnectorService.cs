@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ;
 using EasyNetQ.Logging;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.RabbitConnector
 {
-    public abstract class RabbitConnectorService
+    public abstract class RabbitConnectorService:IRabbitPublisher
     {
 
         protected readonly IBus _rabbitBus;

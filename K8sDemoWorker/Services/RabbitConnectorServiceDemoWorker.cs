@@ -22,7 +22,6 @@ namespace K8sDemoHubWorker.Services
         public override async void Subscribe()
         {
             //await  _rabbitBus.PubSub.SubscribeAsync<JobStatusMessage>("",HandleJobStatusMessage);  
-            Console.WriteLine("Sono nel subscription");
             await Task.Delay(0);
         }
 

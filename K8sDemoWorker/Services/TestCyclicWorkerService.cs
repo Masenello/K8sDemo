@@ -1,4 +1,5 @@
 using System;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.RabbitConnector;
 using K8sBackendShared.Workers;
@@ -10,10 +11,10 @@ namespace K8sDemoWorker.Services
 {
     public class TestCyclicWorkerService:CyclicWorkerService
     {
-        public TestCyclicWorkerService(RabbitConnectorService rabbitService, int cycleTime, AbstractWorkerJob workerJob)
-        :base(rabbitService,cycleTime, workerJob)
+        public TestCyclicWorkerService(IRabbitPublisher rabbitSender, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
+        :base(rabbitSender,logger,cycleTime, workerJob)
         {
-            if (rabbitService is null) throw new Exception("rabbit is null");
+
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.RabbitConnector;
 using Microsoft.Extensions.Hosting;
@@ -13,13 +14,16 @@ namespace K8sBackendShared.Workers
         private AbstractWorkerJob _workerJob = null;
         private BackgroundWorker _bw = new BackgroundWorker();
 
-        private readonly RabbitConnectorService _rabbitService;
+        private readonly IRabbitPublisher _rabbitSender;
+
+        private readonly ILogger _logger;
 
         private int _cycleTime = 500;
 
-        public CyclicWorkerService(RabbitConnectorService rabbitService, int cycleTime, AbstractWorkerJob workerJob)
+        public CyclicWorkerService(IRabbitPublisher rabbitSender, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
         {
-            _rabbitService = rabbitService;
+            _rabbitSender = rabbitSender;
+            _logger=logger;
 
             _cycleTime = cycleTime;
             _bw.WorkerReportsProgress = false;
@@ -37,9 +41,9 @@ namespace K8sBackendShared.Workers
 
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
         { 
-            if (_rabbitService is null) throw new Exception("rabbit is null");
+            if (_rabbitSender is null) throw new Exception("rabbit is null");
             
-            _rabbitService.Publish(e.Status);
+            _rabbitSender.Publish(e.Status);
             Console.WriteLine($"{DateTime.Now}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
         }
 

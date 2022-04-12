@@ -57,6 +57,7 @@ namespace K8sDemoWorker.Jobs
                         targetJob.EndDate = DateTime.Now;
                         _context.SaveChanges();
                         Console.WriteLine($"{DateTime.Now}: Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
+
                     }
                 }
             }     
