@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
@@ -17,12 +18,35 @@ namespace K8sBackendShared.Logging
 
         private LogMessage BuildLogMessage(string message, LogType messageType)
         {
-            return new LogMessage()
+            var logMessage = new LogMessage()
             {
                 Message = message, 
                 MessageType = messageType, 
-                Program = System.Diagnostics.Process.GetCurrentProcess().ProcessName
+                Program = Assembly.GetEntryAssembly().GetName().Name
             };
+            WriteToConsole(logMessage);
+            return logMessage;
+        }
+
+        private void WriteToConsole(LogMessage logmessage)
+        {
+            
+            switch(logmessage.MessageType)
+            {
+                case LogType.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogType.Debug:
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
+                case LogType.Info:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case LogType.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+            }
+            Console.WriteLine(logmessage.ToString());
         }
 
         private void SendLogMessage (LogMessage logmessage)

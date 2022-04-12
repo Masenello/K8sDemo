@@ -7,24 +7,33 @@ using K8sBackendShared.Messages;
 using System.Threading;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.Entities;
+using K8sBackendShared.Interfaces;
 
 namespace K8sDemoWorker.Jobs
 {
     public class TestJob : AbstractWorkerJob
     {
 
+        
+
+        public TestJob(ILogger logger):base(logger)
+        {
+    
+        }
+
         public override void DoWork()
         {
             try 
             {
-                Console.WriteLine($"{DateTime.Now}: Searching for jobs to process ...");
+                //Console.WriteLine($"{DateTime.Now}: Searching for jobs to process ...");
+                _logger.LogInfo("Searching for jobs to process ...");
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
                     //Get the oldest job found in CREATED status from database
                     TestJobEntity targetJob = _context.Jobs.Where(x=>x.Status == JobStatus.created).OrderBy(y=>y.CreationDate).Include(u=>u.User).FirstOrDefault();
                     if (targetJob != null)
                     {
-                        Console.WriteLine($"{DateTime.Now}: Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
+                        _logger.LogInfo($"Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
                         //Set job to running status
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
@@ -56,14 +65,14 @@ namespace K8sDemoWorker.Jobs
                         targetJob.Status = JobStatus.completed;
                         targetJob.EndDate = DateTime.Now;
                         _context.SaveChanges();
-                        Console.WriteLine($"{DateTime.Now}: Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
+                        _logger.LogInfo($"Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
 
                     }
                 }
             }     
             catch(Exception e)
             {
-                Console.WriteLine($"Eror processing job: {e.Message}");
+                _logger.LogError("Eror processing job",e);
             }
         }
     }

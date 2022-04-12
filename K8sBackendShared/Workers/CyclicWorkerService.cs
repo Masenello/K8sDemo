@@ -44,7 +44,7 @@ namespace K8sBackendShared.Workers
             if (_rabbitSender is null) throw new Exception("rabbit is null");
             
             _rabbitSender.Publish(e.Status);
-            Console.WriteLine($"{DateTime.Now}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
+            _logger.LogInfo($"Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
         }
 
         private void BackgroundWorkerOnWorkCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -71,12 +71,12 @@ namespace K8sBackendShared.Workers
         public void CancelWork()
         {
             _bw.CancelAsync();
-            Console.WriteLine("Job Aborted");
+            _logger.LogWarning("Job Aborted");
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine($"{nameof(CyclicWorkerService)} started");
+            _logger.LogInfo($"{nameof(CyclicWorkerService)} started");
             return Task.CompletedTask;
         }
 

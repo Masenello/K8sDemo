@@ -27,7 +27,7 @@ namespace K8sDemoWorker
                         x.GetRequiredService<IRabbitPublisher>(),
                         x.GetRequiredService<ILogger>(),
                         1000,
-                        new TestJob()  
+                        new TestJob(x.GetRequiredService<ILogger>())  
                 )
             );
         }

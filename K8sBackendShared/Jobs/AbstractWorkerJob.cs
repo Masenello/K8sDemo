@@ -1,5 +1,6 @@
 using System;
 using EasyNetQ;
+using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 
@@ -10,6 +11,13 @@ namespace K8sBackendShared.Jobs
         
         public delegate void JobProgressChangedHandler(object sender, JobProgressEventArgs e);
         public event JobProgressChangedHandler JobProgressChanged;
+
+        protected readonly ILogger _logger;
+
+        public AbstractWorkerJob(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public abstract void DoWork();
 

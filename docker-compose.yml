@@ -73,6 +73,17 @@ services:
       - k8sDemo-rabbitMq
       - k8sDemo-hub-manager
 
+  k8sDemo-logmanager:
+    container_name: k8sdemologmanagercontainer
+    image: k8sdemologmanager
+    restart: always
+    networks: 
+      - identity-network
+    depends_on:
+      - k8sDemo-rabbitMq
+    volumes:
+      - D:\Logs\:/app/Logs
+
   k8sDemo-database:
     container_name: k8sdemoapidbcontainer
     image: mcr.microsoft.com/mssql/server:2017-latest

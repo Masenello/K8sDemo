@@ -9,6 +9,7 @@ namespace K8sBackendShared.Logging
 {
     public static class LoggingUtilities
     {
+
     
     public static string AddException(this string source, Exception ex)
         {

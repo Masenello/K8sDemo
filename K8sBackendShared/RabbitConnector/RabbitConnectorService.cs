@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EasyNetQ;
 using EasyNetQ.Logging;
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.Logging;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,8 @@ namespace K8sBackendShared.RabbitConnector
         {    
             try 
             {
-                LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
+                
+                //LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
                 NetworkSettings.WaitForRabbitDependancy();
                 _rabbitBus = RabbitHutch.CreateBus(NetworkSettings.RabbitHostResolver());
                 Subscribe();
@@ -30,7 +32,7 @@ namespace K8sBackendShared.RabbitConnector
             }     
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to start {nameof(RabbitConnectorService)} {e.Message}");
+                Console.WriteLine($"Failed to start {nameof(RabbitConnectorService)}".AddException(e));
                 throw;
             }
 
