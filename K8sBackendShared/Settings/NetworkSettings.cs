@@ -85,7 +85,7 @@ namespace K8sBackendShared.Settings
                     //Wait that RabbitMQ is ready
                     if (IsRabbitUp().Result)
                     {
-                        Console.WriteLine($"RabbitMq started");
+                        Console.WriteLine($"RabbitMq is running");
                         Thread.Sleep(2000);
                         break;
                     }

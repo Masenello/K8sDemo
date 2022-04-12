@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { JobService } from './services/job.service';
 import { TestJobCreationRequest } from './_models/TestJobCreationRequest';
+import { HubService } from './services/hub.service';
 
 
 @Component({
@@ -24,7 +25,8 @@ export class AppComponent {
     private demoService: DemoService, 
     public accountService: AccountService, 
     private toastr: ToastrService,
-    private jobService: JobService) 
+    private jobService: JobService,
+    private hubservice: HubService) 
   { 
 
 
@@ -65,7 +67,14 @@ export class AppComponent {
     });
   }
 
+ 
+  enableLogview() {
+    this.hubservice.sendEnableLogView();
+  }
 
+  disableLogview() {
+    this.hubservice.sendDisableLogView();
+  }
 
 
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using K8sBackendShared.Enums;
+using K8sBackendShared.Interfaces;
 using K8sDemoHubManager.Interfaces;
 using K8sDemoHubManager.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +14,11 @@ namespace K8sDemoHubManager.Hubs
     {
 
         private readonly IConnectedAppsService _connectedAppsService;
-        public ClientHub(IConnectedAppsService connectedAppsService)
+        private readonly ILogger _logger;
+        public ClientHub(IConnectedAppsService connectedAppsService, ILogger logger)
         {
             _connectedAppsService = connectedAppsService;
+            _logger = logger;
         }
 
 
@@ -46,7 +49,7 @@ namespace K8sDemoHubManager.Hubs
                     _connectedAppsService.AddAppToTable(username, ApplicationType.client,  Context.ConnectionId);
 
                     
-                    Console.WriteLine($"User {username} logged in");
+                    _logger.LogInfo($"User {username} logged in");
                 }
 
                 public void UserAppLogOff(string username)
@@ -55,14 +58,23 @@ namespace K8sDemoHubManager.Hubs
                     Clients.Others.SendAsync("UserIsOffLine",username);
                     _connectedAppsService.RemoveAppFromTable(username);
 
-                    Console.WriteLine($"User {username} logged out");
+                    _logger.LogInfo($"User {username} logged out");
                 }
 
         #endregion
 
-        #region Jobs
+        #region Logs
+            public async Task JoinGroup(string groupName)
+            {
+                _logger.LogInfo($"User: {_connectedAppsService.GetUser(Context.ConnectionId)} joined group: {groupName}");
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            }
 
-        
+            public async Task LeaveGroup(string groupName)
+            {
+                _logger.LogInfo($"User: {_connectedAppsService.GetUser(Context.ConnectionId)} leaved group: {groupName}");
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+            }
 
         #endregion
     }

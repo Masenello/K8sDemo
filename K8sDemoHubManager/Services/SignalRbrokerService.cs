@@ -24,16 +24,23 @@ namespace K8sDemoHubManager.Services
             _logger = logger;
         }
 
-        public async Task ForwardJobStatusMessage(JobStatusMessage msg)
+        public async Task ForwardMessage<T>(T msg, string targetUser)
         {        
-                ConnectedAppEntity connectedClient = await _context.ConnectedApps.FirstOrDefaultAsync(x=>x.User.UserName == msg.User);
+                ConnectedAppEntity connectedClient = await _context.ConnectedApps.FirstOrDefaultAsync(x=>x.User.UserName == targetUser);
                 if (connectedClient != null)
                 {
-                    _logger.LogInfo($"{nameof(SignalRbrokerService)}: Forwarding message: {nameof(JobStatusMessage)} to client with connection id: {connectedClient.Id}");
-                    await _hub.Clients.Clients(connectedClient.ConnectionId).SendAsync("ReportJobProgress", msg);
+                    _logger.LogInfo($"{nameof(SignalRbrokerService)}: Forwarding message: {typeof(T).Name} to client with connection id: {connectedClient.Id}");
+                    await _hub.Clients.Clients(connectedClient.ConnectionId).SendAsync(typeof(T).Name, msg);
                     
                 }
             
+        }
+
+        public async Task ForwardMessageToGroup<T>(T msg, string groupName)
+        {             
+            //_logger.LogInfo($"{nameof(SignalRbrokerService)}: Forwarding message: {typeof(T).Name} to group: {groupName}");
+            await _hub.Clients.Group(groupName).SendAsync(typeof(T).Name, msg);
+                
         }
     }
 }

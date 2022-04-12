@@ -72,7 +72,7 @@ export class HubService {
           this.manageHubDisconnection();
         });
 
-        this.hubConnection?.on("ReportJobProgress",(data:JobStatusMessage) => 
+        this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
         {
           this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
           console.log(data);
@@ -109,6 +109,16 @@ export class HubService {
     this.hubConnectionStatus.next(false);
     //Trigger a reuqest to evaluate the hub close event
     this.logoutRequestEvent.emit();
+  }
+
+  public sendEnableLogView()
+  {
+    this.hubConnection?.send("JoinGroup", "logviewers").catch(error=>console.log(error));
+  }
+
+  public sendDisableLogView()
+  {
+    this.hubConnection?.send("LeaveGroup", "logviewers").catch(error=>console.log(error));
   }
 
 

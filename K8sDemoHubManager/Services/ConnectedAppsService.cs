@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using K8sBackendShared.Data;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Enums;
+using K8sBackendShared.Interfaces;
 using K8sDemoHubManager.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +14,15 @@ namespace K8sDemoHubManager.Services
     public class ConnectedAppsService : IConnectedAppsService
     {
 
+        private Dictionary<string, string> _usersRequestingLogForwardingOnBrowser;
+        private readonly ILogger _logger;
+
         private readonly DataContext _context;
-        public ConnectedAppsService(DataContext context)
+        public ConnectedAppsService(DataContext context, ILogger logger)
         {
             _context = context;
+            _usersRequestingLogForwardingOnBrowser = new Dictionary<string, string>();
+            _logger = logger;
         }
         public void AddAppToTable(string username, ApplicationType appType, string connectionId)
         {
@@ -49,6 +56,11 @@ namespace K8sDemoHubManager.Services
             return  _context.ConnectedApps.Include(u=>u.User).FirstOrDefault(x=>x.User.UserName == username);
         }
 
+        public string GetUser(string connectionId)
+        {
+            return  _context.ConnectedApps.Include(u=>u.User).FirstOrDefault(x=>x.ConnectionId == connectionId).User.UserName;
+        }
+
         public  void RemoveAppFromTable(string username)    
         {
             ConnectedAppEntity targetApp =  _context.ConnectedApps.Include(u=>u.User).FirstOrDefault(x=>x.User.UserName == username);
@@ -60,5 +72,6 @@ namespace K8sDemoHubManager.Services
 
             }
         }
+
     }
 }
