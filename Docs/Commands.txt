@@ -1,0 +1,16 @@
+//Start rabbbit docker
+docker run -d --hostname localhost --name k8sDemo-rabbitMq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+
+//Start full update script
+powershell  .\updateandrun.ps1
+
+//free docker space
+docker system prune -f
+
+//Change tag for specific IMAGE ID
+docker tag 1bfc98e879d5 mynewtag
+
+//Angular string interpolation with `
+ this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+ 
+ 

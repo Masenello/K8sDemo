@@ -4,7 +4,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.Utils
 {
-public class BackgroundServiceStarter<T> : IHostedService where T:IHostedService
+
+//This class is used to forse creation an instance of a singleton service in case the service is not injected in any other.
+public class BackgroundServiceStarter<T> : IHostedService
 {
     readonly T backgroundService;
 
@@ -15,12 +17,12 @@ public class BackgroundServiceStarter<T> : IHostedService where T:IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        return backgroundService.StartAsync(cancellationToken);
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        return backgroundService.StopAsync(cancellationToken);
+        return Task.CompletedTask;
     }
 }
 }

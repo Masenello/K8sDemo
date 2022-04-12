@@ -79,8 +79,9 @@ namespace K8sDemoHubManager
             services.AddTransient<SignalRbrokerService>();
             services.AddTransient<DataBaseSpecialOperationsService>();
 
-            services.AddHostedService<RabbitConnectorServiceHub>();
-        
+            //Note: BackgroundServiceStarter is used to create instance of RabbitConnectorServiceHub
+            services.AddSingleton<RabbitConnectorServiceHub>();
+            services.AddHostedService<BackgroundServiceStarter<RabbitConnectorServiceHub>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)

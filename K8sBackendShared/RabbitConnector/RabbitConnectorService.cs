@@ -12,10 +12,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.RabbitConnector
 {
-    public abstract class RabbitConnectorService:IHostedService
+    public abstract class RabbitConnectorService
     {
 
-    
         protected readonly IBus _rabbitBus;
 
         public RabbitConnectorService()
@@ -42,21 +41,6 @@ namespace K8sBackendShared.RabbitConnector
         {
             _rabbitBus.PubSub.Publish<T>(message);
         }
-
-        public Task StartAsync(CancellationToken stoppingToken)
-        {
-            return Task.CompletedTask;
-        }
-   
-
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-
-            this._rabbitBus.Dispose();
-            return Task.CompletedTask;
-        }
-
-
         
     }
 }

@@ -27,7 +27,6 @@ namespace K8sDemoWorker
                         1000,
                         new TestJob()  
                 )
-                
             );
         }
     }

@@ -20,7 +20,7 @@ namespace K8sDemoWorker.Jobs
                 Console.WriteLine($"{DateTime.Now}: Searching for jobs to process ...");
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
-                    //Get the oldest job found in CREATED status
+                    //Get the oldest job found in CREATED status from database
                     TestJobEntity targetJob = _context.Jobs.Where(x=>x.Status == JobStatus.created).OrderBy(y=>y.CreationDate).Include(u=>u.User).FirstOrDefault();
                     if (targetJob != null)
                     {
