@@ -9,6 +9,9 @@ import { environment } from 'src/environments/environment';
 import { JobService } from './services/job.service';
 import { TestJobCreationRequest } from './_models/TestJobCreationRequest';
 import { HubService } from './services/hub.service';
+import {LogMessage, LogMessage as NgxLogMessage} from 'ngx-log-monitor';
+import { Observable, timer } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 
 @Component({
@@ -20,6 +23,8 @@ export class AppComponent {
   title = 'K8sDemoApp';
   response = "No data loaded, yet";
   baseUrl = environment.apiUrl;
+
+  logmessage:LogMessage;
 
   constructor(private http: HttpClient, 
     private demoService: DemoService, 
@@ -35,6 +40,11 @@ export class AppComponent {
       console.log(response);
 	    this.response = response;	
 	  });
+
+    this.hubservice.logMessages.subscribe((response: LogMessage) =>{
+      this.logmessage=response;
+    });
+
   }  
 
   ngOnInit(){
@@ -75,6 +85,29 @@ export class AppComponent {
   disableLogview() {
     this.hubservice.sendDisableLogView();
   }
+
+  restoredLogs: NgxLogMessage[] = [
+    {message: 'A simple restored log message'},
+    {message: 'A success restored message', type: 'SUCCESS'},
+    {message: 'A warning restored message', type: 'WARN'},
+    {message: 'An error restored message', type: 'ERR'},
+    {message: 'An info restored message', type: 'INFO'},
+  ];
+
+  logs: NgxLogMessage[] = [
+    {message: 'A simple log message'},
+    {message: 'A success message', type: 'SUCCESS'},
+    {message: 'A warning message', type: 'WARN'},
+    {message: 'An error message', type: 'ERR'},
+    {message: 'An info message', type: 'INFO'},
+  ];
+
+  // logStream$ = timer(0, 1000).pipe(
+  //   take(this.logs.length),
+  //   map(i => this.logs[i])
+  // );
+
+
 
 
 }

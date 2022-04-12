@@ -1,7 +1,8 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { LogMessage } from 'ngx-log-monitor';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
 import { JobStatusEnum } from '../_enum/JobStatusEnum';
@@ -17,6 +18,8 @@ export class HubService {
   private hubConnection: HubConnection | undefined;
   public hubConnectionStatus: BehaviorSubject<boolean>;
   public logoutRequestEvent =new EventEmitter();
+
+  public logMessages : Subject<LogMessage> = new Subject<LogMessage> ();
 
 
 
@@ -81,6 +84,14 @@ export class HubService {
         //Notify to Hub user has logged in (to pass user name)
         
         this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
+
+        this.hubConnection?.on("LogMessage",(data:any) => 
+        {
+          this.logMessages.next({message: data.message})
+          console.log(data);
+        });
+
+        
 
       })
       .catch(error => 

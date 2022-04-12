@@ -8,6 +8,7 @@ import { NavComponent } from './nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
+import {LogMonitorModule} from 'ngx-log-monitor';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ToastrModule } from 'ngx-toastr';
     FormsModule,
     ToastrModule.forRoot({
       positionClass: "toast-bottom-right"
-    })
+    }),
+    LogMonitorModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
