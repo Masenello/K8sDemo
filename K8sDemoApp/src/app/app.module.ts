@@ -12,6 +12,9 @@ import {LogMonitorModule} from 'ngx-log-monitor';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoginComponent } from './login/login.component';
 
+import {MatCardModule} from '@angular/material/card';
+import {MatFormFieldModule} from '@angular/material/form-field';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,6 +32,10 @@ import { LoginComponent } from './login/login.component';
     }),
     LogMonitorModule,
     BsDropdownModule.forRoot(),
+    MatCardModule,
+    MatFormFieldModule,
+
+    
   ],
   providers: [],
   bootstrap: [AppComponent]
