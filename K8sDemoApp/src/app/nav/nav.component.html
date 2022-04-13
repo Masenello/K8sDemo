@@ -3,20 +3,19 @@
     <a class="navbar-brand" href="#">K8sDemoApp</a>
 
     <!-- Login form -->
-    <form #loginForm="ngForm" class="form-inline" (ngSubmit)="login()" autocomplete="off">
+    <form #loginForm="ngForm" class="form-inline" (ngSubmit)="login()" autocomplete="off" *ngIf="!(currentUser|async)">
       <input name="username" [(ngModel)]="model.username" class="form-control mr-sm-2" type="text"
-        placeholder="Username" *ngIf="(accountService.currentUser|async) == null">
+        placeholder="Username" >
       <input name="password" [(ngModel)]="model.password" class="form-control mr-sm-2" type="password"
-        placeholder="Password" *ngIf="(accountService.currentUser|async) == null">
-      <button class="btn btn-success" type="submit"
-        *ngIf="(accountService.currentUser|async) == null">Login</button>
+        placeholder="Password">
+      <button class="btn btn-success" type="submit">Login</button>
     </form>
 
     <!-- User fucntions dropdown -->
-    <div class="btn-group" dropdown *ngIf="(accountService.currentUser|async) as currentuser">
+    <div class="btn-group" dropdown *ngIf="currentUser|async as loggedInUser">
       <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
               aria-controls="dropdown-basic">
-              {{currentuser.username}}<span class="caret"></span>
+              {{loggedInUser.username}}<span class="caret"></span>
       </button>
       <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
           role="menu" aria-labelledby="button-basic">

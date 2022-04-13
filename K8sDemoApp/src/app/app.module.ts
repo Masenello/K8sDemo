@@ -10,11 +10,13 @@ import { FormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import {LogMonitorModule} from 'ngx-log-monitor';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavComponent
+    NavComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
