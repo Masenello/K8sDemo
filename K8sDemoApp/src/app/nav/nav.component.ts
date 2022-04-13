@@ -11,12 +11,12 @@ import { User } from '../_models/user';
 })
 export class NavComponent implements OnInit {
   model: any = {}
-
+  currentUser = new Observable<User>();
 
   constructor(public accountService: AccountService, private toastr:ToastrService) { }
 
   ngOnInit(): void {
-
+    this.currentUser = this.accountService.currentUser;
   }
 
   login(){

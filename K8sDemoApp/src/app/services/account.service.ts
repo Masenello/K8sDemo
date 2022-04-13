@@ -61,13 +61,14 @@ export class AccountService {
       
   }
 
-  userLogOutCommand()
+  //Called when user presses logout button
+  public userLogOutCommand()
   {
     this.userPressedLogOutButton = true;
     this.logout();
   }
 
-  public logout()
+  private logout()
   {
     var savedUser = this.getStoredUserData();
     if (savedUser != null)
@@ -102,6 +103,7 @@ export class AccountService {
     localStorage.removeItem("user");
     this.currentUser.next(null);
   }
+
 
   private evaluateUserLogOut()
   {
