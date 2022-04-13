@@ -19,18 +19,20 @@ namespace K8sDemoWorker.Jobs
             _jobToProcessId = jobToProcessId;
         }
 
-        public override void DoWork()
+        public async override void DoWork()
         {
-            try 
+            try
             {
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
                     TestJobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
                     if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+                    try 
+                    {
+                        _logger.LogInfo($"Job: {targetJob.Id} of type: {targetJob.Descritpion} created by user: {targetJob.User.UserName} running");
 
-
-                        _logger.LogInfo($"Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
+                        
                         //Set job to running status
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
@@ -59,18 +61,27 @@ namespace K8sDemoWorker.Jobs
 
 
                         //Set job to completed status
+                        _logger.LogInfo($"Job: {targetJob.Id} of type: {targetJob.Descritpion} created by user: {targetJob.User.UserName} completed");
+                        
                         targetJob.Status = JobStatus.completed;
                         targetJob.EndDate = DateTime.Now;
-                        _context.SaveChanges();
-                        _logger.LogInfo($"Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
+                        await _context.SaveChangesAsync();
 
-                    
+                    }     
+                    catch(Exception e)
+                    {
+                        targetJob.Status = JobStatus.error;
+                        targetJob.EndDate = DateTime.Now;
+                        await _context.SaveChangesAsync();
+                        throw;
+                    }
                 }
-            }     
-            catch(Exception e)
+            }
+            catch (Exception e)
             {
                 _logger.LogError("Eror processing job",e);
-            }
+            }     
+                
         }
     }
 }

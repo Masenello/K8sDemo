@@ -28,7 +28,7 @@ namespace K8sDemoLogManager.Services
 
         private async void HandleLogMessage(LogMessage msg)
         {
-                        switch(msg.MessageType)
+            switch(msg.MessageType)
             {
                 case LogType.Error:
                     _nlogger.Log(LogLevel.Error,  msg.ToString());
@@ -48,6 +48,7 @@ namespace K8sDemoLogManager.Services
                     break;
             }
             Console.WriteLine(msg.ToString());
+            _rabbitConnector.Publish<ForwardLogMessage>(new ForwardLogMessage(msg));
             await Task.Delay(0);
         }
 

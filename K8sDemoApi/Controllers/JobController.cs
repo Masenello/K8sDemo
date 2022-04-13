@@ -41,6 +41,7 @@ namespace K8sDemoApi.Controllers
             newJob.UserId = jobUser.Id;
             _context.Jobs.Add(newJob);
             await _context.SaveChangesAsync();
+            _logger.LogInfo($"Job: {newJob.Id} of type: {newJob.Descritpion} created by user: {jobUser.UserName} inserted in database");
 
             //Reply to Client
             RequestJobMessageResult newJobResult = new RequestJobMessageResult();

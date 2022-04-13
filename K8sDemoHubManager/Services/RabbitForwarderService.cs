@@ -23,16 +23,16 @@ namespace K8sDemoHubManager.Services
             _logger = logger;
             _rabbitConnector = rabbitConnector;
             _rabbitConnector.Subscribe<JobStatusMessage>(HandleJobStatusMessage);
-            _rabbitConnector.Subscribe<LogMessage>(HandleLogMessage);
+            _rabbitConnector.Subscribe<ForwardLogMessage>(HandleForwardedLogMessage);
             
         }
 
-        private async void HandleLogMessage(LogMessage msg)
+        private async void HandleForwardedLogMessage(ForwardLogMessage msg)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var transientService = scope.ServiceProvider.GetRequiredService<SignalRbrokerService>();
-                await transientService.ForwardMessageToGroup<LogMessage>(msg, "logviewers");
+                await transientService.ForwardMessageToGroup<ForwardLogMessage>(msg, "logviewers");
             }
         }
 

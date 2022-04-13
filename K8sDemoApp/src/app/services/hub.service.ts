@@ -85,7 +85,7 @@ export class HubService {
         
         this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
 
-        this.hubConnection?.on("LogMessage",(data:any) => 
+        this.hubConnection?.on("ForwardLogMessage",(data:any) => 
         {
           this.logMessages.next({message: data.message})
           console.log(data);

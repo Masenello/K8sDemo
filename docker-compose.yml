@@ -39,8 +39,8 @@ services:
       - k8sDemo-rabbitMq
       - k8sDemo-hub-manager
     environment:
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/Infrastructure/Certificate/certificate.pfx
-      ASPNETCORE_Kestrel__Certificates__Default__Password: Password
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/Infrastructure/Certificate/certificate.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "Password"
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
@@ -57,8 +57,8 @@ services:
       - k8sDemo-database
       - k8sDemo-rabbitMq
     environment:
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/Infrastructure/Certificate/certificate.pfx
-      ASPNETCORE_Kestrel__Certificates__Default__Password: Password
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/app/Infrastructure/Certificate/certificate.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "Password"
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
@@ -93,8 +93,8 @@ services:
       - 1433:1433
     restart: always
     environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: Pass@Word1
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Pass@Word1"
     volumes:
       - D:\Code\K8sDemo\DbMount\:/var/opt/mssql
 
