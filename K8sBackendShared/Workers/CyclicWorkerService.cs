@@ -43,7 +43,7 @@ namespace K8sBackendShared.Workers
         { 
             
             _rabbitConnector.Publish(e.Status);
-            _logger.LogInfo($"Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");
+            _logger.LogInfo($"{nameof(CyclicWorkerService)}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% Message{e.Status.UserMessage}");
         }
 
         private void BackgroundWorkerOnWorkCompleted(object sender, RunWorkerCompletedEventArgs e)

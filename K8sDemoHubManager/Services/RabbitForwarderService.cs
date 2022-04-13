@@ -38,7 +38,7 @@ namespace K8sDemoHubManager.Services
 
         private async void HandleJobStatusMessage(JobStatusMessage msg)
         {
-            _logger.LogInfo($"{nameof(RabbitForwarderService)}: Job Id:{msg.JobId} Status: {msg.Status} Progress: {msg.ProgressPercentage}% ");
+            _logger.LogInfo($"{nameof(RabbitForwarderService)}: Job Id:{msg.JobId} Status: {msg.Status} Progress: {msg.ProgressPercentage}%");
             using (var scope = _serviceProvider.CreateScope())
             {
                 var transientService = scope.ServiceProvider.GetRequiredService<SignalRbrokerService>();

@@ -77,7 +77,14 @@ export class HubService {
 
         this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
         {
-          this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+          if (data.status == JobStatusEnum.error)
+          {
+            this.toastr.error(`${data.userMessage}`)
+          }
+          else
+          {
+            this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+          }
           console.log(data);
         });
 

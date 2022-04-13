@@ -1,3 +1,4 @@
+using K8sBackendShared.Entities;
 using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Messages
@@ -10,5 +11,6 @@ namespace K8sBackendShared.Messages
         public string User { get; set; }
         public double ProgressPercentage { get; set; }
         public string UserMessage { get; set; }
+
     }
 }

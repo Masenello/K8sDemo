@@ -2,8 +2,6 @@ version: '3.4'
 
 networks:
   identity-network:
-    name: identity-network
-    driver: bridge
 
 services:
   k8sDemo-app:

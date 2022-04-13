@@ -1,0 +1,4 @@
+- Controllare cosa succede se più processi sono in subscription sullo stesso messaggio. Riscontrata anomalia nel forward dei log dove un 
+    servizio di forwarding dell'Hub era in subscription al messaggio dei log. Allo stesso messaggio è in subscription anche il logmanager. 
+    Si è notato che alcuni log generati dall'hub non venivano ricevuti dal logmanager. Si è quindi creato un nuovo messaggio per il forward dei log 
+    in subscription solo all'hub e non al logmanager che lo genera.
