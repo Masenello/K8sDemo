@@ -62,9 +62,9 @@ services:
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
-  k8sDemo-worker:
-    container_name: k8sdemoworkercontainer
-    image: k8sdemoworker
+  k8sDemo-director:
+    container_name: k8sdemodirectorcontainer
+    image: k8sdemodirector
     restart: always
     networks: 
       - identity-network

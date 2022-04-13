@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.RabbitConnector
 {
-    public class RabbitConnectorService:IRabbitConnector
+    public class RabbitConnectorService:IRabbitConnector,IDisposable
     {
 
         protected readonly IBus _rabbitBus;
@@ -46,6 +46,10 @@ namespace K8sBackendShared.RabbitConnector
         {
             await _rabbitBus.PubSub.PublishAsync<T>(message);
         }
-        
+
+        public void Dispose()
+        {
+            _rabbitBus.Dispose(); 
+        }
     }
 }

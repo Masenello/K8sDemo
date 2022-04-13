@@ -1,24 +1,24 @@
 using System;
-using System.Reflection;
+using EasyNetQ;
 using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
-using K8sBackendShared.RabbitConnector;
 
 namespace K8sBackendShared.Logging
 {
-    public class RabbitLoggerService : ILogger
+    public class RabbitStandAloneLogger : ILogger
     {
-        private readonly IRabbitConnector _rabbitConnector;
 
-        public RabbitLoggerService(IRabbitConnector rabbitConnector)
+        protected readonly IBus _rabbitBus;
+        
+        public RabbitStandAloneLogger(IBus rabbitBus)
         {
-            _rabbitConnector = rabbitConnector;
+            _rabbitBus = rabbitBus;
         }
 
         private void SendLogMessage (LogMessage logmessage)
         {
-            _rabbitConnector.Publish<LogMessage>(logmessage);
+            _rabbitBus.PubSub.Publish<LogMessage>(logmessage);
         }
 
         public void LogError(string errorMessage)

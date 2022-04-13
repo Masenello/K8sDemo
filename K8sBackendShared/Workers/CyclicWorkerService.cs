@@ -41,7 +41,6 @@ namespace K8sBackendShared.Workers
 
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
         { 
-            if (_rabbitConnector is null) throw new Exception("rabbit is null");
             
             _rabbitConnector.Publish(e.Status);
             _logger.LogInfo($"Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% ");

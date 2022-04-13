@@ -5,6 +5,7 @@ namespace K8sBackendShared.Enums
         completed,
         error,
         created,
-        running
+        running,
+        assigned
     }
 }

@@ -1,13 +1,12 @@
-using System.Threading;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
-using K8sDemoWorker.Jobs;
-using K8sDemoWorker.Services;
+using K8sDemoDirector.Jobs;
+using K8sDemoDirector.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace K8sDemoWorker
+namespace K8sDemoDirector
 {
     public class Startup
     {
@@ -22,12 +21,12 @@ namespace K8sDemoWorker
         {
             services.AddSingleton<ILogger,RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
-            services.AddHostedService<TestCyclicWorkerService>(x =>
-                new TestCyclicWorkerService(
+            services.AddHostedService<CyclicWorkerManagerService>(x =>
+                new CyclicWorkerManagerService(
                         x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
                         1000,
-                        new TestJob(x.GetRequiredService<ILogger>())  
+                        new WorkerManagerJob(x.GetRequiredService<ILogger>())  
                 )
             );
         }

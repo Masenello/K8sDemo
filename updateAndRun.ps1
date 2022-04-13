@@ -14,6 +14,9 @@ docker build -t k8sdemoworker:latest -f k8sdemoworker/Dockerfile .
 #Build .Net logger image
 Set-Location D:\Code\K8sDemo
 docker build -t k8sdemologmanager:latest -f k8sdemologmanager/Dockerfile .
+#Build .Net director image
+Set-Location D:\Code\K8sDemo
+docker build -t k8sdemodirector:latest -f k8sdemodirector/Dockerfile .
 #Build Angular APP image
 Set-Location D:\Code\K8sDemo\K8sDemoApp
 #docker build --no-cache -t k8sdemoapp:latest .

@@ -11,28 +11,25 @@ using K8sBackendShared.Interfaces;
 
 namespace K8sDemoWorker.Jobs
 {
-    public class TestJob : AbstractWorkerJob
+    public class TestJob : AbstractStandAloneJob
     {
-
-        
-
-        public TestJob(ILogger logger):base(logger)
+        private readonly int _jobToProcessId;
+        public TestJob(int jobToProcessId):base()
         {
-    
+            _jobToProcessId = jobToProcessId;
         }
 
         public override void DoWork()
         {
             try 
             {
-                //Console.WriteLine($"{DateTime.Now}: Searching for jobs to process ...");
-                _logger.LogInfo("Searching for jobs to process ...");
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
-                    //Get the oldest job found in CREATED status from database
-                    TestJobEntity targetJob = _context.Jobs.Where(x=>x.Status == JobStatus.created).OrderBy(y=>y.CreationDate).Include(u=>u.User).FirstOrDefault();
-                    if (targetJob != null)
-                    {
+                    TestJobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
+                    if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
+                    if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+
+
                         _logger.LogInfo($"Processing Job: {targetJob.Id} from user: {targetJob.User.UserName}");
                         //Set job to running status
                         targetJob.Status = JobStatus.running;
@@ -67,7 +64,7 @@ namespace K8sDemoWorker.Jobs
                         _context.SaveChanges();
                         _logger.LogInfo($"Job: {targetJob.Id} from user: {targetJob.User.UserName} processing completed");
 
-                    }
+                    
                 }
             }     
             catch(Exception e)
