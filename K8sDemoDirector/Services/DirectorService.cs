@@ -45,6 +45,7 @@ namespace K8sDemoDirector.Services
 
         }
 
+        
         private JobRequestAssignResultMessage RespondToJobAssignRequest(JobRequestAssignMessage request)
         {
             try

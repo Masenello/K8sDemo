@@ -42,7 +42,7 @@ namespace K8sDemoDirector.Jobs
                         JobsAvailableMessage msg = new JobsAvailableMessage();
                         foreach(var jobType  in _insertedJobs.ToList().GroupBy(x=>x.Value.Type))
                         {
-                            Console.WriteLine($"{jobType.Key}:{jobType.Count()}");
+                            //Console.WriteLine($"{jobType.Key}:{jobType.Count()}");
                             msg.JobsList.Add(new JobAvailableCount()
                                 {
                                     JobType = jobType.Key,

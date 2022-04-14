@@ -71,6 +71,18 @@ services:
       - k8sDemo-rabbitMq
       - k8sDemo-hub-manager
 
+  k8sDemo-worker:
+    container_name: k8sdemoworkercontainer
+    image: k8sdemoworker
+    restart: always
+    networks: 
+      - identity-network
+    depends_on:
+      - k8sDemo-database
+      - k8sDemo-rabbitMq
+      - k8sDemo-hub-manager
+      - k8sDemo-director
+
   k8sDemo-logmanager:
     container_name: k8sdemologmanagercontainer
     image: k8sdemologmanager
