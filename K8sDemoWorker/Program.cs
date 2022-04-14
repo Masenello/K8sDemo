@@ -21,11 +21,12 @@ namespace K8sDemoWorker
     {
         static async Task Main(string[] args)
         {
-            using (TestJob job = new TestJob(Convert.ToInt32(args[0])))
-            {
-                job.DoWork();
-            }
-            
+            var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseStartup<Startup>(); 
     }
 }

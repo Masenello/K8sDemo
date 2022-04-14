@@ -47,9 +47,22 @@ namespace K8sBackendShared.RabbitConnector
             await _rabbitBus.PubSub.PublishAsync<T>(message);
         }
 
-        public void Dispose()
+
+
+        public Tresp Request<Treq, Tresp>(Treq message)
+        {
+            return _rabbitBus.Rpc.Request<Treq, Tresp>(message);
+        }
+
+        public void Respond<Treq, Tresp>(Func<Treq, Tresp> respondToRequestFunction)
+        {
+            _rabbitBus.Rpc.Respond<Treq, Tresp>(respondToRequestFunction);
+        }
+
+                public void Dispose()
         {
             _rabbitBus.Dispose(); 
         }
+
     }
 }

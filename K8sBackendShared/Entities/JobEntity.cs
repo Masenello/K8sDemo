@@ -5,7 +5,7 @@ using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Entities
 {
-    public class TestJobEntity
+    public class JobEntity
 
     {
         public int Id { get; set; }
@@ -22,6 +22,14 @@ namespace K8sBackendShared.Entities
         [Required]
         [ForeignKey(nameof(User))]
         public int UserId {get; set;}
+
+        public JobType Type {get; set;}
+
+
+        public string GenerateJobDescriptor()
+        {
+            return ($"Job: {Id} of type: {Type} created by user: {User.UserName}");
+        }
         
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.Workers
 {
-    public abstract class CyclicWorkerService:IHostedService
+    public abstract class EventWorkerService:IHostedService
     {
         protected AbstractWorkerJob _workerJob = null;
         protected BackgroundWorker _bw = new BackgroundWorker();
@@ -18,14 +18,12 @@ namespace K8sBackendShared.Workers
 
         protected readonly ILogger _logger;
 
-        private int _cycleTime = 500;
 
-        public CyclicWorkerService(IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
+        public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger, AbstractWorkerJob workerJob)
         {
             _rabbitConnector = rabbitConnector;
             _logger=logger;
 
-            _cycleTime = cycleTime;
             _bw.WorkerReportsProgress = false;
             _bw.WorkerSupportsCancellation = true;
             _bw.DoWork += BackgroundWorkerOnDoWork;
@@ -34,10 +32,10 @@ namespace K8sBackendShared.Workers
             _workerJob = workerJob;
             _workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
 
-            _bw.RunWorkerAsync();
-
-
+            Subscribe();
         }
+
+        public abstract void Subscribe();
 
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
         { 
@@ -48,20 +46,15 @@ namespace K8sBackendShared.Workers
 
         private void BackgroundWorkerOnWorkCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //Run again after previous run is complete
-            _bw.RunWorkerAsync();
+            
         }
 
         private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
         {
-            while (!_bw.CancellationPending)
-            {
-                Thread.Sleep(_cycleTime);   // If you need to make a pause between runs
-                //Console.WriteLine("Worker run started");
-                //Do Work!
-                _workerJob.DoWork(null);
-                //Console.WriteLine("Worker run completed");
-            } 
+            // while (!_bw.CancellationPending)
+            // {
+                _workerJob.DoWork(e.Argument);
+            // } 
         
         }
 
@@ -75,13 +68,13 @@ namespace K8sBackendShared.Workers
 
         public virtual Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInfo($"{nameof(CyclicWorkerService)} started");
+            _logger.LogInfo($"{nameof(EventWorkerService)} started");
             return Task.CompletedTask;
         }
 
         public virtual Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInfo($"{nameof(CyclicWorkerService)} stopped");
+            _logger.LogInfo($"{nameof(EventWorkerService)} stopped");
             return Task.CompletedTask;
         }
     }

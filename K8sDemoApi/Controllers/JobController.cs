@@ -24,7 +24,7 @@ namespace K8sDemoApi.Controllers
         }
         
         [HttpPost("RequestNewJob")]
-        public async Task<ActionResult<RequestJobMessageResult>> RequestNewJob(RequestJobMessage requestFromClient)
+        public async Task<ActionResult<RequestNewJobCreationResultMessage>> RequestNewJob(RequestNewJobCreationMessage requestFromClient)
         {
             //Retrieve user entity from database
             AppUserEntity jobUser =await _context.Users.FirstOrDefaultAsync(x=>x.UserName== requestFromClient.User);
@@ -34,17 +34,18 @@ namespace K8sDemoApi.Controllers
             }
 
             //Add new job in Jobs database table with status INSERTED
-            TestJobEntity newJob = new TestJobEntity();
+            JobEntity newJob = new JobEntity();
             newJob.CreationDate = DateTime.Now;
             newJob.Descritpion= requestFromClient.RequestedJobType.ToString();
             newJob.Status = K8sBackendShared.Enums.JobStatus.created;
             newJob.UserId = jobUser.Id;
+            newJob.Type = requestFromClient.RequestedJobType;
             _context.Jobs.Add(newJob);
             await _context.SaveChangesAsync();
             _logger.LogInfo($"Job: {newJob.Id} of type: {newJob.Descritpion} created by user: {jobUser.UserName} inserted in database");
 
             //Reply to Client
-            RequestJobMessageResult newJobResult = new RequestJobMessageResult();
+            RequestNewJobCreationResultMessage newJobResult = new RequestNewJobCreationResultMessage();
             newJobResult.CreationTime = DateTime.Now;
             newJobResult.JobId = newJob.Id;
             newJobResult.User = jobUser.UserName;

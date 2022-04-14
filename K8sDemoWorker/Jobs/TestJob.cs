@@ -11,29 +11,26 @@ using K8sBackendShared.Interfaces;
 
 namespace K8sDemoWorker.Jobs
 {
-    public class TestJob : AbstractStandAloneJob
+    public class TestJob : AbstractWorkerJob
     {
-        private readonly int _jobToProcessId;
-        public TestJob(int jobToProcessId):base()
-        {
-            _jobToProcessId = jobToProcessId;
+        private int _jobToProcessId;
+        public TestJob(ILogger logger):base(logger)
+        {     
         }
 
-        public async override void DoWork()
+        public async override void DoWork(object workerParameters)
         {
-            try
-            {
+                _jobToProcessId = (int)workerParameters;
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
-                    TestJobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
+                    JobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
                     if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+
+
                     try 
                     {
-                        _logger.LogInfo($"Job: {targetJob.Id} of type: {targetJob.Descritpion} created by user: {targetJob.User.UserName} running");
-
-                        
-                        //Set job to running status
+                        _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
                         _context.SaveChanges();
@@ -43,7 +40,7 @@ namespace K8sDemoWorker.Jobs
                         jobStatus.JobId = targetJob.Id;
                         jobStatus.Status = JobStatus.running;
                         jobStatus.User = targetJob.User.UserName;
-                        jobStatus.StatusJobType = (JobType)Enum.Parse(typeof(JobType), targetJob.Descritpion);
+                        jobStatus.StatusJobType = targetJob.Type;
                         jobStatus.ProgressPercentage = 0.0;
                         ReportWorkProgress(jobStatus);
 
@@ -61,8 +58,7 @@ namespace K8sDemoWorker.Jobs
 
 
                         //Set job to completed status
-                        _logger.LogInfo($"Job: {targetJob.Id} of type: {targetJob.Descritpion} created by user: {targetJob.User.UserName} completed");
-                        
+                        _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} completed");
                         targetJob.Status = JobStatus.completed;
                         targetJob.EndDate = DateTime.Now;
                         await _context.SaveChangesAsync();
@@ -70,18 +66,16 @@ namespace K8sDemoWorker.Jobs
                     }     
                     catch(Exception e)
                     {
+                        //Set job to error status
+                        _logger.LogError($"{targetJob.GenerateJobDescriptor()} in error", e);
                         targetJob.Status = JobStatus.error;
                         targetJob.EndDate = DateTime.Now;
                         await _context.SaveChangesAsync();
                         throw;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Eror processing job",e);
-            }     
-                
+            
+
         }
     }
 }

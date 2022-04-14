@@ -19,7 +19,7 @@ namespace K8sBackendShared.Jobs
             _logger = logger;
         }
 
-        public abstract void DoWork();
+        public abstract void DoWork(object workerParameters);
 
         protected void ReportWorkProgress(JobStatusMessage newStatus) 
         {
