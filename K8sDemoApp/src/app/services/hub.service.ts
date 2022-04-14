@@ -6,8 +6,10 @@ import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
 import { JobStatusEnum } from '../_enum/JobStatusEnum';
+import { ForwardLogMessage } from '../_models/ForwardLogMessage';
 import { JobStatusMessage } from '../_models/JobStatusMessage';
 import { User } from '../_models/user';
+import { LogTypeConverter } from '../_shared/LogTypeConverter';
 
 @Injectable({
   providedIn: 'root'
@@ -92,10 +94,16 @@ export class HubService {
         
         this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
 
-        this.hubConnection?.on("ForwardLogMessage",(data:any) => 
+        this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
         {
-          this.logMessages.next({message: data.message})
-          console.log(data);
+          console.log(data.message);
+          let conv : LogTypeConverter = new LogTypeConverter;
+          this.logMessages.next(
+            {
+              message: `${data.program}| ${data.message}`,
+              type:conv.ConvertLogType(data.messageType)
+            })
+          
         });
 
         
