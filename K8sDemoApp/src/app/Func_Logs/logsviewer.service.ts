@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubService } from '../services/hub.service';
-import { ForwardLogMessage } from '../_models/ForwardLogMessage';
+import { ForwardLogMessage } from '../_models/Hub_Messages/ForwardLogMessage';
 import { LogUtils } from '../_shared/Utils/LogUtils';
 import { Observable, Subject } from 'rxjs';
 import { LogMessage } from 'ngx-log-monitor';

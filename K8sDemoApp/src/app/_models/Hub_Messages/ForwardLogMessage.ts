@@ -1,4 +1,4 @@
-import { LogTypeEnum } from "../_enum/LogTypeEnum";
+import { LogTypeEnum } from "../../_enum/LogTypeEnum";
 
 export interface ForwardLogMessage{
     program: string;

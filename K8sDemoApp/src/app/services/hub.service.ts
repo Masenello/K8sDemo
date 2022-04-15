@@ -1,15 +1,13 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { LogMessage } from 'ngx-log-monitor';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
-import { JobStatusEnum } from '../_enum/JobStatusEnum';
-import { ForwardLogMessage } from '../_models/ForwardLogMessage';
-import { JobStatusMessage } from '../_models/JobStatusMessage';
+import { ForwardLogMessage } from '../_models/Hub_Messages/ForwardLogMessage';
+import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 import { User } from '../_models/user';
-import { LogUtils } from '../_shared/Utils/LogUtils';
+
 
 @Injectable({
   providedIn: 'root'

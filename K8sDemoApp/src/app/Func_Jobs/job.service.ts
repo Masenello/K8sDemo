@@ -2,12 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { TestJobCreationResult } from '../_models/TestJobCreationResult';
-import { TestJobCreationRequest} from '../_models/TestJobCreationRequest';
-import { AccountService } from '../services/account.service';
+import { TestJobCreationResult } from '../_models/API_Messages/TestJobCreationResult';
+import { TestJobCreationRequest} from '../_models/API_Messages/TestJobCreationRequest';
 import { ToastrService } from 'ngx-toastr';
 import { HubService } from '../services/hub.service';
-import { JobStatusMessage } from '../_models/JobStatusMessage';
+import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 import { JobStatusEnum } from '../_enum/JobStatusEnum';
 
 @Injectable({
