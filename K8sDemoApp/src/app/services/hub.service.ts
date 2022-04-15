@@ -9,7 +9,7 @@ import { JobStatusEnum } from '../_enum/JobStatusEnum';
 import { ForwardLogMessage } from '../_models/ForwardLogMessage';
 import { JobStatusMessage } from '../_models/JobStatusMessage';
 import { User } from '../_models/user';
-import { LogTypeConverter } from '../_shared/LogTypeConverter';
+import { LogUtils } from '../_shared/Utils/LogUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -97,11 +97,13 @@ export class HubService {
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
         {
           console.log(data.message);
-          let conv : LogTypeConverter = new LogTypeConverter;
+          let logUtils : LogUtils = new LogUtils;
+          
           this.logMessages.next(
             {
-              message: `${data.program}| ${data.message}`,
-              type:conv.ConvertLogType(data.messageType)
+              timestamp: logUtils.ExtractDateString(data.message),
+              message: logUtils.ExtractMessage(data.message),
+              type:logUtils.ConvertLogType(data.messageType)
             })
           
         });
