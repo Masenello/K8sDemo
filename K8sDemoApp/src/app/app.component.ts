@@ -6,7 +6,7 @@ import { User } from './_models/user';
 import { AccountService } from './services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
-import { JobService } from './services/job.service';
+import { JobService } from './Func_Jobs/job.service';
 import { TestJobCreationRequest } from './_models/TestJobCreationRequest';
 import { HubService } from './services/hub.service';
 import {LogMessage, LogMessage as NgxLogMessage} from 'ngx-log-monitor';
@@ -59,18 +59,5 @@ export class AppComponent {
     });
   }
 
-  sendTestJobRequest() {
-    let jobRequest:TestJobCreationRequest =  
-    {
-      user:this.accountService.currentUser.getValue()?.username!,
-      requestDateTime: new Date(),
-      requestJobType:0
-    };
-    this.jobService.sendTestJobRequest(jobRequest).subscribe(result =>{
-      this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
-    },error=>{
-      console.log(error);
-      this.toastr.error(error.error);
-    });
-  }
+  
 }

@@ -4,8 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TestJobCreationResult } from '../_models/TestJobCreationResult';
 import { TestJobCreationRequest} from '../_models/TestJobCreationRequest';
-import { AccountService } from './account.service';
+import { AccountService } from '../services/account.service';
 import { ToastrService } from 'ngx-toastr';
+import { HubService } from '../services/hub.service';
+import { JobStatusMessage } from '../_models/JobStatusMessage';
+import { JobStatusEnum } from '../_enum/JobStatusEnum';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +18,21 @@ export class JobService {
   baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, 
-    private toastr: ToastrService) 
+    private toastr: ToastrService,
+    private hub: HubService) 
   {
-
+    this.hub.receivedNewJobStatusEvent.subscribe((data:JobStatusMessage)=> 
+    {
+      if (data.status == JobStatusEnum.error)
+          {
+            this.toastr.error(`${data.userMessage}`)
+          }
+          else
+          {
+            this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+          }
+          console.log(data);
+    })
   }
   
 

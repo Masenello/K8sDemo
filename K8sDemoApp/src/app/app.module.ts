@@ -15,13 +15,15 @@ import { LoginComponent } from './login/login.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component';
+import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
     LoginComponent,
-    LogsviewerComponent
+    LogsviewerComponent,
+    JobmanagerComponent
   ],
   imports: [
     BrowserModule,

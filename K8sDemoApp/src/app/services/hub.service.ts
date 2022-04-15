@@ -25,7 +25,7 @@ export class HubService {
   //Hub events
   public logoutRequestEvent =new EventEmitter();
   public receivedNewLogEvent =new EventEmitter();
-
+  public receivedNewJobStatusEvent =new EventEmitter();
 
 
   constructor(private toastr: ToastrService) 
@@ -80,27 +80,17 @@ export class HubService {
           this.manageHubDisconnection();
         });
 
-        this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
-        {
-          if (data.status == JobStatusEnum.error)
-          {
-            this.toastr.error(`${data.userMessage}`)
-          }
-          else
-          {
-            this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
-          }
-          console.log(data);
-        });
+    
 
         //Notify to Hub user has logged in (to pass user name)
         
         this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
 
+
+        this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
+        { this.receivedNewJobStatusEvent.emit(data);});
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
         {this.receivedNewLogEvent.emit(data);});
-
-        
 
       })
       .catch(error => 
