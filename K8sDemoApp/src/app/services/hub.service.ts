@@ -19,9 +19,12 @@ export class HubService {
   hubUrl  = environment.hubUrl;
   private hubConnection: HubConnection | undefined;
   public hubConnectionStatus: BehaviorSubject<boolean>;
-  public logoutRequestEvent =new EventEmitter();
 
-  public logMessages : Subject<LogMessage> = new Subject<LogMessage> ();
+  
+
+  //Hub events
+  public logoutRequestEvent =new EventEmitter();
+  public receivedNewLogEvent =new EventEmitter();
 
 
 
@@ -95,18 +98,7 @@ export class HubService {
         this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
 
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
-        {
-          console.log(data.message);
-          let logUtils : LogUtils = new LogUtils;
-          
-          this.logMessages.next(
-            {
-              timestamp: logUtils.ExtractDateString(data.message),
-              message: logUtils.ExtractMessage(data.message),
-              type:logUtils.ConvertLogType(data.messageType)
-            })
-          
-        });
+        {this.receivedNewLogEvent.emit(data);});
 
         
 
@@ -139,15 +131,12 @@ export class HubService {
     this.logoutRequestEvent.emit();
   }
 
-  public sendEnableLogView()
+  public hubSend(methodName:string, args:any)
   {
-    this.hubConnection?.send("JoinGroup", "logviewers").catch(error=>console.log(error));
+    this.hubConnection?.send(methodName, args).catch(error=>console.log(error));
   }
 
-  public sendDisableLogView()
-  {
-    this.hubConnection?.send("LeaveGroup", "logviewers").catch(error=>console.log(error));
-  }
+
 
 
 

@@ -24,27 +24,9 @@
       matTooltip="Send test job request" >Send test job request </button>
   </div>
 
-  <div class="container" style="margin-top: 50px">
-    <button type="button" 
-      *ngIf="(accountService.currentUser|async) != null"
-      class="btn btn-primary"  
-      (click)="enableLogview()">Enable log viewer</button>
+  <!-- TODO move to single page -->
+  <app-logsviewer *ngIf="(accountService.currentUser|async) != null" ></app-logsviewer>
 
-      <button type="button" 
-      *ngIf="(accountService.currentUser|async) != null"
-      class="btn btn-primary"  
-      (click)="disableLogview()">Disable log viewer</button>
-  </div>
-
-  <div class="container" style="margin-top: 50px">
-    <log-monitor
-      [logStream]="logmessage"
-      theme="dark"
-      title="Docker cluster logs"
-      [animated]="true"
-      [icons]="true"
-       ></log-monitor>
-  </div>
 
 </div>
 

@@ -14,12 +14,14 @@ import { LoginComponent } from './login/login.component';
 
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
-    LoginComponent
+    LoginComponent,
+    LogsviewerComponent
   ],
   imports: [
     BrowserModule,
