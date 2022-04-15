@@ -21,9 +21,11 @@ export class HubService {
   
 
   //Hub events
-  public logoutRequestEvent =new EventEmitter();
+  public hubClosedEvent =new EventEmitter();
   public receivedNewLogEvent =new EventEmitter();
   public receivedNewJobStatusEvent =new EventEmitter();
+  public userOnLineEvent =new EventEmitter();
+  public userOffLineEvent =new EventEmitter();
 
 
   constructor(private toastr: ToastrService) 
@@ -44,66 +46,53 @@ export class HubService {
     await this.hubConnection
       .start().then(()=>
       {
-
+        //Hub is connected
         this.hubConnectionStatus.next(true)
             
-        this.hubConnection?.on("UserIsOnLine", username => 
-        {
-              this.toastr.info(username + " has connected");
-            })
-
-        this.hubConnection?.on("UserIsOffLine", username => 
-        {
-              this.toastr.warning(username + " has disconnected");
-            })
-
-        this.hubConnection?.on("UserIsOffLine", username => 
-        {
-              this.toastr.warning(username + " has disconnected");
-            })
-
         this.hubConnection?.onreconnecting(()=>
-        {
-          this.toastr.warning("Hub connection lost: trying to reconnect to server...");
-        });
+        {this.toastr.warning("Hub connection lost: trying to reconnect to server...");});
 
         this.hubConnection?.onreconnected(()=>
         {
           this.toastr.info("Hub connection restored");
-          this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
+          this.hubSend("UserAppLogIn", user.username);
         });
 
         this.hubConnection?.onclose(()=>
         {
-          this.manageHubDisconnection();
+          this.hubConnectionStatus.next(false);
+          this.hubClosedEvent.emit();
         });
 
-    
-
         //Notify to Hub user has logged in (to pass user name)
-        
-        this.hubConnection?.send("UserAppLogIn", user.username).catch(error=>console.log(error));
+        this.hubSend("UserAppLogIn", user.username);
 
 
+        //Add other services events 
         this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
         { this.receivedNewJobStatusEvent.emit(data);});
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
         {this.receivedNewLogEvent.emit(data);});
+        this.hubConnection?.on("UserIsOnLine", username => 
+        {this.userOnLineEvent.emit(username);})
+        this.hubConnection?.on("UserIsOffLine", username => 
+        {this.userOffLineEvent.emit(username);})
 
       })
       .catch(error => 
         {
           console.log(error);
-          this.toastr.error("Failed connection with Hub");
+          this.toastr.error("Failed connection to Hub");
           throw(error);
         });
 
   }
 
+  //Called at user log out
   public stopHubConnection(user: User)
   {
     //Notify to Hub user has connected
-    this.hubConnection?.send("UserAppLogOff", user.username)
+    this.hubSend("UserAppLogOff", user.username)
     .then(()=>
     {
       this.hubConnection?.stop();
@@ -112,16 +101,10 @@ export class HubService {
     .catch((error=> console.log(error)))
   }
 
-  private manageHubDisconnection()
-  {
-    this.hubConnectionStatus.next(false);
-    //Trigger a reuqest to evaluate the hub close event
-    this.logoutRequestEvent.emit();
-  }
 
-  public hubSend(methodName:string, args:any)
+  public hubSend(methodName:string, args:any):Promise<void>
   {
-    this.hubConnection?.send(methodName, args).catch(error=>console.log(error));
+    return this.hubConnection?.send(methodName, args).catch(error => console.log(error));
   }
 
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { AccountService } from '../services/account.service';
+import { AccountService } from '../Func_Login/account.service';
 import { User } from '../_models/user';
 
 @Component({

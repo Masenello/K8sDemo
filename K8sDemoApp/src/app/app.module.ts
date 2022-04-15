@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import {LogMonitorModule} from 'ngx-log-monitor';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './Func_Login/login.component';
 
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';

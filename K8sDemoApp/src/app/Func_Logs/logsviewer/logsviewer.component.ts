@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LogMessage } from 'ngx-log-monitor';
-import { AccountService } from 'src/app/services/account.service';
+import { AccountService } from 'src/app/Func_Login/account.service';
 import { LogsviewerService } from '../logsviewer.service';
 
 @Component({

@@ -5,7 +5,7 @@ import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
-import { HubService } from './hub.service';
+import { HubService } from '../services/hub.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +23,13 @@ export class AccountService {
     {
       this.currentUser = new BehaviorSubject<User | null>(null);
       
-      this.hubService.logoutRequestEvent.subscribe(()=>
-      {
-        //Evaluate if Hub closed is intentional (baecause user logged out) or unexpected (hub disconnection)
-          this.evaluateUserLogOut();
-      });
+      this.hubService.hubClosedEvent.subscribe(()=>{this.manageHubClosed();});
+
+      this.hubService.userOnLineEvent.subscribe((username)=>{
+        this.toastr.info(username + " has connected");});
+
+      this.hubService.userOffLineEvent.subscribe((username)=>{
+        this.toastr.warning(username + " has disconnected");});
 
     }
 
@@ -105,7 +107,8 @@ export class AccountService {
   }
 
 
-  private evaluateUserLogOut()
+  //Evaluate if Hub closed is intentional (baecause user logged out) or unexpected (hub disconnection)
+  private manageHubClosed()
   {
     if (!this.userPressedLogOutButton)
     {

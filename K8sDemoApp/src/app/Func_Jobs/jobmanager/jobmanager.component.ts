@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { AccountService } from 'src/app/services/account.service';
+import { AccountService } from 'src/app/Func_Login/account.service';
 import { TestJobCreationRequest } from 'src/app/_models/API_Messages/TestJobCreationRequest';
 import { JobService } from '../job.service';
 
