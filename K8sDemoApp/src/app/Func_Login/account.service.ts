@@ -40,9 +40,13 @@ export class AccountService {
   {
       return this.http.post(this.baseUrl + "account/login", request).pipe(
         map((response: any)=>{
-          const user = response;
+          let user:LoggedUser = response;
           if (user)
           {
+            //TODO Remove this!
+            user.roles =[]
+            user.roles[0] = RoleEnum.Admin
+
             console.log("User " + user.username + " logged in");
             localStorage.setItem("user", JSON.stringify(user));
             this.setCurrentUser(user);
@@ -56,9 +60,6 @@ export class AccountService {
   {
     try
     {
-      //TODO Remove this!
-      user.roles[0] = RoleEnum.Admin
-
       await this.hubService.createHubConnection(user);
       this.currentUser.next(user);
     }
