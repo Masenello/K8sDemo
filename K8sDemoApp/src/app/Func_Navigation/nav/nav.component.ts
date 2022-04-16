@@ -12,30 +12,30 @@ import { NavigationService } from '../navigation.service';
 })
 export class NavComponent implements OnInit {
   model: any = {}
-  currentUser = new Observable<User>();
 
   constructor(public accountService: AccountService, 
     private toastr:ToastrService,
-    private navigationService:NavigationService) { }
+    private navigationService:NavigationService) {
+      
+    this.accountService.userLoggedIn.subscribe((user:any) =>{
+      this.navigationService.navigate("");
+    });
+
+    this.accountService.userLoggedOut.subscribe((user:any) =>{
+      this.navigationService.navigate("login");
+    });
+
+    }
 
   ngOnInit(): void {
-    this.currentUser = this.accountService.currentUser;
+    //When application is loaded try to restore current user 
+    //if existing user data is present in localstorage
+    this.accountService.tryRestoreCurrentUser()
   }
 
-  login(){
-    this.accountService.login(this.model).subscribe(response => {
-      console.log(response);
-    }, error=>
-    {
-      console.log(error)
-      this.toastr.error("Login failed");
-    });
-    
-  }
 
   logout(){
     this.accountService.userLogOutCommand();
-    this.navigationService.navigate("login");
   }
 
 }

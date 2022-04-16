@@ -2,7 +2,7 @@
   <span>My Application</span>
 
   <button mat-icon-button [matMenuTriggerFor]="menu"
-   *ngIf="currentUser|async as loggedInUser">
+   *ngIf="accountService.currentUser|async as loggedInUser">
     <mat-icon>face</mat-icon>
     <span>{{loggedInUser.username}}</span>
   </button>

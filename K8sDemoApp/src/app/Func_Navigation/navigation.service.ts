@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { AccountService } from '../Func_Login/account.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavigationService {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+
+  }
 
   public navigate(pageName: string, state?: any): void {
     console.log(`Navigating to ${pageName}`)

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
@@ -14,6 +14,8 @@ export class AccountService {
   baseUrl = environment.apiUrl;
   currentUser : BehaviorSubject<User | null>;
   public userPressedLogOutButton:boolean = false;
+  public userLoggedIn =new EventEmitter();
+  public userLoggedOut =new EventEmitter();
 
 
 
@@ -43,6 +45,7 @@ export class AccountService {
             console.log("User " + user.username + " logged in");
             localStorage.setItem("user", JSON.stringify(user));
             this.setCurrentUser(user);
+            this.userLoggedIn.emit(user);
           }
         }))
   }
@@ -78,6 +81,7 @@ export class AccountService {
       this.hubService.stopHubConnection(savedUser);
     }
     this.clearStoredUserData();
+    this.userLoggedOut.emit();
   }
 
   public tryRestoreCurrentUser():boolean
@@ -87,6 +91,7 @@ export class AccountService {
     {
       console.log("DEBUG: Loaded user from localstorage: " + savedUser.username);
       this.setCurrentUser(savedUser);
+      this.userLoggedIn.emit(savedUser);
       return true;
     }
     return false;
