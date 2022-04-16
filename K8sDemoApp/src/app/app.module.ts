@@ -4,18 +4,39 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { NavComponent } from './nav/nav.component';
+import { NavComponent } from './Func_Navigation/nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import {LogMonitorModule} from 'ngx-log-monitor';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoginComponent } from './Func_Login/login.component';
 
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatSelectModule} from '@angular/material/select';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component';
 import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component';
+import { HomeComponent } from './Pages/home/home.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +44,8 @@ import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component
     NavComponent,
     LoginComponent,
     LogsviewerComponent,
-    JobmanagerComponent
+    JobmanagerComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -35,11 +57,30 @@ import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component
       positionClass: "toast-bottom-right"
     }),
     LogMonitorModule,
-    BsDropdownModule.forRoot(),
     MatCardModule,
     MatFormFieldModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatSidenavModule,
+    MatListModule,
+    MatMenuModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatTooltipModule,
+    MatSlideToggleModule,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    MatTabsModule,
+    MatCheckboxModule,
 
-    
+
   ],
   providers: [],
   bootstrap: [AppComponent]

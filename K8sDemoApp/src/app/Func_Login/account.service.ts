@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
-import { User } from '../_models/user';
+import { LoginRequest, User } from '../_models/user';
 import { HubService } from '../services/hub.service';
 
 @Injectable({
@@ -33,9 +33,9 @@ export class AccountService {
 
     }
 
-  login(model: any)
+  login(request: LoginRequest)
   {
-      return this.http.post(this.baseUrl + "account/login", model).pipe(
+      return this.http.post(this.baseUrl + "account/login", request).pipe(
         map((response: any)=>{
           const user = response;
           if (user)
@@ -80,14 +80,16 @@ export class AccountService {
     this.clearStoredUserData();
   }
 
-  tryRestoreCurrentUser()
+  public tryRestoreCurrentUser():boolean
   {
     var savedUser = this.getStoredUserData()
     if (savedUser != null)
     {
       console.log("DEBUG: Loaded user from localstorage: " + savedUser.username);
       this.setCurrentUser(savedUser);
+      return true;
     }
+    return false;
   }
 
   private getStoredUserData():User | null

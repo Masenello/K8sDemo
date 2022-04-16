@@ -12,6 +12,9 @@ import { HubService } from './services/hub.service';
 import {LogMessage, LogMessage as NgxLogMessage} from 'ngx-log-monitor';
 import { Observable, timer } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { NavigationService } from './Func_Navigation/navigation.service';
+import { RouterOutlet } from '@angular/router';
+
 
 
 @Component({
@@ -30,7 +33,7 @@ export class AppComponent {
     private demoService: DemoService, 
     public accountService: AccountService, 
     private toastr: ToastrService,
-    private jobService: JobService) 
+    private navigationService : NavigationService) 
   { 
 
 
@@ -45,9 +48,7 @@ export class AppComponent {
   }  
 
   ngOnInit(){
-    //When application is loaded try to restore current user 
-    //if existing user data is present in localstorage
-    this.accountService.tryRestoreCurrentUser();
+    this.navigationService.navigate("login");
   }
 
   sendRabbitMessageApi() {
@@ -57,6 +58,10 @@ export class AppComponent {
       console.log(error);
       this.toastr.error(error.error);
     });
+  }
+
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet?.activatedRouteData;
   }
 
   

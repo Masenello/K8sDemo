@@ -1,0 +1,19 @@
+<mat-toolbar>
+  <span>My Application</span>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu"
+   *ngIf="currentUser|async as loggedInUser">
+    <mat-icon>face</mat-icon>
+    <span>{{loggedInUser.username}}</span>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Log out</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+
+<!-- Component output of routing -->
+<ng-content></ng-content>
