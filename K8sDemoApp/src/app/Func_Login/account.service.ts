@@ -4,15 +4,16 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
-import { LoginRequest, User } from '../_models/user';
+import { LoginRequest, LoggedUser } from '../_models/user';
 import { HubService } from '../services/hub.service';
+import { RoleEnum } from '../_enum/RoleEnum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  currentUser : BehaviorSubject<User | null>;
+  currentUser : BehaviorSubject<LoggedUser | null>;
   public userPressedLogOutButton:boolean = false;
   public userLoggedIn =new EventEmitter();
   public userLoggedOut =new EventEmitter();
@@ -23,7 +24,7 @@ export class AccountService {
     private toastr: ToastrService,
     private hubService: HubService) 
     {
-      this.currentUser = new BehaviorSubject<User | null>(null);
+      this.currentUser = new BehaviorSubject<LoggedUser | null>(null);
       
       this.hubService.hubClosedEvent.subscribe(()=>{this.manageHubClosed();});
 
@@ -51,10 +52,13 @@ export class AccountService {
   }
 
   //Called also on application init to restore user data if present in local storage
-  private async setCurrentUser(user:User)
+  private async setCurrentUser(user:LoggedUser)
   {
     try
     {
+      //TODO Remove this!
+      user.roles[0] = RoleEnum.Admin
+
       await this.hubService.createHubConnection(user);
       this.currentUser.next(user);
     }
@@ -97,7 +101,7 @@ export class AccountService {
     return false;
   }
 
-  private getStoredUserData():User | null
+  private getStoredUserData():LoggedUser | null
   {
     var savedUser = JSON.parse(localStorage.getItem('user')|| '{}');
     if (savedUser != null && savedUser.username != undefined)

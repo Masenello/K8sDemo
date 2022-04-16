@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
 import { ForwardLogMessage } from '../_models/Hub_Messages/ForwardLogMessage';
 import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
-import { User } from '../_models/user';
+import { LoggedUser } from '../_models/user';
 
 
 @Injectable({
@@ -33,7 +33,7 @@ export class HubService {
     this.hubConnectionStatus = new BehaviorSubject<boolean>(false);
   }
 
-  public async createHubConnection(user: User)
+  public async createHubConnection(user: LoggedUser)
   {
     //Create connection
     this.hubConnection = new HubConnectionBuilder()
@@ -89,7 +89,7 @@ export class HubService {
   }
 
   //Called at user log out
-  public stopHubConnection(user: User)
+  public stopHubConnection(user: LoggedUser)
   {
     //Notify to Hub user has connected
     this.hubSend("UserAppLogOff", user.username)

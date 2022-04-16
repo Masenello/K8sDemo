@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { AccountService } from '../../Func_Login/account.service';
-import { User } from '../../_models/user';
+import { LoggedUser } from '../../_models/user';
 import { NavigationService } from '../navigation.service';
 
 @Component({
@@ -13,16 +13,20 @@ import { NavigationService } from '../navigation.service';
 export class NavComponent implements OnInit {
   model: any = {}
 
+  navBarOpen: boolean;
+
   constructor(public accountService: AccountService, 
     private toastr:ToastrService,
     private navigationService:NavigationService) {
       
     this.accountService.userLoggedIn.subscribe((user:any) =>{
       this.navigationService.navigate("");
+      this.navBarOpen = true;
     });
 
     this.accountService.userLoggedOut.subscribe((user:any) =>{
       this.navigationService.navigate("login");
+      this.navBarOpen = false;
     });
 
     }

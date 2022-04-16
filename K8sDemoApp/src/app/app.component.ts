@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { DemoService } from './services/demoservice';
-import { User } from './_models/user';
+import { LoggedUser } from './_models/user';
 import { AccountService } from './Func_Login/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';

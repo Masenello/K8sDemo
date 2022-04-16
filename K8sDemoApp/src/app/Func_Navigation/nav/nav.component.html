@@ -1,3 +1,4 @@
+<!-- upper bar -->
 <mat-toolbar>
   <span>My Application</span>
 
@@ -14,6 +15,24 @@
   </mat-menu>
 </mat-toolbar>
 
+<!-- SideNav -->
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen">
+    
+    <div class="example-sidenav-content">
+      <span>My side Nav</span>
 
-<!-- Component output of routing -->
-<ng-content></ng-content>
+    </div>
+  </mat-sidenav>
+
+
+  <mat-sidenav-content>
+    <!-- Component output of routing -->
+    <ng-content></ng-content>
+  </mat-sidenav-content>  
+</mat-sidenav-container>
+
+
+
+
+
