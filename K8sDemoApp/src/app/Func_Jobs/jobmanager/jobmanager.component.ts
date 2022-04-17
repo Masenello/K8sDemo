@@ -18,7 +18,7 @@ import { Subject } from 'rxjs';
 })
 export class JobmanagerComponent implements OnInit {
 
-  currentJobs =new Subject<JobStatusMessage[]>();
+  internalJobsList =new Subject<JobStatusMessage[]>();
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
 
   constructor(public accountService: AccountService,
@@ -26,38 +26,52 @@ export class JobmanagerComponent implements OnInit {
     private toastr: ToastrService,
     private hub:HubService) 
     {
+      //Subscribe to Job updates from HUB
       this.hub.receivedNewJobStatusEvent.subscribe((jobStatus:JobStatusMessage)=> 
       {
         console.log(jobStatus);
         if (jobStatus.status == JobStatusEnum.error)
-          {
-            this.toastr.error(`${jobStatus.userMessage}`)
-          }
-        else
-          {
-            this.toastr.info(`Job id: ${jobStatus.jobId}: Status: ${JobStatusEnum[jobStatus.status]} Percentage: ${jobStatus.progressPercentage}`)
-          }
-
-        var tmpJob:JobStatusMessage = from(this.currentJobsTmp).where(x=>x.jobId == jobStatus.jobId).firstOrDefault();
-        if (tmpJob == null)
         {
-          this.currentJobsTmp.push(jobStatus);
+          this.toastr.error(`${jobStatus.userMessage}`)
         }
-        else
-        {
-          tmpJob.progressPercentage = jobStatus.progressPercentage;
-          tmpJob.status = jobStatus.status;
-          tmpJob.userMessage = jobStatus.userMessage;
-        }
+        this.updateInternalJobsList(jobStatus);
+      })
 
-        this.currentJobs.next(this.currentJobsTmp);
-        
+      
+      this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username).subscribe((userPendingJobs)=> 
+      {
+        userPendingJobs.forEach(element => {
+          this.updateInternalJobsList(element);
+        });
       })
 
 
   }
 
   ngOnInit(): void {
+    this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username);
+  }
+
+  updateInternalJobsList(jobStatus:JobStatusMessage)
+  {
+    var tmpJob:JobStatusMessage = from(this.currentJobsTmp).where(x=>x.jobId == jobStatus.jobId).firstOrDefault();
+    if (tmpJob == null)
+    {
+      //Job is not in list, add it
+      this.currentJobsTmp.push(jobStatus);
+    }
+    else
+    {
+
+        //Update job in list
+        tmpJob.progressPercentage = jobStatus.progressPercentage;
+        tmpJob.status = jobStatus.status;
+        tmpJob.userMessage = jobStatus.userMessage;
+      
+
+    }
+
+    this.internalJobsList.next(this.currentJobsTmp);
   }
 
   sendTestJobRequest() {
@@ -69,8 +83,7 @@ export class JobmanagerComponent implements OnInit {
     };
     this.jobService.sendTestJobRequest(jobRequest).subscribe(result =>{
       this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
-
-      this.currentJobsTmp.push(
+      this.updateInternalJobsList(
         {
           jobId: result.jobId,
           jobType: result.jobType,
@@ -78,9 +91,7 @@ export class JobmanagerComponent implements OnInit {
           user:result.user,
           progressPercentage: 0,
           userMessage: result.userMessage
-        }
-      );
-
+        });
 
     },error=>{
       console.log(error);

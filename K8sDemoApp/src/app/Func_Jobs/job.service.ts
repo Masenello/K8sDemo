@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TestJobCreationResult } from '../_models/API_Messages/TestJobCreationResult';
 import { TestJobCreationRequest} from '../_models/API_Messages/TestJobCreationRequest';
+import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 
 
 
@@ -18,6 +19,10 @@ export class JobService {
   constructor(private http: HttpClient) 
   {
     
+  }
+
+  getUserPendingJobs(username: string): Observable<JobStatusMessage[]>{
+    return this.http.get<JobStatusMessage[]>(this.baseUrl + "Job/"+username, {responseType: 'json'});
   }
   
 

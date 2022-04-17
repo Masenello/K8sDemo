@@ -4,7 +4,7 @@
       test job request </button>
   </div>
   <div>
-    <div *ngFor="let job of (currentJobs|async)"> 
+    <div *ngFor="let job of (internalJobsList|async)"> 
         <div><app-jobstatus [job]="job"></app-jobstatus></div>
     </div>
   </div>

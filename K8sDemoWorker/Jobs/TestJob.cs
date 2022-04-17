@@ -54,6 +54,7 @@ namespace K8sDemoWorker.Jobs
 
                         Thread.Sleep(3000);
                         jobStatus.ProgressPercentage = 100.0;
+                        jobStatus.Status = JobStatus.completed;
                         ReportWorkProgress(jobStatus);
 
 

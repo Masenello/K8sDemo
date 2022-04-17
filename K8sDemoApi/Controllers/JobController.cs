@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Data;
+using K8sBackendShared.DTOs;
 using K8sBackendShared.Entities;
+using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +26,7 @@ namespace K8sDemoApi.Controllers
             _context = context;
         }
         
+        //[Authorize]
         [HttpPost("RequestNewJob")]
         public async Task<ActionResult<RequestNewJobCreationResultMessage>> RequestNewJob(RequestNewJobCreationMessage requestFromClient)
         {
@@ -54,6 +58,31 @@ namespace K8sDemoApi.Controllers
             newJobResult.UserMessage = "";
             return Ok(newJobResult);
 
+        }
+
+        //[Authorize]
+        [HttpGet("{username}")]
+        public async Task<ActionResult<List<JobStatusDto>>> GetUserPendingJobs(string username)
+        {
+            List<JobStatusDto> userPendingJobs = new List<JobStatusDto>();
+
+            foreach (var job in await _context.Jobs.Where(x=>x.User.UserName == username 
+            && (x.Status == JobStatus.created 
+            || x.Status == JobStatus.assigned 
+            ||x.Status == JobStatus.running)).ToListAsync())
+            {
+                JobStatusDto jobStatus = new JobStatusDto()
+                {
+                    JobId = job.Id,
+                    JobType = job.Type,
+                    Status = job.Status,
+                    User = username,
+                    ProgressPercentage = 0,
+                    UserMessage="",
+                };
+                userPendingJobs.Add(jobStatus);
+            }
+            return userPendingJobs;
         }
     }
 
