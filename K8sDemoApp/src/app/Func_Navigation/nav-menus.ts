@@ -127,7 +127,7 @@ export const appMenus: MenuEntry[] = [
     pageName: 'connectors',
     iconName: 'developer_board',
     color: MenuColor.Purple,
-    roles: [ RoleEnum.Admin ]
+    //roles: [ RoleEnum.Admin ]
   },
   {
     name: 'Alifax Software',
@@ -136,7 +136,7 @@ export const appMenus: MenuEntry[] = [
     iconName: 'ai-alifax-logo',
     iconType: MenuIconType.Custom,
     color: MenuColor.Red,
-    roles: [RoleEnum.Admin ]
+    //roles: [RoleEnum.Admin ]
   },
   {
     name: 'Users',
@@ -144,7 +144,7 @@ export const appMenus: MenuEntry[] = [
     description: 'Manage application users',
     iconName: 'manage_accounts',
     color: MenuColor.Purple,
-    roles: [ RoleEnum.Admin ],
+    //roles: [ RoleEnum.Admin ],
     locations: [ MenuLocation.Homepage, MenuLocation.UserMenu ],
     section: settingsSection,
   },
@@ -154,7 +154,7 @@ export const appMenus: MenuEntry[] = [
     description: 'Open SignalR test environment',
     iconName: 'connect_without_contact',
     color: MenuColor.Blue,
-    roles: [ RoleEnum.Admin ],
+    //roles: [ RoleEnum.Admin ],
     section: testsSection,
   }
 ]

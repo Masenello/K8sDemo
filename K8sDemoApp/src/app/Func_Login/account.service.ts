@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { LoginRequest, LoggedUser } from '../_models/user';
 import { HubService } from '../services/hub.service';
 import { RoleEnum } from '../_enum/RoleEnum';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -128,6 +129,47 @@ export class AccountService {
       this.logout();
     }
     this.userPressedLogOutButton = false; 
+  }
+
+
+  //Roles management
+  public getTokenInformation(token: string) : LoggedUser
+  {
+
+
+    let tokenInfo = this.getDecodedJWT(token);
+    let loggedUser:LoggedUser;
+
+    loggedUser.roles = tokenInfo.role;
+    loggedUser.username = tokenInfo.unique_name;
+    loggedUser.token = token;
+
+    return loggedUser;
+
+  }
+
+  public get roles(): typeof RoleEnum {
+    return RoleEnum;
+  }
+
+  public isInRole(role: RoleEnum): boolean {
+    return this.currentUser?.value.roles?.includes(role);
+  }
+
+  public hasRole(roles: RoleEnum[]): boolean {
+    return !roles || roles.filter(x => this.currentUser?.value.roles?.includes(x)).length > 0;
+  }
+
+  public isTokenExpired(): boolean {
+    return this.currentUser?.value.token && this.getDecodedJWT(this.currentUser.value.token)?.exp < (Math.floor((new Date).getTime() / 1000));
+  }
+
+  getDecodedJWT(token: string): any {
+    try {
+      return jwt_decode(token);
+    } catch(Error) {
+      return null;
+    }
   }
   
 }

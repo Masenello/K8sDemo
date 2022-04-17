@@ -3,7 +3,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { AccountService } from '../../Func_Login/account.service';
 import { LoggedUser } from '../../_models/user';
+import { MenuColor, MenuEntry, MenuIconType, MenuLocation } from '../menu-entry.model';
 import { NavigationService } from '../navigation.service';
+import { appMenus } from '../../Func_Navigation/nav-menus';
 
 @Component({
   selector: 'app-nav',
@@ -14,11 +16,15 @@ export class NavComponent implements OnInit {
   model: any = {}
 
   navBarOpen: boolean;
+  menus: MenuEntry[];
+  
 
   constructor(public accountService: AccountService, 
     private toastr:ToastrService,
-    private navigationService:NavigationService) {
-      
+    public navigationService:NavigationService) {
+    
+    this.menus = appMenus;
+
     this.accountService.userLoggedIn.subscribe((user:any) =>{
       this.navigationService.navigate("");
       this.navBarOpen = true;
@@ -41,5 +47,8 @@ export class NavComponent implements OnInit {
   logout(){
     this.accountService.userLogOutCommand();
   }
+
+
+
 
 }
