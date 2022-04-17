@@ -7,6 +7,7 @@ import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
 import { TestJobCreationRequest } from 'src/app/_models/API_Messages/TestJobCreationRequest';
 import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage';
 import { JobService } from '../job.service';
+import { from } from "linq-to-typescript"
 
 @Component({
   selector: 'app-jobmanager',
@@ -47,10 +48,18 @@ export class JobmanagerComponent implements OnInit {
     private toastr: ToastrService,
     private hub:HubService) {
     
-    this.hub.receivedNewJobStatusEvent.subscribe((data:JobStatusMessage)=> 
-    {
-      
-    })
+    // this.hub.receivedNewJobStatusEvent.subscribe((data:JobStatusMessage)=> 
+    // {
+    //   var updatedJob = from(this.jobs).where(x=>x.jobId == data.jobId).firstOrDefault();
+    //   if (updatedJob == null)
+    //   {
+    //     this.jobs.push(updatedJob)
+    //   }
+    //   else
+    //   {
+    //     updatedJob = data
+    //   }
+    // })
   }
 
   ngOnInit(): void {

@@ -20,17 +20,19 @@ export class JobService {
     private toastr: ToastrService,
     private hub: HubService) 
   {
+
+
     this.hub.receivedNewJobStatusEvent.subscribe((data:JobStatusMessage)=> 
     {
       if (data.status == JobStatusEnum.error)
-          {
-            this.toastr.error(`${data.userMessage}`)
-          }
-          else
-          {
-            this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
-          }
-          console.log(data);
+      {
+        this.toastr.error(`${data.userMessage}`)
+      }
+      else
+      {
+        this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
+      }
+        console.log(data);
     })
   }
   
