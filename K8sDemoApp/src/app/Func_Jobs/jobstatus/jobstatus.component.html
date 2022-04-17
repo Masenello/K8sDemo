@@ -1,16 +1,20 @@
 <mat-card class="example-card" style="width: 200px">
   <mat-card-content>
-
     <div mat-line>
         <div>
-          <mat-icon>build</mat-icon>
+          <mat-icon>badge</mat-icon>
           <span style="font-weight: bold">Job Id: </span>
           {{job.jobId}}
         </div>
         <div mat-line>
             <mat-icon mat-list-icon>handyman</mat-icon>
           <span style="font-weight: bold">Job Type: </span>
-          {{job.jobType}}
+          {{job.jobType|jobTypeEnumNamePipe}}
+        </div>
+        <div mat-line>
+            <mat-icon mat-list-icon>monitor_heart</mat-icon>
+          <span style="font-weight: bold">Job Status: </span>
+          {{job.status|jobStatusEnumNamePipe}}
         </div>
         <div mat-line>
         <mat-icon mat-list-icon>face</mat-icon>

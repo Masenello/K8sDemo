@@ -15,17 +15,17 @@ import { LoggedUser } from '../_models/user';
 export class HubService {
 
   hubUrl  = environment.hubUrl;
-  private hubConnection: HubConnection | undefined;
-  public hubConnectionStatus: BehaviorSubject<boolean>;
+  private hubConnection: HubConnection;
+  public hubConnectionStatus: BehaviorSubject<boolean>= new BehaviorSubject<boolean>(false);
 
   
 
   //Hub events
-  public hubClosedEvent =new EventEmitter();
-  public receivedNewLogEvent =new EventEmitter();
-  public receivedNewJobStatusEvent =new EventEmitter();
-  public userOnLineEvent =new EventEmitter();
-  public userOffLineEvent =new EventEmitter();
+  public hubClosedEvent =new Subject();
+  public receivedNewLogEvent =new Subject<ForwardLogMessage>();
+  public receivedNewJobStatusEvent =new Subject<JobStatusMessage>();
+  public userOnLineEvent =new Subject();
+  public userOffLineEvent =new Subject();
 
 
   constructor(private toastr: ToastrService) 
@@ -61,7 +61,7 @@ export class HubService {
         this.hubConnection?.onclose(()=>
         {
           this.hubConnectionStatus.next(false);
-          this.hubClosedEvent.emit();
+          this.hubClosedEvent.next();
         });
 
         //Notify to Hub user has logged in (to pass user name)
@@ -70,13 +70,13 @@ export class HubService {
 
         //Add other services events 
         this.hubConnection?.on("JobStatusMessage",(data:JobStatusMessage) => 
-        { this.receivedNewJobStatusEvent.emit(data);});
+        {this.receivedNewJobStatusEvent.next(data);});
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
-        {this.receivedNewLogEvent.emit(data);});
+        {this.receivedNewLogEvent.next(data);});
         this.hubConnection?.on("UserIsOnLine", username => 
-        {this.userOnLineEvent.emit(username);})
+        {this.userOnLineEvent.next(username);})
         this.hubConnection?.on("UserIsOffLine", username => 
-        {this.userOffLineEvent.emit(username);})
+        {this.userOffLineEvent.next(username);})
 
       })
       .catch(error => 

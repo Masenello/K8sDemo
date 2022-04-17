@@ -49,7 +49,9 @@ namespace K8sDemoApi.Controllers
             newJobResult.CreationTime = DateTime.Now;
             newJobResult.JobId = newJob.Id;
             newJobResult.User = jobUser.UserName;
-            newJobResult.UserMessage = $"Job: {newJob.Id} of type: {newJob.Descritpion} created by user: {jobUser.UserName}";
+            newJobResult.JobType = newJob.Type;
+            newJobResult.JobStatus = newJob.Status;
+            newJobResult.UserMessage = "";
             return Ok(newJobResult);
 
         }

@@ -7,7 +7,9 @@ import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
 import { TestJobCreationRequest } from 'src/app/_models/API_Messages/TestJobCreationRequest';
 import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage';
 import { JobService } from '../job.service';
+
 import { from } from "linq-to-typescript"
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-jobmanager',
@@ -16,50 +18,43 @@ import { from } from "linq-to-typescript"
 })
 export class JobmanagerComponent implements OnInit {
 
-  jobs: JobStatusMessage[] = [
-    {
-      jobId: 1,
-      jobType: JobTypeEnum.test,
-      status: JobStatusEnum.running,
-      user:"pimpi",
-      progressPercentage: 27,
-      userMessage: "Tutto bello"
-    },
-    {
-      jobId: 2,
-      jobType: JobTypeEnum.test,
-      status: JobStatusEnum.inserted,
-      user:"ciccio",
-      progressPercentage: 0,
-      userMessage: ""
-    },
-    {
-      jobId: 3,
-      jobType: JobTypeEnum.test,
-      status: JobStatusEnum.running,
-      user:"pimpi",
-      progressPercentage: 27,
-      userMessage: "Tutto bello"
-    },
-  ];
+  currentJobs =new Subject<JobStatusMessage[]>();
+  currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
 
   constructor(public accountService: AccountService,
     public jobService : JobService,
     private toastr: ToastrService,
-    private hub:HubService) {
-    
-    // this.hub.receivedNewJobStatusEvent.subscribe((data:JobStatusMessage)=> 
-    // {
-    //   var updatedJob = from(this.jobs).where(x=>x.jobId == data.jobId).firstOrDefault();
-    //   if (updatedJob == null)
-    //   {
-    //     this.jobs.push(updatedJob)
-    //   }
-    //   else
-    //   {
-    //     updatedJob = data
-    //   }
-    // })
+    private hub:HubService) 
+    {
+      this.hub.receivedNewJobStatusEvent.subscribe((jobStatus:JobStatusMessage)=> 
+      {
+        console.log(jobStatus);
+        if (jobStatus.status == JobStatusEnum.error)
+          {
+            this.toastr.error(`${jobStatus.userMessage}`)
+          }
+        else
+          {
+            this.toastr.info(`Job id: ${jobStatus.jobId}: Status: ${JobStatusEnum[jobStatus.status]} Percentage: ${jobStatus.progressPercentage}`)
+          }
+
+        var tmpJob:JobStatusMessage = from(this.currentJobsTmp).where(x=>x.jobId == jobStatus.jobId).firstOrDefault();
+        if (tmpJob == null)
+        {
+          this.currentJobsTmp.push(jobStatus);
+        }
+        else
+        {
+          tmpJob.progressPercentage = jobStatus.progressPercentage;
+          tmpJob.status = jobStatus.status;
+          tmpJob.userMessage = jobStatus.userMessage;
+        }
+
+        this.currentJobs.next(this.currentJobsTmp);
+        
+      })
+
+
   }
 
   ngOnInit(): void {
@@ -74,6 +69,19 @@ export class JobmanagerComponent implements OnInit {
     };
     this.jobService.sendTestJobRequest(jobRequest).subscribe(result =>{
       this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
+
+      this.currentJobsTmp.push(
+        {
+          jobId: result.jobId,
+          jobType: result.jobType,
+          status: result.jobStatus,
+          user:result.user,
+          progressPercentage: 0,
+          userMessage: result.userMessage
+        }
+      );
+
+
     },error=>{
       console.log(error);
       this.toastr.error(error.error);

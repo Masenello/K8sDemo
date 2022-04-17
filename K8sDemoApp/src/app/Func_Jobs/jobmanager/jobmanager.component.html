@@ -1,20 +1,10 @@
-<div class="container" style="margin-top: 50px">
-  <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
-    test job request </button>
 
-
-  <mat-list>
-    <div mat-subheader>Folders</div>
-    <mat-list-item *ngFor="let jobs of jobs">
-      <mat-icon mat-list-icon>folder</mat-icon>
-      <div mat-line>{{jobs.jobId}}</div>
-      <div mat-line>{{jobs.jobType}}</div>
-      <div mat-line>{{jobs.user}}</div>
-      <div mat-line>{{jobs.progressPercentage}}</div>
-
-    </mat-list-item>
-
-  </mat-list>
-
-  <app-jobstatus></app-jobstatus>
-</div>
+  <div>
+    <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
+      test job request </button>
+  </div>
+  <div>
+    <div *ngFor="let job of (currentJobs|async)"> 
+        <div><app-jobstatus [job]="job"></app-jobstatus></div>
+    </div>
+  </div>

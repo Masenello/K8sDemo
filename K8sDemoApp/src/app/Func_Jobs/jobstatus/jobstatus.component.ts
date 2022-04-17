@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { HubService } from 'src/app/services/hub.service';
-import { JobStatusEnum } from 'src/app/_enum/JobStatusEnum';
-import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
+import { Component, Input, OnInit } from '@angular/core';
 import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage';
+import { JobStatusEnumNamePipe } from '../jobEnumsPipes';
+
 
 @Component({
   selector: 'app-jobstatus',
@@ -11,15 +9,10 @@ import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage'
   styleUrls: ['./jobstatus.component.css']
 })
 export class JobstatusComponent implements OnInit {
+  @Input() job: JobStatusMessage;
 
-  job:JobStatusMessage =     {
-    jobId: 1,
-    jobType: JobTypeEnum.test,
-    status: JobStatusEnum.running,
-    user:"pimpi",
-    progressPercentage: 27,
-    userMessage: "Aaaaaargh!"
-  }
+
+
 
   constructor() {
 
@@ -28,6 +21,5 @@ export class JobstatusComponent implements OnInit {
   ngOnInit(): void {
   }
 
- 
 
 }

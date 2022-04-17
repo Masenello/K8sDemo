@@ -43,6 +43,7 @@ import { ClusterMonitoringComponent } from './Pages/clusterMonitoring/cluster-mo
 import { DatabaseTestComponent } from './Pages/SystemTest/database-test/database-test.component';
 import { AsyncJobsTestComponent } from './Pages/SystemTest/async-jobs-test/async-jobs-test.component';
 import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
+import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnumsPipes';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,9 @@ import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
     ClusterMonitoringComponent,
     DatabaseTestComponent,
     AsyncJobsTestComponent,
-    JobstatusComponent
+    JobstatusComponent,
+    JobStatusEnumNamePipe,
+    JobTypeEnumNamePipe,
   ],
   imports: [
     BrowserModule,
@@ -91,6 +94,7 @@ import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
     MatCheckboxModule,
     MatButtonToggleModule,
     MatProgressBarModule,
+
 
 
   ],
