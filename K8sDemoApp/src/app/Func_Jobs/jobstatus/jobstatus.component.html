@@ -1,0 +1,36 @@
+<mat-card class="example-card" style="width: 200px">
+  <mat-card-content>
+
+    <div mat-line>
+        <div>
+          <mat-icon>build</mat-icon>
+          <span style="font-weight: bold">Job Id: </span>
+          {{job.jobId}}
+        </div>
+        <div mat-line>
+            <mat-icon mat-list-icon>handyman</mat-icon>
+          <span style="font-weight: bold">Job Type: </span>
+          {{job.jobType}}
+        </div>
+        <div mat-line>
+        <mat-icon mat-list-icon>face</mat-icon>
+          <span style="font-weight: bold">User: </span>
+          {{job.user}}
+        </div>
+        <div mat-line *ngIf="job.userMessage != ''">
+            <mat-icon mat-list-icon>message</mat-icon>
+            <span style="font-weight: bold">Message: </span>
+            {{job.userMessage}}
+          </div>
+      <div mat-line>
+        <mat-icon mat-list-icon>hourglass_bottom</mat-icon>
+        <span style="font-weight: bold">Progress: </span>
+        {{job.progressPercentage}}
+        <span> % </span>
+        <mat-progress-bar mode="determinate" value={{job.progressPercentage}}></mat-progress-bar>
+      </div>
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

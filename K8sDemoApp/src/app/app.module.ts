@@ -33,10 +33,16 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component';
 import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component';
 import { HomeComponent } from './Pages/home/home.component';
+import { ClusterMonitoringComponent } from './Pages/clusterMonitoring/cluster-monitoring.component';
+import { DatabaseTestComponent } from './Pages/SystemTest/database-test/database-test.component';
+import { AsyncJobsTestComponent } from './Pages/SystemTest/async-jobs-test/async-jobs-test.component';
+import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +51,11 @@ import { HomeComponent } from './Pages/home/home.component';
     LoginComponent,
     LogsviewerComponent,
     JobmanagerComponent,
-    HomeComponent
+    HomeComponent,
+    ClusterMonitoringComponent,
+    DatabaseTestComponent,
+    AsyncJobsTestComponent,
+    JobstatusComponent
   ],
   imports: [
     BrowserModule,
@@ -79,6 +89,8 @@ import { HomeComponent } from './Pages/home/home.component';
     MatProgressSpinnerModule,
     MatTabsModule,
     MatCheckboxModule,
+    MatButtonToggleModule,
+    MatProgressBarModule,
 
 
   ],

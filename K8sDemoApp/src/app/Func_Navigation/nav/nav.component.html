@@ -17,7 +17,7 @@
 
 <!-- SideNav -->
 <mat-sidenav-container class="example-container">
-  <mat-sidenav #sidenav mode="push" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64"  >
+  <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64"  >
     
       <!-- menus built based on configuration in nav-menus.ts -->
       <mat-nav-list>
@@ -44,6 +44,9 @@
       </ng-container>
 
     </mat-nav-list>
+
+    <!-- TODO Add API version -->
+
     <!-- <mat-nav-list class="sidenav-bottom" style="width: 100%;">
       <mat-divider></mat-divider>
       <div style="padding: 10px;" class="text-center">
@@ -56,6 +59,9 @@
     </mat-nav-list> -->
   </mat-sidenav>
   <mat-sidenav-content>
+
+    <!-- TODO Sidenav toggle -->
+
     <!-- <mat-toolbar color="primary" style="z-index: 99;">
       <button
         type="button"
