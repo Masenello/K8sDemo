@@ -45,6 +45,7 @@ import { AsyncJobsTestComponent } from './Pages/SystemTest/async-jobs-test/async
 import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
 import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnumsPipes';
 import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor';
+import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor
     JobstatusComponent,
     JobStatusEnumNamePipe,
     JobTypeEnumNamePipe,
+    LogViewerPipe,
   ],
   imports: [
     BrowserModule,
@@ -100,6 +102,7 @@ import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor
 
   ],
   providers: [
+    LogViewerPipe,
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

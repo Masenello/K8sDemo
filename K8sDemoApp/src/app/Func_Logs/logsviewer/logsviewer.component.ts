@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { LogMessage } from 'ngx-log-monitor';
-import { AccountService } from 'src/app/Func_Login/account.service';
 import { LogsviewerService } from '../logsviewer.service';
 
 @Component({
@@ -12,7 +11,7 @@ export class LogsviewerComponent implements OnInit {
 
   logmessage:LogMessage;
   
-  constructor(private logViewerService:LogsviewerService) {
+  constructor(public logViewerService:LogsviewerService) {
 
     this.logViewerService.logMessages.subscribe((response: LogMessage) =>{
       this.logmessage=response;

@@ -1,10 +1,10 @@
 <div class="container" >
 
   <mat-button-toggle-group #group="matButtonToggleGroup">
-    <mat-button-toggle value="visibility_on" aria-label="Text align left" (click)="enableLogview()" matTooltip="Enable log viewer">
+    <mat-button-toggle value="visibility_on" aria-label="Text align left" (click)="enableLogview()" matTooltip="Connect viewer to log stream">
       <mat-icon>visibility_on</mat-icon>
     </mat-button-toggle>
-    <mat-button-toggle value="visibility_off" aria-label="Text align center" (click)="disableLogview()" matTooltip="Disable log viewer">
+    <mat-button-toggle value="visibility_off" aria-label="Text align center" (click)="disableLogview()" matTooltip="Disconnect viewer from log stream">
       <mat-icon>visibility_off</mat-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>
@@ -15,7 +15,8 @@
         theme="dark" 
         title="Docker cluster logs" 
         [animated]="true" 
-        [icons]="true">
+        [icons]="true"
+        [history]="logViewerService.historyMessages">
     </log-monitor>
   </div>
 </div>
