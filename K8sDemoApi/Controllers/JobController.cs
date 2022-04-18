@@ -61,7 +61,7 @@ namespace K8sDemoApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{username}")]
+        [HttpGet("GetUserPendingJobs/{username}")]
         public async Task<ActionResult<List<JobStatusDto>>> GetUserPendingJobs(string username)
         {
             List<JobStatusDto> userPendingJobs = new List<JobStatusDto>();
@@ -81,6 +81,20 @@ namespace K8sDemoApi.Controllers
                     UserMessage="",
                 };
                 userPendingJobs.Add(jobStatus);
+            }
+            return userPendingJobs;
+        }
+
+        [Authorize]
+        [HttpGet("GetUserJobs/{username}")]
+        public async Task<ActionResult<List<JobDto>>> GetUserJobs(string username)
+        {
+            List<JobDto> userPendingJobs = new List<JobDto>();
+
+            foreach (var job in await _context.Jobs.Where(x=>x.User.UserName == username).ToListAsync())
+            {
+                JobDto jobDto = new JobDto(job);
+                userPendingJobs.Add(jobDto);
             }
             return userPendingJobs;
         }

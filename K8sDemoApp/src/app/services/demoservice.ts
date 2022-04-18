@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TestJobCreationResult } from '../_models/API_Messages/TestJobCreationResult';
+import { JobCreationResult } from '../_models/API_Messages/JobCreationResult';
 import { ThisReceiver } from '@angular/compiler';
 
 @Injectable({

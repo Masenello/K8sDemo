@@ -4,7 +4,7 @@ import { AccountService } from 'src/app/Func_Login/account.service';
 import { HubService } from 'src/app/services/hub.service';
 import { JobStatusEnum } from 'src/app/_enum/JobStatusEnum';
 import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
-import { TestJobCreationRequest } from 'src/app/_models/API_Messages/TestJobCreationRequest';
+import { TestJobCreationRequest } from 'src/app/_models/API_Messages/JobCreationRequest';
 import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage';
 import { JobService } from '../job.service';
 
@@ -80,7 +80,7 @@ export class JobmanagerComponent implements OnInit {
       requestDateTime: new Date(),
       requestJobType:0
     };
-    this.jobService.sendTestJobRequest(jobRequest).subscribe(result =>{
+    this.jobService.sendJobCreationRequest(jobRequest).subscribe(result =>{
       this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
       this.updateInternalJobsList(
         {

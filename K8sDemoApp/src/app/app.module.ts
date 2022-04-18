@@ -46,6 +46,8 @@ import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
 import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnumsPipes';
 import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor';
 import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
+import { JobhistoricalComponent } from './Func_Jobs/jobhistorical/jobhistorical.component';
+import { GuiGridModule } from '@generic-ui/ngx-grid';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
     JobStatusEnumNamePipe,
     JobTypeEnumNamePipe,
     LogViewerPipe,
+    JobhistoricalComponent,
   ],
   imports: [
     BrowserModule,
@@ -97,12 +100,14 @@ import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
     MatCheckboxModule,
     MatButtonToggleModule,
     MatProgressBarModule,
-
+    GuiGridModule,
 
 
   ],
   providers: [
     LogViewerPipe,
+    JobStatusEnumNamePipe,
+    JobTypeEnumNamePipe,
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

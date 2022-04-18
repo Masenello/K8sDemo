@@ -7,7 +7,7 @@ import { AccountService } from './Func_Login/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { JobService } from './Func_Jobs/job.service';
-import { TestJobCreationRequest } from './_models/API_Messages/TestJobCreationRequest';
+import { TestJobCreationRequest } from './_models/API_Messages/JobCreationRequest';
 import { HubService } from './services/hub.service';
 import {LogMessage, LogMessage as NgxLogMessage} from 'ngx-log-monitor';
 import { Observable, timer } from 'rxjs';

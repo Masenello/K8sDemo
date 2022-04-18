@@ -1,0 +1,9 @@
+<Div>
+    <button gui-button type="submit" (click)="loadData()">Refresh</button>
+    <gui-grid [source]="jobsSource"
+          [columns]="jobGridcolumns"
+          [paging]="paging"
+          [loading]="loading">
+    </gui-grid>
+</Div>
+
