@@ -1,11 +1,13 @@
-
+<app-director-status-viewer></app-director-status-viewer>
   <div>
     <div><span>{{jobsListHeader}}</span></div>
     <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
       test job request </button>
   </div>
   <div>
-    <div *ngFor="let job of (internalJobsList|async)"> 
-        <div><app-jobstatus [job]="job"></app-jobstatus></div>
+    <div *ngFor="let job of (internalJobsList|async)" > 
+        <div >
+          <app-jobstatus [job]="job" style="display: flex;"></app-jobstatus>
+        </div>
     </div>
   </div>

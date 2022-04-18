@@ -13,33 +13,10 @@ export class DirectorStatusViewerComponent implements OnInit {
   workerList:string
   jobsList:string
 
+
+
   constructor(private directorStatusService:DirectorStatusService) {
 
-    this.directorStatusService.directorStatus.subscribe((status: DirectorStatusMessage)=>{
-      
-      this.jobsList = ""
-      if (status.jobsList!=null)
-      {
-        this.jobsList ="Jobs:";
-        status.jobsList.forEach(p =>{
-          this.jobsList = this.jobsList + JobTypeEnum[p.jobType] + ":" + p.jobCount 
-      })
-      }
-    
-
-      this.workerList=""
-      if (status.registeredWorkers!=null)
-      {
-        this.workerList = "Workers:"
-        status.registeredWorkers.forEach(x =>{
-          this.workerList = this.workerList + x.workerId + ":" + JobTypeEnum[x.workerJobType]
-        })
-      }
-      // console.log(this.jobsList)
-      // console.log(this.workerList)
-
-      
-    })
 
   }
 

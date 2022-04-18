@@ -49,6 +49,8 @@ import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
 import { JobhistoricalComponent } from './Func_Jobs/jobhistorical/jobhistorical.component';
 import { GuiGridModule } from '@generic-ui/ngx-grid';
 import { DirectorStatusViewerComponent } from './Func_DirectorStatus/director-status-viewer/director-status-viewer.component';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { JobTypeStatusComponent } from './Func_DirectorStatus/job-type-status/job-type-status.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,7 @@ import { DirectorStatusViewerComponent } from './Func_DirectorStatus/director-st
     LogViewerPipe,
     JobhistoricalComponent,
     DirectorStatusViewerComponent,
+    JobTypeStatusComponent,
   ],
   imports: [
     BrowserModule,
@@ -103,6 +106,9 @@ import { DirectorStatusViewerComponent } from './Func_DirectorStatus/director-st
     MatButtonToggleModule,
     MatProgressBarModule,
     GuiGridModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    })
 
 
   ],

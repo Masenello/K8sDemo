@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log("Request log in user: " + this.user.username + "password: "+ this.user.password )
+    //console.log("Request log in user: " + this.user.username + "password: "+ this.user.password )
     this.accountService.login(this.user).subscribe(response => {
       console.log(response);
     }, error=>

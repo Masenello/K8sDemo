@@ -48,9 +48,7 @@ export class HubService {
     await this.hubConnection
       .start().then(()=>
       {
-        //Hub is connected
-        this.hubConnectionStatus.next(true)
-            
+  
         this.hubConnection?.onreconnecting(()=>
         {this.toastr.warning("Hub connection lost: trying to reconnect to server...");});
 
@@ -81,6 +79,9 @@ export class HubService {
         {this.userOnLineEvent.next(username);})
         this.hubConnection?.on("UserIsOffLine", username => 
         {this.userOffLineEvent.next(username);})
+
+        //Hub is connected
+        this.hubConnectionStatus.next(true)
 
       })
       .catch(error => 

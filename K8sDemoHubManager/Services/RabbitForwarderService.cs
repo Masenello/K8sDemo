@@ -33,7 +33,7 @@ namespace K8sDemoHubManager.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var transientService = scope.ServiceProvider.GetRequiredService<SignalRbrokerService>();
-                await transientService.ForwardMessageToGroup<DirectorStatusMessage>(msg, "logviewers");
+                await transientService.ForwardMessageToGroup<DirectorStatusMessage>(msg, "directorMonitor");
             }
         }
 

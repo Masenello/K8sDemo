@@ -30,7 +30,7 @@ export class JobmanagerComponent implements OnInit {
       //Subscribe to Job updates from HUB
       this.hub.receivedNewJobStatusEvent.subscribe((jobStatus:JobStatusMessage)=> 
       {
-        console.log(jobStatus);
+        //console.log(jobStatus);
         if (jobStatus.status == JobStatusEnum.error)
         {
           this.toastr.error(`${jobStatus.userMessage}`)
@@ -44,6 +44,7 @@ export class JobmanagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserPendingJobs();
+
 
   }
 
@@ -102,5 +103,7 @@ export class JobmanagerComponent implements OnInit {
       this.toastr.error(error.error);
     });
   }
+
+
 
 }

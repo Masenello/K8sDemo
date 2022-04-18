@@ -12,5 +12,5 @@ export interface WorkerDescriptor{
 
 export interface JobAvailableCount{
     jobType: JobTypeEnum,
-    jobCount:Number,
+    jobCount:number,
 }
