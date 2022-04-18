@@ -20,6 +20,7 @@ export class JobmanagerComponent implements OnInit {
 
   internalJobsList =new Subject<JobStatusMessage[]>();
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
+  jobsListHeader:string;
 
   constructor(public accountService: AccountService,
     public jobService : JobService,
@@ -43,13 +44,13 @@ export class JobmanagerComponent implements OnInit {
         userPendingJobs.forEach(element => {
           this.updateInternalJobsList(element);
         });
+        
       })
-
-
   }
 
   ngOnInit(): void {
     this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username);
+
   }
 
   updateInternalJobsList(jobStatus:JobStatusMessage)
@@ -62,16 +63,14 @@ export class JobmanagerComponent implements OnInit {
     }
     else
     {
-
         //Update job in list
         tmpJob.progressPercentage = jobStatus.progressPercentage;
         tmpJob.status = jobStatus.status;
         tmpJob.userMessage = jobStatus.userMessage;
-      
-
     }
-
+    //TODO Remove completed jobs from list, now they are only hidden!
     this.internalJobsList.next(this.currentJobsTmp);
+    this.jobsListHeader= `${from(this.currentJobsTmp).where(x=>x.progressPercentage<100).count()} Pending jobs for user: ${this.accountService.currentUser.value.username}`;
   }
 
   sendTestJobRequest() {

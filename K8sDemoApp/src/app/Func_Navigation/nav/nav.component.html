@@ -1,5 +1,5 @@
 <!-- upper bar -->
-<mat-toolbar>
+<mat-toolbar id="app-toolbar">
   <span>My Application</span>
 
   <button mat-icon-button [matMenuTriggerFor]="menu"
@@ -16,7 +16,7 @@
 </mat-toolbar>
 
 <!-- SideNav -->
-<mat-sidenav-container class="example-container">
+<mat-sidenav-container class="example-container" >
   <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64"  >
     
       <!-- menus built based on configuration in nav-menus.ts -->

@@ -18,7 +18,7 @@ export class AuthorizationInterceptor implements HttpInterceptor {
        let currentUser = this.accountService.currentUser.value;
        if (currentUser && currentUser.token) 
        {
-        console.log(`Sending user token ${currentUser.token}`)
+        //console.log(`Sending user token ${currentUser.token}`)
          request = request.clone({
            setHeaders: {
              Authorization: `Bearer ${currentUser.token}`,
