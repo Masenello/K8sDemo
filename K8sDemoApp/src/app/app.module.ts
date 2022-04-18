@@ -48,6 +48,7 @@ import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor
 import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
 import { JobhistoricalComponent } from './Func_Jobs/jobhistorical/jobhistorical.component';
 import { GuiGridModule } from '@generic-ui/ngx-grid';
+import { DirectorStatusViewerComponent } from './Func_DirectorStatus/director-status-viewer/director-status-viewer.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { GuiGridModule } from '@generic-ui/ngx-grid';
     JobTypeEnumNamePipe,
     LogViewerPipe,
     JobhistoricalComponent,
+    DirectorStatusViewerComponent,
   ],
   imports: [
     BrowserModule,

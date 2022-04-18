@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { JobhistoricalComponent } from 'src/app/Func_Jobs/jobhistorical/jobhistorical.component';
+import { JobmanagerComponent } from 'src/app/Func_Jobs/jobmanager/jobmanager.component';
 
 @Component({
   selector: 'app-async-jobs-test',
@@ -9,7 +10,8 @@ import { JobhistoricalComponent } from 'src/app/Func_Jobs/jobhistorical/jobhisto
 })
 export class AsyncJobsTestComponent implements OnInit {
 
-  @ViewChild(JobhistoricalComponent) child: JobhistoricalComponent;
+  @ViewChild(JobhistoricalComponent) jobsHistoricalComponent: JobhistoricalComponent;
+  @ViewChild(JobmanagerComponent) jobManagerComponent: JobmanagerComponent;
 
   constructor() { }
 
@@ -22,7 +24,12 @@ export class AsyncJobsTestComponent implements OnInit {
     switch(tabChangeEvent.tab.textLabel)
     {
       case "Jobs Historical":
-        this.child.loadData();
+        this.jobsHistoricalComponent.loadData();
+        break;
+      case "Pending Jobs":
+        this.jobManagerComponent.getUserPendingJobs();
+        break;
+
     }
     
 }

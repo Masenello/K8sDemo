@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
+import { DirectorStatusMessage } from '../_models/Hub_Messages/DirectorStatusMessage';
 import { ForwardLogMessage } from '../_models/Hub_Messages/ForwardLogMessage';
 import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 import { LoggedUser } from '../_models/user';
@@ -24,6 +25,7 @@ export class HubService {
   public hubClosedEvent =new Subject();
   public receivedNewLogEvent =new Subject<ForwardLogMessage>();
   public receivedNewJobStatusEvent =new Subject<JobStatusMessage>();
+  public receivedNewDirectorStatusEvent =new Subject<DirectorStatusMessage>();
   public userOnLineEvent =new Subject();
   public userOffLineEvent =new Subject();
 
@@ -73,6 +75,8 @@ export class HubService {
         {this.receivedNewJobStatusEvent.next(data);});
         this.hubConnection?.on("ForwardLogMessage",(data:ForwardLogMessage) => 
         {this.receivedNewLogEvent.next(data);});
+        this.hubConnection?.on("DirectorStatusMessage",(data:DirectorStatusMessage) => 
+        {this.receivedNewDirectorStatusEvent.next(data);});
         this.hubConnection?.on("UserIsOnLine", username => 
         {this.userOnLineEvent.next(username);})
         this.hubConnection?.on("UserIsOffLine", username => 

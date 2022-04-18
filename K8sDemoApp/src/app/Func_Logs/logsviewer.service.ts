@@ -15,11 +15,14 @@ export class LogsviewerService {
   public logMessages : Subject<LogMessage> = new Subject<LogMessage> ();
   public historyMessages : Array<LogMessage> = new Array<LogMessage> ();
 
+
   constructor(private hub: HubService, private logPipe: LogViewerPipe) {
     this.hub.receivedNewLogEvent.subscribe((data:ForwardLogMessage)=>
     {
       this.addLog(data);
     });
+
+
   }
 
     public sendEnableLogView()

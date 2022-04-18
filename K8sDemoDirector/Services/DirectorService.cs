@@ -24,10 +24,15 @@ namespace K8sDemoDirector.Services
         :base(rabbitConnector,logger,cycleTime, workerJob)
         {
             _getJobListJob = workerJob;
+
+            base.MainCycleCompleted += CyclicWorkerMainCycleCompleted;
+
             _workersRegistry = new ConcurrentDictionary<int, WorkerDescriptorDto>();
             _rabbitConnector.Respond<JobRequestAssignMessage, JobRequestAssignResultMessage>(RespondToJobAssignRequest);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
         }
+
+
 
         private void HandleWorkerUnregisterMessage(WorkerUnRegisterToDirectorMessage msg)
         {
@@ -99,6 +104,15 @@ namespace K8sDemoDirector.Services
                 return true;
             } 
             return false;
+        }
+
+        private void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
+        {
+            _rabbitConnector.Publish<DirectorStatusMessage>(new DirectorStatusMessage()
+            {
+                RegisteredWorkers = _workersRegistry.Values.ToList(),
+                JobsList = _getJobListJob.BuildJobsAvailableMessage().JobsList,
+            });
         }
 
     }

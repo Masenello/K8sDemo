@@ -26,6 +26,21 @@ namespace K8sDemoDirector.Jobs
             _insertedJobs = new ConcurrentDictionary<int,JobEntity>();
         }
 
+        public JobsAvailableMessage BuildJobsAvailableMessage()
+        {
+            JobsAvailableMessage msg = new JobsAvailableMessage();
+            foreach(var jobType  in _insertedJobs.ToList().GroupBy(x=>x.Value.Type))
+                {
+                    //Console.WriteLine($"{jobType.Key}:{jobType.Count()}");
+                    msg.JobsList.Add(new JobAvailableCount()
+                    {
+                        JobType = jobType.Key,
+                        JobCount = jobType.Count()
+                    });
+                } 
+                return msg;
+        }
+
         public override void DoWork(object workerParameters)
         {
             try 
@@ -39,17 +54,7 @@ namespace K8sDemoDirector.Jobs
 
                     if(_insertedJobs.Count()>0)
                     {
-                        JobsAvailableMessage msg = new JobsAvailableMessage();
-                        foreach(var jobType  in _insertedJobs.ToList().GroupBy(x=>x.Value.Type))
-                        {
-                            //Console.WriteLine($"{jobType.Key}:{jobType.Count()}");
-                            msg.JobsList.Add(new JobAvailableCount()
-                                {
-                                    JobType = jobType.Key,
-                                    JobCount = jobType.Count()
-                                    });
-                        } 
-                        _rabbitConnector.Publish<JobsAvailableMessage>(msg);
+                        _rabbitConnector.Publish<JobsAvailableMessage>(BuildJobsAvailableMessage());
                     }
                 }
             }     

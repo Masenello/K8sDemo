@@ -39,18 +39,23 @@ export class JobmanagerComponent implements OnInit {
       })
 
       
-      this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username).subscribe((userPendingJobs)=> 
-      {
-        userPendingJobs.forEach(element => {
-          this.updateInternalJobsList(element);
-        });
-        
-      })
+
   }
 
   ngOnInit(): void {
-    this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username);
+    this.getUserPendingJobs();
 
+  }
+
+  getUserPendingJobs()
+  {
+    this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username).subscribe((userPendingJobs)=> 
+    {
+      userPendingJobs.forEach(element => {
+        this.updateInternalJobsList(element);
+      });
+      
+    })
   }
 
   updateInternalJobsList(jobStatus:JobStatusMessage)

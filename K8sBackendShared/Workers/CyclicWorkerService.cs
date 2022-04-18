@@ -20,6 +20,9 @@ namespace K8sBackendShared.Workers
 
         private int _cycleTime = 500;
 
+        public delegate void MainCycleCompletedHandler(object sender, EventArgs e);
+        public event MainCycleCompletedHandler MainCycleCompleted;
+
         public CyclicWorkerService(IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, AbstractWorkerJob workerJob)
         {
             _rabbitConnector = rabbitConnector;
@@ -61,6 +64,10 @@ namespace K8sBackendShared.Workers
                 //Do Work!
                 _workerJob.DoWork(null);
                 //Console.WriteLine("Worker run completed");
+                if (MainCycleCompleted != null)
+                {
+                    MainCycleCompleted(this,new EventArgs());
+                }
             } 
         
         }
