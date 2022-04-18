@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavComponent } from './Func_Navigation/nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +44,7 @@ import { DatabaseTestComponent } from './Pages/SystemTest/database-test/database
 import { AsyncJobsTestComponent } from './Pages/SystemTest/async-jobs-test/async-jobs-test.component';
 import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
 import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnumsPipes';
+import { AuthorizationInterceptor } from './Func_Login/authorization.interceptor';
 
 @NgModule({
   declarations: [
@@ -98,7 +99,9 @@ import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnums
 
 
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

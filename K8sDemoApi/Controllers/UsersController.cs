@@ -23,6 +23,7 @@ namespace K8sDemoApi.Controllers
             return await _context.Users.ToListAsync();
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUserEntity>> GetUser(int id)
         {

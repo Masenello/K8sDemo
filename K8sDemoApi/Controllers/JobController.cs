@@ -26,7 +26,7 @@ namespace K8sDemoApi.Controllers
             _context = context;
         }
         
-        //[Authorize]
+        [Authorize]
         [HttpPost("RequestNewJob")]
         public async Task<ActionResult<RequestNewJobCreationResultMessage>> RequestNewJob(RequestNewJobCreationMessage requestFromClient)
         {
@@ -60,7 +60,7 @@ namespace K8sDemoApi.Controllers
 
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{username}")]
         public async Task<ActionResult<List<JobStatusDto>>> GetUserPendingJobs(string username)
         {
