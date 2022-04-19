@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/Func_Login/account.service';
 import { HubService } from 'src/app/services/hub.service';
@@ -10,6 +10,7 @@ import { JobService } from '../job.service';
 
 import { from } from "linq-to-typescript"
 import { Subject } from 'rxjs';
+import { JobTypeEnumNamePipe } from '../jobEnumsPipes';
 
 @Component({
   selector: 'app-jobmanager',
@@ -17,7 +18,8 @@ import { Subject } from 'rxjs';
   styleUrls: ['./jobmanager.component.css']
 })
 export class JobmanagerComponent implements OnInit {
-
+  
+  @Input() targetJobType: JobTypeEnum;
   internalJobsList =new Subject<JobStatusMessage[]>();
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
   jobsListHeader:string;
@@ -25,7 +27,8 @@ export class JobmanagerComponent implements OnInit {
   constructor(public accountService: AccountService,
     public jobService : JobService,
     private toastr: ToastrService,
-    private hub:HubService) 
+    private hub:HubService,
+    private jobTypeEnumNamePipe:JobTypeEnumNamePipe) 
     {
       //Subscribe to Job updates from HUB
       this.hub.receivedNewJobStatusEvent.subscribe((jobStatus:JobStatusMessage)=> 

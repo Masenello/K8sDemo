@@ -1,24 +1,26 @@
 <div class="grid-container-element">
-    <div class="grid-child-element-jobsQueue">
-      <!-- Job commands -->
+    <!-- Job commands -->
+    <div class="grid-child-element-jobsCommands">
       <div>
-        <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
-          test job request </button>
-        <div>{{jobsListHeader}}</div>
+        <button mat-mini-fab color="primary" aria-label="Send test job request" (click)="sendTestJobRequest()" style="margin: 2px;">
+            <mat-icon>add</mat-icon>
+          </button>
+        <!-- {{jobsListHeader}} -->
       </div>
-      <!-- Job Queue -->
+    </div>
+    <!-- Job Queue -->
+    <div class="grid-child-element-jobsQueue">
       <div class="cdk-virtual-scroll-data-source-example">
-        <cdk-virtual-scroll-viewport orientation="vertical" itemSize="10" class="example-viewport">
+        <cdk-virtual-scroll-viewport orientation="vertical" itemSize="10" class="example-viewport ">
           <div *ngFor="let job of (internalJobsList|async)">
             <app-jobstatus [job]="job" class="example-item"></app-jobstatus>
           </div>
         </cdk-virtual-scroll-viewport>
       </div>
     </div>
-  
+  <!-- Job status chart -->
   <div class="grid-child-element-jobStatusChart">
-      <!-- Job status chart -->
-      <app-director-status-viewer></app-director-status-viewer>
+      <app-job-type-status [targetJobType]="targetJobType" ></app-job-type-status>
   </div>
 </div>
 

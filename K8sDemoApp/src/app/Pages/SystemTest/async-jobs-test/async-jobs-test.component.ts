@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { JobhistoricalComponent } from 'src/app/Func_Jobs/jobhistorical/jobhistorical.component';
 import { JobmanagerComponent } from 'src/app/Func_Jobs/jobmanager/jobmanager.component';
+import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
 
 @Component({
   selector: 'app-async-jobs-test',
@@ -12,6 +13,8 @@ export class AsyncJobsTestComponent implements OnInit {
 
   @ViewChild(JobhistoricalComponent) jobsHistoricalComponent: JobhistoricalComponent;
   @ViewChild(JobmanagerComponent) jobManagerComponent: JobmanagerComponent;
+
+  targetJobType1: JobTypeEnum = JobTypeEnum.test
 
   constructor() { }
 
