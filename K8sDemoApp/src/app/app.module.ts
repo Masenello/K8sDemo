@@ -51,6 +51,7 @@ import { GuiGridModule } from '@generic-ui/ngx-grid';
 import { DirectorStatusViewerComponent } from './Func_DirectorStatus/director-status-viewer/director-status-viewer.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { JobTypeStatusComponent } from './Func_DirectorStatus/job-type-status/job-type-status.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { JobTypeStatusComponent } from './Func_DirectorStatus/job-type-status/jo
     GuiGridModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
-    })
+    }),
+    ScrollingModule
 
 
   ],

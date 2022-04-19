@@ -44,8 +44,6 @@ export class JobmanagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserPendingJobs();
-
-
   }
 
   getUserPendingJobs()

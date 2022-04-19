@@ -1,13 +1,29 @@
-<app-director-status-viewer></app-director-status-viewer>
-  <div>
-    <div><span>{{jobsListHeader}}</span></div>
-    <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
-      test job request </button>
-  </div>
-  <div>
-    <div *ngFor="let job of (internalJobsList|async)" > 
-        <div >
-          <app-jobstatus [job]="job" style="display: flex;"></app-jobstatus>
-        </div>
+<div class="grid-container-element">
+    <div class="grid-child-element-jobsQueue">
+      <!-- Job commands -->
+      <div>
+        <button type="button" class="btn btn-primary" (click)="sendTestJobRequest()" matTooltip="Send test job request">Send
+          test job request </button>
+        <div>{{jobsListHeader}}</div>
+      </div>
+      <!-- Job Queue -->
+      <div class="cdk-virtual-scroll-data-source-example">
+        <cdk-virtual-scroll-viewport orientation="vertical" itemSize="10" class="example-viewport">
+          <div *ngFor="let job of (internalJobsList|async)">
+            <app-jobstatus [job]="job" class="example-item"></app-jobstatus>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
     </div>
+  
+  <div class="grid-child-element-jobStatusChart">
+      <!-- Job status chart -->
+      <app-director-status-viewer></app-director-status-viewer>
   </div>
+</div>
+
+
+
+
+
+
