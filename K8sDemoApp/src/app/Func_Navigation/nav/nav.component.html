@@ -1,18 +1,25 @@
 <!-- upper bar -->
-<mat-toolbar id="app-toolbar">
-  <span>My Application</span>
+<mat-toolbar class="app-toolbar">
+  <span>K8sDemoApp</span>
+  <span class="example-spacer"></span>
 
+  <!-- Logged user icon and name -->
   <button mat-icon-button [matMenuTriggerFor]="menu"
-   *ngIf="accountService.currentUser|async as loggedInUser">
+   *ngIf="accountService.currentUser|async as loggedInUser"
+   class="userIcon">
     <mat-icon>face</mat-icon>
     <span>{{loggedInUser.username}}</span>
   </button>
-  <mat-menu #menu="matMenu">
+  
+  <!-- User functions menu -->
+  <mat-menu #menu="matMenu" >
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Log out</span>
     </button>
   </mat-menu>
+
+  <span class="example-spacer-small"></span>
 </mat-toolbar>
 
 <!-- SideNav -->

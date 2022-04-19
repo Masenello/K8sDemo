@@ -1,16 +1,17 @@
-#userIcon {
+.userIcon {
     margin: 10;
-    color: white;
+    color: black;
     }
 
-#userNameLabel{
-    font-weight: bold;
-    color: white;
-    font-size: large;
+
+.example-spacer {
+   width: 80%;
 }
+.example-spacer-small {
+    width: 10%;
+ }
 
-
-#app-toolbar {
+.app-toolbar {
     position: sticky;
     position: -webkit-sticky; /* For macOS/iOS Safari */
     top: 0; /* Sets the sticky toolbar to be on top */
