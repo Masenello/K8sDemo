@@ -10,13 +10,19 @@
     </div>
     <!-- Job Queue -->
     <div class="grid-child-element-jobsQueue">
-      <div class="cdk-virtual-scroll-data-source-example">
-        <cdk-virtual-scroll-viewport orientation="vertical" itemSize="10" class="example-viewport ">
+      <div class="cdk-virtual-scroll-data-source-example" 
+      >
+        <div *ngIf="(internalJobsListActiveJobsNumber|async)==0">
+            No jobs in queue
+        </div>
+        <cdk-virtual-scroll-viewport orientation="vertical" itemSize="10" class="example-viewport "
+        *ngIf="(internalJobsListActiveJobsNumber|async)>0">
           <div *ngFor="let job of (internalJobsList|async)">
             <app-jobstatus [job]="job" class="example-item"></app-jobstatus>
           </div>
         </cdk-virtual-scroll-viewport>
       </div>
+   
     </div>
   <!-- Job status chart -->
   <div class="grid-child-element-jobStatusChart">

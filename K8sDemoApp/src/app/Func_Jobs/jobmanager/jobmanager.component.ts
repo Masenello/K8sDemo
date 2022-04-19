@@ -9,7 +9,7 @@ import { JobStatusMessage } from 'src/app/_models/Hub_Messages/JobStatusMessage'
 import { JobService } from '../job.service';
 
 import { from } from "linq-to-typescript"
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { JobTypeEnumNamePipe } from '../jobEnumsPipes';
 
 @Component({
@@ -23,6 +23,7 @@ export class JobmanagerComponent implements OnInit {
   internalJobsList =new Subject<JobStatusMessage[]>();
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
   jobsListHeader:string;
+  internalJobsListActiveJobsNumber =new BehaviorSubject<number>(0);
 
   constructor(public accountService: AccountService,
     public jobService : JobService,
@@ -77,7 +78,8 @@ export class JobmanagerComponent implements OnInit {
     }
     //TODO Remove completed jobs from list, now they are only hidden!
     this.internalJobsList.next(this.currentJobsTmp);
-    this.jobsListHeader= `${from(this.currentJobsTmp).where(x=>x.progressPercentage<100).count()} Pending jobs for user: ${this.accountService.currentUser.value.username}`;
+    this.jobsListHeader= `${from(this.currentJobsTmp).where(x=>x.status == JobStatusEnum.completed).count()} Pending jobs for user: ${this.accountService.currentUser.value.username}`;
+    this.internalJobsListActiveJobsNumber.next(from(this.currentJobsTmp).where(x=>x.status != JobStatusEnum.completed).count())
   }
 
   sendTestJobRequest() {

@@ -1,6 +1,8 @@
+import { DatePipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { from } from 'linq-to-typescript';
 import { Subject } from 'rxjs/internal/Subject';
+import { environment } from 'src/environments/environment';
 import { AccountService } from '../Func_Login/account.service';
 import { HubService } from '../services/hub.service';
 import { JobTypeEnum } from '../_enum/JobTypeEnum';
@@ -13,7 +15,7 @@ import { jobChartDescriptor } from '../_models/jobChartDescriptor';
 export class DirectorStatusService {
 
   public newDirectorStatus : Subject<DirectorStatusMessage> = new Subject<DirectorStatusMessage> ();
-
+  datePipe = new DatePipe('en-US');
   directorStatusDataBuffer:Array<DirectorStatusMessage>  = [];
   directorStatusDataBufferMaxPoints = 200
 
@@ -40,6 +42,7 @@ export class DirectorStatusService {
   buildChartData(targetJobType:JobTypeEnum): jobChartDescriptor
   {
     var descriptor: jobChartDescriptor = new jobChartDescriptor()
+    descriptor.chartTitle = `Job type: ${JobTypeEnum[targetJobType]} status`
     if (this.directorStatusDataBuffer.length == this.directorStatusDataBufferMaxPoints)
     {
       this.directorStatusDataBuffer.shift()
@@ -47,7 +50,7 @@ export class DirectorStatusService {
 
     this.directorStatusDataBuffer.forEach((dataPoint)=>
     {
-      descriptor.xAxisData.push(new Date())
+      descriptor.xAxisData.push(this.datePipe.transform(new Date(), environment.dateTimeFormat))
       descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).where(x=>x.workerJobType == targetJobType).count())
       var jobsOfTargetType = from(dataPoint.jobsList).firstOrDefault(x=>x.jobType == targetJobType)
       if (jobsOfTargetType == null)

@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { from } from 'linq-to-typescript';
 import { JobTypeEnum } from 'src/app/_enum/JobTypeEnum';
 import { DirectorStatusMessage } from 'src/app/_models/Hub_Messages/DirectorStatusMessage';
 import { jobChartDescriptor } from 'src/app/_models/jobChartDescriptor';
@@ -17,9 +16,6 @@ export class JobTypeStatusComponent implements OnInit {
 
   options : any
 
-  xAxisDataBuffer:Array<Date>  = [];
-  workersBuffer :Array<number>  = [];
-  jobsBuffer :Array<number> = [];
  
 
   constructor(private directorStatusService:DirectorStatusService) {
@@ -31,18 +27,20 @@ export class JobTypeStatusComponent implements OnInit {
 
   buildChart(chartDecriptor: jobChartDescriptor)
   {
-    let xAxisData:Array<Date>  = chartDecriptor.xAxisData
-    let workers :Array<number>  = chartDecriptor.yWorkerAxisData
-    let jobs :Array<number> = chartDecriptor.yJobsAxisData
 
     this.options= {
+      title: {
+        text: chartDecriptor.chartTitle,
+        x: 'center'
+      },
       legend: {
         data: ['Workers', 'Unassigned Jobs'],
         align: 'left',
+        y: 'bottom',
       },
       tooltip: {},
       xAxis: {
-        data: xAxisData,
+        data: chartDecriptor.xAxisData,
         silent: false,
         splitLine: {
           show: false,
@@ -54,13 +52,13 @@ export class JobTypeStatusComponent implements OnInit {
           name: 'Workers',
           type: 'line',
           showSymbol: false,
-          data: workers,
+          data: chartDecriptor.yWorkerAxisData,
         },
         {
           name: 'Unassigned Jobs',
           type: 'line',
           showSymbol: false,
-          data: jobs,
+          data: chartDecriptor.yJobsAxisData,
         },
       ],
     }

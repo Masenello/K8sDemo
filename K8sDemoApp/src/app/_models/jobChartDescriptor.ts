@@ -1,5 +1,6 @@
 export class jobChartDescriptor{
-    xAxisData: Array<Date> = new Array<Date>();
+    chartTitle:string ;
+    xAxisData: Array<string> = new Array<string>();
     yWorkerAxisData:Array<number>= new Array<number>();
     yJobsAxisData:Array<number>= new Array<number>();
 }
