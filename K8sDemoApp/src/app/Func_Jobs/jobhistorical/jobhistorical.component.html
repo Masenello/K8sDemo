@@ -1,9 +1,20 @@
-<Div>
-    <button gui-button type="submit" (click)="loadData()">Refresh</button>
-    <gui-grid [source]="jobsSource"
-          [columns]="jobGridcolumns"
-          [paging]="paging"
-          [loading]="loading">
-    </gui-grid>
-</Div>
+<div  class="grid-container-element">
+    <!-- Commands -->
+    <div class="grid-child-element-jobsCommands">
+        <button mat-mini-fab color="primary" aria-label="Refresh data from database" (click)="manualLoadData()" style="margin: 2px;">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+    <!-- Table -->
+    <div class="grid-child-element-table">
+      <gui-grid style="margin: 2px;"
+            [source]="jobsSource"
+            [columns]="jobGridcolumns"
+            [paging]="paging"
+            [loading]="loading"
+            [sorting]="sorting"
+            >
+      </gui-grid>
+    </div>
+</div>
 

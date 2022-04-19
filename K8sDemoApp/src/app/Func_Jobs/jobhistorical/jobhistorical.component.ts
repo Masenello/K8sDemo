@@ -1,8 +1,11 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { GuiColumn, GuiPaging, GuiPagingDisplay } from '@generic-ui/ngx-grid';
+import { GuiColumn, GuiDataType, GuiPaging, GuiPagingDisplay, GuiSorting, GuiSortingOrder } from '@generic-ui/ngx-grid';
 import { from } from 'linq-to-typescript';
+import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/Func_Login/account.service';
 import { Job } from 'src/app/_models/API_Messages/Job';
+import { environment } from 'src/environments/environment';
 import { JobService } from '../job.service';
 import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from '../jobEnumsPipes';
 
@@ -13,11 +16,18 @@ import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from '../jobEnumsPipes';
 })
 export class JobhistoricalComponent implements OnInit {
   
+  datePipe = new DatePipe('en-US');
   jobsSource =new Array<Job>();
   jobGridcolumns: Array<GuiColumn> = [
     {
       header: 'Id',
-      field: 'jobId'
+      field: 'jobId',
+      type: GuiDataType.NUMBER,
+      sorting: {
+        enabled: true,
+        order:GuiSortingOrder.DESC
+        
+    }
     },
     {
       header: 'Job Type',
@@ -31,15 +41,18 @@ export class JobhistoricalComponent implements OnInit {
     },
     {
       header: 'Creation Date',
-      field: 'creationDate'
+      field: 'creationDate',
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
     },
     {
       header: 'Start Date',
-      field: 'startDate'
+      field: 'startDate',
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
     },
     {
       header: 'End Date',
-      field: 'endDate'
+      field: 'endDate',
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
     },
     {
       header: 'Description',
@@ -61,11 +74,17 @@ paging: GuiPaging = {
   display: GuiPagingDisplay.BASIC
 };
 
+sorting: GuiSorting = {
+  enabled: true
+};
+
+
 loading = true
 
   constructor(private jobService:JobService, private accountService:AccountService,
     private jobStatusEnumsPipe : JobStatusEnumNamePipe,
-    private jobTypeEnumsPipe : JobTypeEnumNamePipe
+    private jobTypeEnumsPipe : JobTypeEnumNamePipe,
+    private toastr:ToastrService,
     ) {
 
 
@@ -75,16 +94,23 @@ loading = true
     this.loadData();
   }
 
+  manualLoadData()
+  {
+    this.loadData()
+    this.toastr.info("Jobs historical data loaded from database")
+  }
+
 
   loadData()
   {
     this.loading = true
     this.jobService.getUserJobs(this.accountService.currentUser.value.username).subscribe((userJobs)=> 
     {
-      //console.log(userJobs)
-      this.jobsSource = from(userJobs).orderByDescending(x=>x.jobId).toArray();
+      this.jobsSource = userJobs;
     })
     this.loading = false
+
+    
   }
 
 }
