@@ -13,6 +13,12 @@ docker build -t k8sdemologmanager:latest -f k8sdemologmanager/Dockerfile .
 #Build .Net director image
 Set-Location D:\Code\K8sDemo
 docker build -t k8sdemodirector:latest -f k8sdemodirector/Dockerfile .
+#Build RabbitMq image
+Set-Location D:\Code\K8sDemo
+docker build -t k8sdemorabbitmq:latest -f K8sDemoRabbitMq/Dockerfile .
+#Build SqlServer image
+Set-Location D:\Code\K8sDemo
+docker build -t k8sdemosqlserver:latest -f K8sDemoSqlServer/Dockerfile .
 #Build Angular APP image
 Set-Location D:\Code\K8sDemo\K8sDemoApp
 docker build -t k8sdemoapp:latest .

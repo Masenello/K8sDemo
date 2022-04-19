@@ -7,6 +7,12 @@ powershell  .\updateandrun.ps1
 //free docker space
 docker system prune -f
 
+//Get logging driver
+docker inspect -f '{{.HostConfig.LogConfig.Type}}' k8sdemoapicontainer
+
+//Get log path
+docker inspect --format='{{.LogPath}}' k8sdemoapicontainer
+
 //Change tag for specific IMAGE ID
 docker tag 1bfc98e879d5 mynewtag
 

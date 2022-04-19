@@ -1,0 +1,3 @@
+FROM mcr.microsoft.com/mssql/server:2017-latest
+#force redirection of all output to log file inside container
+CMD /opt/mssql/bin/sqlservr >> /home/logs/containerlog.txt 2>&1

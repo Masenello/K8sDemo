@@ -21,6 +21,7 @@ services:
       - k8sDemo-hub-manager
     volumes: 
       - D:\Code\K8sDemo\Certificates\:/etc/nginx/certs
+      - D:\Logs\k8sDemo-app\:/home/logs
 
 
   k8sDemo-api:
@@ -96,7 +97,7 @@ services:
 
   k8sDemo-database:
     container_name: k8sdemoapidbcontainer
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: k8sdemosqlserver:latest
     networks: 
       - identity-network
     ports:
@@ -107,10 +108,11 @@ services:
       SA_PASSWORD: "Pass@Word1"
     volumes:
       - D:\Code\K8sDemo\DbMount\:/var/opt/mssql
+      - D:\Logs\k8sDemo-database\:/home/logs
 
   k8sDemo-rabbitMq:
     container_name: k8sdemorabbitmqcontainer
-    image: rabbitmq:3-management
+    image: k8sdemorabbitmq
     networks: 
       - identity-network
     ports:
@@ -118,4 +120,6 @@ services:
       - 15672:15672
     restart: always
     hostname: k8sDemo-rabbitMq
+    volumes:
+      - D:\Logs\k8sDemo-rabbitMq\:/home/logs
 

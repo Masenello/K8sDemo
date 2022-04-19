@@ -1,0 +1,3 @@
+FROM rabbitmq:3-management
+#force redirection of all output to log file inside container
+CMD rabbitmq-server >> /home/logs/containerlog.txt 2>&1
