@@ -4,3 +4,5 @@
     in subscription solo all'hub e non al logmanager che lo genera.
 
 - Accedere ai log da API (download log + archivi)
+- mettere tasto di refresh in Jobs queue per aggiornare la lista job da API
+- Dare possibilità di rimuovere job da Historical

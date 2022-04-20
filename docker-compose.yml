@@ -7,7 +7,9 @@ services:
   k8sDemo-app:
     container_name: k8sdemoappcontainer
     image: k8sdemoapp
-    #build: .
+    build: 
+      context: K8sDemoApp
+      dockerfile: k8sdemoapp_dockerfile
     restart: always
     networks: 
       - identity-network
@@ -27,7 +29,9 @@ services:
   k8sDemo-api:
     container_name: k8sdemoapicontainer
     image: k8sdemoapi
-    #build: .
+    build: 
+      context: .
+      dockerfile: K8sDemoApi\k8sdemoapi-dockerfile
     restart: always
     networks: 
       - identity-network
@@ -46,7 +50,9 @@ services:
   k8sDemo-hub-manager:
     container_name: k8sdemohubmanagercontainer
     image: k8sdemohubmanager
-    #build: K8sDemoApi/
+    build: 
+      context: .
+      dockerfile: K8sDemoHubManager\k8sdemohubmanager-dockerfile
     restart: always
     networks: 
       - identity-network
@@ -64,6 +70,9 @@ services:
   k8sDemo-director:
     container_name: k8sdemodirectorcontainer
     image: k8sdemodirector
+    build: 
+      context: .
+      dockerfile: K8sDemoDirector\k8sdemodirector-dockerfile
     restart: always
     networks: 
       - identity-network
@@ -75,6 +84,9 @@ services:
   k8sDemo-worker:
     container_name: k8sdemoworkercontainer
     image: k8sdemoworker
+    build: 
+      context: .
+      dockerfile: K8sDemoWorker\k8sdemoworker-dockerfile
     restart: always
     networks: 
       - identity-network
@@ -87,6 +99,9 @@ services:
   k8sDemo-logmanager:
     container_name: k8sdemologmanagercontainer
     image: k8sdemologmanager
+    build: 
+      context: .
+      dockerfile: K8sDemoLogManager\k8sdemologmanager-dockerfile
     restart: always
     networks: 
       - identity-network
@@ -98,6 +113,9 @@ services:
   k8sDemo-database:
     container_name: k8sdemoapidbcontainer
     image: k8sdemosqlserver:latest
+    build: 
+      context: .
+      dockerfile: K8sDemoSqlServer\k8sdemosqlserver-dockerfile
     networks: 
       - identity-network
     ports:
@@ -113,6 +131,9 @@ services:
   k8sDemo-rabbitMq:
     container_name: k8sdemorabbitmqcontainer
     image: k8sdemorabbitmq
+    build: 
+      context: .
+      dockerfile: K8sDemoRabbitMq\k8sdemorabbitmq-dockerfile
     networks: 
       - identity-network
     ports:

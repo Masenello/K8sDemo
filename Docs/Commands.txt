@@ -18,5 +18,10 @@ docker tag 1bfc98e879d5 mynewtag
 
 //Angular string interpolation with `
  this.toastr.info(`Job id: ${data.jobId}: Status: ${JobStatusEnum[data.status]} Percentage: ${data.progressPercentage}`)
- 
+
+//Update all images in docker compose yaml
+docker compose build
+
+//Start docker compose
+docker compose up 
  
