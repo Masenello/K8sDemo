@@ -17,7 +17,7 @@ namespace K8sDemoLogManager.Services
         private readonly  Logger _nlogger; 
         private readonly  IRabbitConnector _rabbitConnector; 
 
-        public RabbitLogReceiverService(IRabbitConnector rabbitConnector):base()
+        public RabbitLogReceiverService(IRabbitConnector rabbitConnector)
         {
             _rabbitConnector = rabbitConnector;
             _nlogger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();

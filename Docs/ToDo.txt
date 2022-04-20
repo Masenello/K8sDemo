@@ -3,5 +3,4 @@
     Si è notato che alcuni log generati dall'hub non venivano ricevuti dal logmanager. Si è quindi creato un nuovo messaggio per il forward dei log 
     in subscription solo all'hub e non al logmanager che lo genera.
 
-- Accedere ai log dei docker da logmanager
-- Modificare logmager in web API per consentire il download dei log da browser
+- Accedere ai log da API (download log + archivi)
