@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: volume-logs
+  name: volume-database-logs
   labels:
     type: local
 spec:
-  storageClassName: hostpath
+  storageClassName: manual
   capacity:
     storage: 100Mi
   accessModes:
-    - ReadWriteMany
+    #ReadWriteOnce = mounted only for one pod
+    - ReadWriteOnce
   hostPath:
-    path: /d/logs/
+    path: /d/logs/k8sDemo-database
   persistentVolumeReclaimPolicy: Retain

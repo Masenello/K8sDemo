@@ -5,11 +5,12 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: hostpath
+  storageClassName: manual
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteMany
+  #ReadWriteOnce = mounted only for one pod
+    - ReadWriteOnce
   hostPath:
-    path: /d/code/k8sDemo/dbmount/
+    path: /d/code/k8sDemo/dbmount
   persistentVolumeReclaimPolicy: Retain
