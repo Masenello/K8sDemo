@@ -4,9 +4,9 @@ networks:
   identity-network:
 
 services:
-  k8sDemo-app:
+  k8sdemo-app:
     container_name: k8sdemoappcontainer
-    image: k8sdemoapp
+    image: masenellomarco/k8sdemoapp:latest
     build: 
       context: K8sDemoApp
       dockerfile: k8sdemoapp_dockerfile
@@ -26,9 +26,9 @@ services:
       - D:\Logs\k8sDemo-app\:/home/logs
 
 
-  k8sDemo-api:
+  k8sdemo-api:
     container_name: k8sdemoapicontainer
-    image: k8sdemoapi
+    image: masenellomarco/k8sdemoapi:latest
     build: 
       context: .
       dockerfile: K8sDemoApi\k8sdemoapi-dockerfile
@@ -47,9 +47,9 @@ services:
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
-  k8sDemo-hub-manager:
+  k8sdemo-hub-manager:
     container_name: k8sdemohubmanagercontainer
-    image: k8sdemohubmanager
+    image: masenellomarco/k8sdemohubmanager:latest
     build: 
       context: .
       dockerfile: K8sDemoHubManager\k8sdemohubmanager-dockerfile
@@ -67,9 +67,9 @@ services:
     volumes:
       - D:\Code\K8sDemo\Certificates\:/app/Infrastructure/Certificate
 
-  k8sDemo-director:
+  k8sdemo-director:
     container_name: k8sdemodirectorcontainer
-    image: k8sdemodirector
+    image: masenellomarco/k8sdemodirector:latest
     build: 
       context: .
       dockerfile: K8sDemoDirector\k8sdemodirector-dockerfile
@@ -81,9 +81,9 @@ services:
       - k8sDemo-rabbitMq
       - k8sDemo-hub-manager
 
-  k8sDemo-worker:
+  k8sdemo-worker:
     container_name: k8sdemoworkercontainer
-    image: k8sdemoworker
+    image: masenellomarco/k8sdemoworker:latest
     build: 
       context: .
       dockerfile: K8sDemoWorker\k8sdemoworker-dockerfile
@@ -96,9 +96,9 @@ services:
       - k8sDemo-hub-manager
       - k8sDemo-director
 
-  k8sDemo-logmanager:
+  k8sdemo-logmanager:
     container_name: k8sdemologmanagercontainer
-    image: k8sdemologmanager
+    image: masenellomarco/k8sdemologmanager:latest
     build: 
       context: .
       dockerfile: K8sDemoLogManager\k8sdemologmanager-dockerfile
@@ -110,9 +110,9 @@ services:
     volumes:
       - D:\Logs\:/app/Logs
 
-  k8sDemo-database:
+  k8sdemo-database:
     container_name: k8sdemoapidbcontainer
-    image: k8sdemosqlserver:latest
+    image: masenellomarco/k8sdemosqlserver:latest
     build: 
       context: .
       dockerfile: K8sDemoSqlServer\k8sdemosqlserver-dockerfile
@@ -128,9 +128,9 @@ services:
       - D:\Code\K8sDemo\DbMount\:/var/opt/mssql
       - D:\Logs\k8sDemo-database\:/home/logs
 
-  k8sDemo-rabbitMq:
+  k8sdemo-rabbitmq:
     container_name: k8sdemorabbitmqcontainer
-    image: k8sdemorabbitmq
+    image: masenellomarco/k8sdemorabbitmq:latest
     build: 
       context: .
       dockerfile: K8sDemoRabbitMq\k8sdemorabbitmq-dockerfile
@@ -140,7 +140,7 @@ services:
       - 5672:5672
       - 15672:15672
     restart: always
-    hostname: k8sDemo-rabbitMq
+    hostname: k8sdemo-rabbitmq
     volumes:
       - D:\Logs\k8sDemo-rabbitMq\:/home/logs
 

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: volume-logs
+  labels:
+    type: local
+spec:
+  storageClassName: hostpath
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /D/Logs
+  persistentVolumeReclaimPolicy: Retain
