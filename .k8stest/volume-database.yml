@@ -11,5 +11,5 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /D/Code/K8sDemo/DbMount
+    path: /d/code/k8sDemo/dbmount/
   persistentVolumeReclaimPolicy: Retain

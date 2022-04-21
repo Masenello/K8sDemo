@@ -11,5 +11,5 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /D/Logs
+    path: /d/logs/
   persistentVolumeReclaimPolicy: Retain

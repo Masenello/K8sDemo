@@ -44,9 +44,11 @@ spec:
       restartPolicy: Always
       volumes:
         - name: k8sdemo-database-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-database-claim0
+          hostPath: 
+            path: /d/Code/K8sDemo/DbMount
+            #type: Directory
         - name: k8sdemo-database-claim1
-          persistentVolumeClaim:
-            claimName: k8sdemo-database-claim1
+          hostPath: 
+            path: /d/Logs/k8sDemo-database
+            #type: Directory
 status: {}
