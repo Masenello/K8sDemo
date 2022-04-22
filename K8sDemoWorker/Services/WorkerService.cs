@@ -27,6 +27,7 @@ namespace K8sDemoWorker.Services
             _rabbitConnector.Subscribe<JobsAvailableMessage>(HandleJobsAvailableMessage);
         }
 
+
         public override Task  StopAsync(CancellationToken stoppingToken)
         {
             _logger.LogInfo($"Worker: {_workerId} unregistering from director");

@@ -6,3 +6,4 @@
 - Accedere ai log da API (download log + archivi)
 - mettere tasto di refresh in Jobs queue per aggiornare la lista job da API
 - Dare possibilità di rimuovere job da Historical
+- Timeout per job 

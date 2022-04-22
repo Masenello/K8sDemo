@@ -41,6 +41,7 @@ namespace K8sDemoDirector.Services
             _workersRegistry = new ConcurrentDictionary<int, WorkerDescriptorDto>();
             _rabbitConnector.Respond<JobRequestAssignMessage, JobRequestAssignResultMessage>(RespondToJobAssignRequest);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
+        
         }
 
 
@@ -70,7 +71,14 @@ namespace K8sDemoDirector.Services
                 {
                     request.WorkerId = RegisterWorker(request.JobType).WorkerId;
                 }
-                //Console.WriteLine($"received request for job of type: {request.JobType}");
+                Console.WriteLine($"received request for job of type: {request.JobType}");
+                if (_getJobListJob._insertedJobs.ToList().Where(x=>x.Value.Type == request.JobType).Count()==0)
+                {
+                    return new JobRequestAssignResultMessage(){
+                        JobId = 0,
+                        WorkerId = request.WorkerId
+                    };
+                }
                 var targetJob = _getJobListJob._insertedJobs.ToList().Where(x=>x.Value.Type == request.JobType).OrderBy(y=>y.Value.CreationDate).FirstOrDefault();
                 JobEntity tmp;
                 _getJobListJob._insertedJobs.TryRemove(targetJob.Key, out tmp);
@@ -170,7 +178,7 @@ namespace K8sDemoDirector.Services
         {
             scalingTarget = directorStatus.GetWorkersNumber(jobType)+1;
             _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-            _logger.LogInfo($"Scaling up workers for job: {jobType}");
+            _logger.LogInfo($"Scaling up workers for job: {jobType} to {scalingTarget}");
         }
 
    
@@ -186,7 +194,7 @@ namespace K8sDemoDirector.Services
                     {
                         scalingTarget = directorStatus.GetWorkersNumber(jobType)-1;
                         _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-                        _logger.LogInfo($"Scaling down workers for job: {jobType}");
+                        _logger.LogInfo($"Scaling down workers for job: {jobType} to {scalingTarget}");
                     }
                 }
             }      
