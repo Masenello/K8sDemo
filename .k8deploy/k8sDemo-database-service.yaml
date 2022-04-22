@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out .kompose
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: k8sdemo-database
+  name: k8sdemo-database
+spec:
+  ports:
+    - name: "1433"
+      port: 1433
+      targetPort: 1433
+      nodePort: 30001
+  selector:
+    io.kompose.service: k8sdemo-database
+  type: LoadBalancer
+status:
+  loadBalancer: {}

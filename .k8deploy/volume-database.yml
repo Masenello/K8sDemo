@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: volume-database
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+  #ReadWriteOnce = mounted only for one pod
+    - ReadWriteOnce
+  hostPath:
+    path: /d/code/k8sDemo/dbmount
+  persistentVolumeReclaimPolicy: Retain
