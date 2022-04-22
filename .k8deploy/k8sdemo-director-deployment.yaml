@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: k8sdemo-director
   name: k8sdemo-director
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       io.kompose.service: k8sdemo-director

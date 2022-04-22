@@ -1,4 +1,5 @@
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.K8s;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
 using K8sDemoDirector.Jobs;
@@ -21,8 +22,10 @@ namespace K8sDemoDirector
         {
             services.AddSingleton<ILogger,RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
+            services.AddSingleton<IK8s, KubernetesConnectorService>();
             services.AddHostedService<DirectorService>(x =>
                 new DirectorService(
+                        x.GetRequiredService<IK8s>(),
                         x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
                         1000,

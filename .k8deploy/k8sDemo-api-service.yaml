@@ -13,7 +13,6 @@ spec:
     - name: "5501"
       port: 5501
       targetPort: 5501
-      nodePort: 30005
   selector:
     io.kompose.service: k8sdemo-api
   type: LoadBalancer

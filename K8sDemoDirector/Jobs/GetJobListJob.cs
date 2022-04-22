@@ -63,5 +63,7 @@ namespace K8sDemoDirector.Jobs
                 _logger.LogError($"Eror processing: {nameof(GetJobListJob)}",e);
             }
         }
+
+        
     }
 }

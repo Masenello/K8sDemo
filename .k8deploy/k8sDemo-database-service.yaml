@@ -13,7 +13,6 @@ spec:
     - name: "1433"
       port: 1433
       targetPort: 1433
-      nodePort: 30001
   selector:
     io.kompose.service: k8sdemo-database
   type: LoadBalancer

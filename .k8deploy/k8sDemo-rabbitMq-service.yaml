@@ -18,5 +18,6 @@ spec:
       targetPort: 15672
   selector:
     io.kompose.service: k8sdemo-rabbitmq
+  type: LoadBalancer
 status:
   loadBalancer: {}

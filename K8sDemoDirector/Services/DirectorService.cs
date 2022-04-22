@@ -1,16 +1,23 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using k8s;
+using k8s.Models;
+using k8s.Util.Common;
 using K8sBackendShared.Data;
 using K8sBackendShared.DTOs;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Jobs;
+using K8sBackendShared.K8s;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Workers;
 using K8sDemoDirector.Jobs;
+using Newtonsoft.Json.Serialization;
 
 namespace K8sDemoDirector.Services
 {
@@ -19,11 +26,15 @@ namespace K8sDemoDirector.Services
         private readonly GetJobListJob _getJobListJob;     
 
         private readonly ConcurrentDictionary<int,WorkerDescriptorDto> _workersRegistry;
+
+
+        private readonly IK8s _k8sConnector;
         
-        public DirectorService(IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
+        public DirectorService(IK8s k8sConnector,IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
         :base(rabbitConnector,logger,cycleTime, workerJob)
         {
             _getJobListJob = workerJob;
+            _k8sConnector = k8sConnector;
 
             base.MainCycleCompleted += CyclicWorkerMainCycleCompleted;
 
@@ -90,7 +101,7 @@ namespace K8sDemoDirector.Services
             WorkerDescriptorDto newWorkerDescriptor = new WorkerDescriptorDto()
             {
                 WorkerJobType = workerJobType,
-                WorkerId =$"WORKER_{workerJobType}_{_workersRegistry.Count(x=>x.Value.WorkerJobType == workerJobType)+1}" 
+                WorkerId =$"WORKER_{workerJobType}_{DateTime.Now.Ticks}" 
             };
             _workersRegistry.TryAdd(_workersRegistry.Count+1,newWorkerDescriptor);
             _logger.LogInfo($"New worker registered with Id: {newWorkerDescriptor.WorkerId}");
@@ -106,14 +117,79 @@ namespace K8sDemoDirector.Services
             return false;
         }
 
+
+        int cycleCounter = 0;
         private void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-            _rabbitConnector.Publish<DirectorStatusMessage>(new DirectorStatusMessage()
+            DirectorStatusMessage newStatus = new DirectorStatusMessage()
             {
                 RegisteredWorkers = _workersRegistry.Values.ToList(),
                 JobsList = _getJobListJob.BuildJobsAvailableMessage().JobsList,
-            });
+            };
+            _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
+
+            if(cycleCounter % 10 == 0)
+            {
+                MonitorWorkNumber(newStatus);
+            }
+            
+
+
+            cycleCounter+=1;
         }
 
+
+
+        private void MonitorWorkNumber(DirectorStatusMessage directorStatus)
+        {
+            foreach(var jobType in directorStatus.GetWorkersTypes())
+            {
+                _logger.LogInfo($"Job count: {directorStatus.GetJobsNumber(jobType)}");
+                //TODO parametrize treshold
+                if (directorStatus.GetJobsNumber(jobType) > 4)
+                {
+                    //Spawn 1 worker
+                    WorkersScaleUp(directorStatus,jobType);
+                }
+
+                if (directorStatus.GetJobsNumber(jobType) == 0)
+                {
+                    //Kill worker
+                    WorkersScaleDown(directorStatus,jobType);
+                }
+            }
+        }
+
+        int scalingTarget = 0;
+        
+        
+
+
+        //TODO parametric on worker pod deployment
+        private void WorkersScaleUp(DirectorStatusMessage directorStatus, JobType jobType)
+        {
+            scalingTarget = directorStatus.GetWorkersNumber(jobType)+1;
+            _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+            _logger.LogInfo($"Scaling up workers for job: {jobType}");
+        }
+
+   
+        private void WorkersScaleDown(DirectorStatusMessage directorStatus, JobType jobType)
+        {
+            //Always leave at least one worker 
+            if (directorStatus.GetWorkersNumber(jobType)>1)
+            {
+                //No jobs of that type must be running
+                using (var _context = (new DataContextFactory()).CreateDbContext(null))
+                {
+                    if (_context.Jobs.Where(x=>x.Type == jobType && x.Status==JobStatus.running).Count() == 0)
+                    {
+                        scalingTarget = directorStatus.GetWorkersNumber(jobType)-1;
+                        _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+                        _logger.LogInfo($"Scaling down workers for job: {jobType}");
+                    }
+                }
+            }      
+        }
     }
 }
