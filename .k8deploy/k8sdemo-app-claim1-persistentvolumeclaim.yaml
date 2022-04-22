@@ -1,11 +1,14 @@
+#Claim logs
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-logmanager-claim0
-  name: k8sdemo-logmanager-claim0
+    io.kompose.service: k8sdemo-app-claim1
+  name: k8sdemo-app-claim1
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

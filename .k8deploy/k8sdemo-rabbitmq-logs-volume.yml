@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: volume-database-logs
+  name: k8sdemo-rabbitmq-logs-volume
   labels:
     type: local
 spec:
@@ -12,5 +12,5 @@ spec:
     #ReadWriteOnce = mounted only for one pod
     - ReadWriteOnce
   hostPath:
-    path: /d/logs/k8sDemo-database
+    path: /d/logs/k8sDemo-rabbitmq
   persistentVolumeReclaimPolicy: Retain

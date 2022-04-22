@@ -3,12 +3,13 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-database-claim1
-  name: k8sdemo-database-claim1
+    io.kompose.service: k8sdemo-api-claim0
+  name: k8sdemo-api-claim0
 spec:
+  storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
   resources:
     requests:
-      storage: 100Mi
+      storage: 10Mi
 status: {}

@@ -1,3 +1,5 @@
+#claim certificates
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,9 +8,10 @@ metadata:
     io.kompose.service: k8sdemo-hub-manager-claim0
   name: k8sdemo-hub-manager-claim0
 spec:
+  storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
   resources:
     requests:
-      storage: 100Mi
+      storage: 10Mi
 status: {}

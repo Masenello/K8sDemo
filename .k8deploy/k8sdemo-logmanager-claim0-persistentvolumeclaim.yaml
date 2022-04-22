@@ -1,11 +1,14 @@
+#claim logs
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-rabbitmq-claim0
-  name: k8sdemo-rabbitmq-claim0
+    io.kompose.service: k8sdemo-logmanager-claim0
+  name: k8sdemo-logmanager-claim0
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

@@ -6,16 +6,16 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-database
-  name: k8sdemo-database
+    io.kompose.service: k8sdemo-hub-manager
+  name: k8sdemo-hub-manager
 spec:
   ports:
-    - name: "1433"
-      port: 1433
-      targetPort: 1433
-      nodePort: 30001
+    - name: "5001"
+      port: 5001
+      targetPort: 5001
+      nodePort: 30006
   selector:
-    io.kompose.service: k8sdemo-database
+    io.kompose.service: k8sdemo-hub-manager
   type: LoadBalancer
 status:
   loadBalancer: {}

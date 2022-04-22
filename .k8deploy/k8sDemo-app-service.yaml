@@ -13,13 +13,17 @@ spec:
     - name: "80"
       port: 80
       targetPort: 80
+      nodePort: 30002
     - name: "443"
       port: 443
       targetPort: 443
+      nodePort: 30003
     - name: "8080"
       port: 8080
       targetPort: 8080
+      nodePort: 30004
   selector:
     io.kompose.service: k8sdemo-app
+  type: LoadBalancer
 status:
   loadBalancer: {}

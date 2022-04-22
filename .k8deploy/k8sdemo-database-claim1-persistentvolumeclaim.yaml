@@ -1,3 +1,5 @@
+#Claims logs folder 
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
