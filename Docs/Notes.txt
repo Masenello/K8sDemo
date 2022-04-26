@@ -1,0 +1,49 @@
+
+#apply all yaml config
+kubectl apply -f .k8deploy
+
+#delete all yaml config
+kubectl delete -f .k8deploy
+
+#view all
+kubectl get all
+
+#view volumes
+kubectl get pv
+
+#view volumes claims
+kubectl get pvc
+
+#delete volume claims
+kubectl delete pvc [CLAIMNAME]
+
+#get pod names
+kubectl get pod
+
+#get info on pod
+kubectl describe pod [PODNAME]
+
+kubectl port-forward [PODNAME] 1433:1433
+
+#get pod log
+kubectl logs [PODNAME]
+
+
+https://localhost:5501/api/GetTestData
+
+
+sqlcmd -S localhost,1433 -U sa -P Pass@Word1
+
+kubectl apply -f .k8stest/volume-database.yml
+kubectl apply -f .k8stest/volume-logs.yml
+
+kubectl apply -f .k8stest/identity-network-networkpolicy.yaml
+
+kubectl apply -f .k8stest/k8sdemo-database-claim0-persistentvolumeclaim.yaml
+kubectl apply -f .k8stest/k8sdemo-database-claim1-persistentvolumeclaim.yaml
+
+kubectl apply -f .k8stest/k8sDemo-database-service.yaml
+kubectl apply -f .k8stest/k8sdemo-database-deployment.yaml
+
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6IjdGQ194T3ZEXzJqR2x0Y2s2WFhoX2JrczhjVzNiMXZoVHlyM2RBdDRTbFEifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRhc2hib2FyZC1hZG1pbi1zYS10b2tlbi1sa3RtOSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjY2YwMWMxMC0xN2E1LTRlMDctODUyYS01OWU5MzE2ODA2MDAiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDpkYXNoYm9hcmQtYWRtaW4tc2EifQ.b2DQs72lEoiFsfxuqQCEGdx-AEul2lTpbYhk6k3Mjo6DM93s9AfW8zY5S4dhEv26_vkWnyT2s-rU9ekeEkLe_uwQY35wiqMcf454HwcZjMHjPgNmioAos0IVvv6m52BLnlPTz0aFpT8L2kocaaRva6gjfGdElUqrZlsk4ZzRlG3E3rFq7StgTFZV9cwO5VMzgCzmauX4FbkpH34FXed96mnAuT60eJlxprkPDFYF0r-xepc_0ifH7ketjbZ9Sp7IWvv5fzALGmJrmdC1E3xgmuN9uNNruiKrZWtihCtyNU39rebXrAYH9u3BxJekRxDDbBba3dyTAGAIMivj7rnRqQ
