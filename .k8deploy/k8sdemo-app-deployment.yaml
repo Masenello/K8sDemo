@@ -36,14 +36,9 @@ spec:
           volumeMounts:
             - mountPath: /etc/nginx/certs
               name: k8sdemo-app-claim0
-            - mountPath: /home/logs
-              name: k8sdemo-app-claim1
       restartPolicy: Always
       volumes:
         - name: k8sdemo-app-claim0
           persistentVolumeClaim:
             claimName: k8sdemo-app-claim0
-        - name: k8sdemo-app-claim1
-          persistentVolumeClaim:
-            claimName: k8sdemo-app-claim1
 status: {}

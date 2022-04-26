@@ -12,4 +12,6 @@ COPY --from=build-step /app/dist/K8sDemoApp /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/nginx.conf
 
 #force redirection of all output to log file inside container
-CMD nginx -g 'daemon off;' >> /home/logs/containerlog.txt 2>&1
+#CMD nginx -g 'daemon off;' >> /home/logs/containerlog.txt 2>&1
+
+CMD nginx -g 'daemon off;'

@@ -39,14 +39,9 @@ spec:
           volumeMounts:
             - mountPath: /var/opt/mssql
               name: k8sdemo-database-claim0
-            - mountPath: /home/logs
-              name: k8sdemo-database-claim1
       restartPolicy: Always
       volumes:
         - name: k8sdemo-database-claim0
           persistentVolumeClaim:
             claimName: k8sdemo-database-claim0
-        - name: k8sdemo-database-claim1
-          persistentVolumeClaim:
-            claimName: k8sdemo-database-claim1
 status: {}

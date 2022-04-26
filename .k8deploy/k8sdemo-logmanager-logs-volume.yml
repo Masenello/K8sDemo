@@ -12,5 +12,5 @@ spec:
     #ReadWriteOnce = mounted only for one pod
     - ReadWriteOnce
   hostPath:
-    path: /d/logs/k8sDemo-applicationcluster
+    path: /d/logs/
   persistentVolumeReclaimPolicy: Retain

@@ -32,13 +32,6 @@ spec:
             - containerPort: 5672
             - containerPort: 15672
           resources: {}
-          volumeMounts:
-            - mountPath: /home/logs
-              name: k8sdemo-rabbitmq-claim0
       hostname: k8sdemo-rabbitmq
       restartPolicy: Always
-      volumes:
-        - name: k8sdemo-rabbitmq-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-rabbitmq-claim0
 status: {}
