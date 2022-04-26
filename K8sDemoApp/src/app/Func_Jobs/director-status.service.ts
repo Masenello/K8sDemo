@@ -50,7 +50,8 @@ export class DirectorStatusService {
 
     this.directorStatusDataBuffer.forEach((dataPoint)=>
     {
-      descriptor.xAxisData.push(this.datePipe.transform(new Date(), environment.dateTimeFormat))
+      descriptor.xAxisData.push(this.datePipe.transform(dataPoint.timestamp, environment.dateTimeFormat))
+      //console.log(dataPoint)
       descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).where(x=>x.workerJobType == targetJobType).count())
       var jobsOfTargetType = from(dataPoint.jobsList).firstOrDefault(x=>x.jobType == targetJobType)
       if (jobsOfTargetType == null)

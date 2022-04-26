@@ -131,6 +131,7 @@ namespace K8sDemoDirector.Services
         {
             DirectorStatusMessage newStatus = new DirectorStatusMessage()
             {
+                Timestamp = DateTime.Now,
                 RegisteredWorkers = _workersRegistry.Values.ToList(),
                 JobsList = _getJobListJob.BuildJobsAvailableMessage().JobsList,
             };
