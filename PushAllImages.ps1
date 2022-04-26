@@ -1,4 +1,4 @@
-docker login -u masenellomarco
+docker login -u masenellomarco -p Mangusta1!
 
 docker push masenellomarco/k8sdemoapi:latest
 docker push masenellomarco/k8sdemodirector:latest
