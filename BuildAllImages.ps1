@@ -25,10 +25,10 @@ docker build -t masenellomarco/k8sdemoapp:latest -f k8sdemoapp_dockerfile .
 
 #*********************************   AUX      **********************************************************
 #Build RabbitMq image
-#Set-Location D:\Code\K8sDemo
-#docker build -t masenellomarco/k8sdemorabbitmq:latest -f K8sDemoRabbitMq/k8sdemorabbitmq-dockerfile .
+Set-Location D:\Code\K8sDemo
+docker build -t masenellomarco/k8sdemorabbitmq:latest -f K8sDemoRabbitMq/k8sdemorabbitmq-dockerfile .
 
 #Build SqlServer image
-#Set-Location D:\Code\K8sDemo
-#docker build -t masenellomarco/k8sdemosqlserver:latest -f K8sDemoSqlServer/k8sdemosqlserver-dockerfile .
+Set-Location D:\Code\K8sDemo
+docker build -t masenellomarco/k8sdemosqlserver:latest -f K8sDemoSqlServer/k8sdemosqlserver-dockerfile .
 

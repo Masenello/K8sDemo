@@ -4,6 +4,7 @@ metadata:
   name: k8sdemo-database-data-volume
   labels:
     type: local
+    forceBinding: k8sdemo-database-data-volume
 spec:
   storageClassName: manual
   capacity:

@@ -14,4 +14,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    #force selection of specific volume
+    matchLabels:
+      type: local
+      forceBinding: k8sdemo-database-data-volume
 status: {}

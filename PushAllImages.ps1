@@ -7,5 +7,5 @@ docker push masenellomarco/k8sdemohubmanager:latest
 docker push masenellomarco/k8sdemologmanager:latest
 docker push masenellomarco/k8sdemoapp:latest
 
-#docker push masenellomarco/k8sdemosqlserver:latest
-#docker push masenellomarco/k8sdemorabbitmq:latest
+docker push masenellomarco/k8sdemosqlserver:latest
+docker push masenellomarco/k8sdemorabbitmq:latest

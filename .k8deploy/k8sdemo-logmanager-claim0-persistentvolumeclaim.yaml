@@ -14,4 +14,9 @@ spec:
   resources:
     requests:
       storage: 100Mi
+  selector:
+  #force selection of specific volume
+    matchLabels: 
+      type: local
+      forceBinding: k8sdemo-logmanager-logs-volume
 status: {}

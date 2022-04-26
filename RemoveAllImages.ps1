@@ -4,5 +4,5 @@ docker rmi masenellomarco/k8sdemohubmanager
 docker rmi masenellomarco/k8sdemoapi
 docker rmi masenellomarco/k8sdemoworker
 docker rmi masenellomarco/k8sdemodirector
-#docker rmi masenellomarco/k8sdemorabbitmq
-#docker rmi masenellomarco/k8sdemosqlserver
+docker rmi masenellomarco/k8sdemorabbitmq
+docker rmi masenellomarco/k8sdemosqlserver

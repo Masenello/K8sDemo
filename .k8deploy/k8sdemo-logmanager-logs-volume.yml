@@ -4,6 +4,7 @@ metadata:
   name: k8sdemo-logmanager-logs-volume
   labels:
     type: local
+    forceBinding: k8sdemo-logmanager-logs-volume
 spec:
   storageClassName: manual
   capacity:
