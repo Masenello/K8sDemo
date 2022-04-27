@@ -1,5 +1,5 @@
 #Docker Hub login
-docker login -u masenellomarco -p Mangusta1!
+docker login -u masenellomarco 
 
 #Delete all deployments
 kubectl delete -f .k8deploy
