@@ -5,14 +5,11 @@ import { jobChartDescriptor } from 'src/app/_models/jobChartDescriptor';
 import { DirectorStatusService } from '../director-status.service';
 
 @Component({
-  selector: 'app-job-type-status',
-  templateUrl: './job-type-status.component.html',
-  styleUrls: ['./job-type-status.component.css']
+  selector: 'app-director-status-chart',
+  templateUrl: './director-status-chart.component.html',
+  styleUrls: ['./director-status-chart.component.css']
 })
-export class JobTypeStatusComponent implements OnInit {
-
-  @Input() targetJobType: JobTypeEnum;
-
+export class DirectorStatusChartComponent implements OnInit {
 
   options : any
 
@@ -20,7 +17,7 @@ export class JobTypeStatusComponent implements OnInit {
 
   constructor(private directorStatusService:DirectorStatusService) {
     this.directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage)=>{
-      this.buildChart(this.directorStatusService.buildChartData(this.targetJobType))
+      this.buildChart(this.directorStatusService.buildChartData())
 
     })
   }
@@ -34,7 +31,7 @@ export class JobTypeStatusComponent implements OnInit {
         x: 'center'
       },
       legend: {
-        data: ['Workers', 'Unassigned Jobs'],
+        data: ['Workers', 'Active Jobs'],
         align: 'left',
         y: 'bottom',
       },
@@ -55,7 +52,7 @@ export class JobTypeStatusComponent implements OnInit {
           data: chartDecriptor.yWorkerAxisData,
         },
         {
-          name: 'Unassigned Jobs',
+          name: 'Active Jobs',
           type: 'line',
           showSymbol: false,
           data: chartDecriptor.yJobsAxisData,

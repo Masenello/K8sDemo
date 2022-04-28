@@ -4,15 +4,10 @@ import { JobTypeEnum } from "src/app/_enum/JobTypeEnum";
 export interface DirectorStatusMessage{
     timestamp: Date,
     registeredWorkers: Array<WorkerDescriptor>,
-    jobsList: Array<JobAvailableCount>,
 }
 
 export interface WorkerDescriptor{
-    workerJobType: JobTypeEnum,
     workerId:string,
+    currentJobs:number
 }
 
-export interface JobAvailableCount{
-    jobType: JobTypeEnum,
-    jobCount:number,
-}

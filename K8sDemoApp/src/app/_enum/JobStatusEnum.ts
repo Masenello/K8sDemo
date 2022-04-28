@@ -4,5 +4,5 @@ export enum JobStatusEnum
     error,
     created,
     running,
-    inserted
+    assigned
 }

@@ -49,7 +49,7 @@ import { LogViewerPipe } from './Func_Logs/log-viewer.pipe';
 import { JobhistoricalComponent } from './Func_Jobs/jobhistorical/jobhistorical.component';
 import { GuiGridModule } from '@generic-ui/ngx-grid';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { JobTypeStatusComponent } from './Func_Jobs/job-type-status/job-type-status.component';
+import { DirectorStatusChartComponent } from './Func_Jobs/director-status-chart/director-status-chart.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
@@ -68,7 +68,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     JobTypeEnumNamePipe,
     LogViewerPipe,
     JobhistoricalComponent,
-    JobTypeStatusComponent,
+    DirectorStatusChartComponent,
   ],
   imports: [
     BrowserModule,

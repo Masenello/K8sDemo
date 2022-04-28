@@ -39,10 +39,10 @@ export class DirectorStatusService {
     
   }
 
-  buildChartData(targetJobType:JobTypeEnum): jobChartDescriptor
+  buildChartData(): jobChartDescriptor
   {
     var descriptor: jobChartDescriptor = new jobChartDescriptor()
-    descriptor.chartTitle = `Job type: ${JobTypeEnum[targetJobType]} status`
+    descriptor.chartTitle = `Director status`
     if (this.directorStatusDataBuffer.length == this.directorStatusDataBufferMaxPoints)
     {
       this.directorStatusDataBuffer.shift()
@@ -51,17 +51,14 @@ export class DirectorStatusService {
     this.directorStatusDataBuffer.forEach((dataPoint)=>
     {
       descriptor.xAxisData.push(this.datePipe.transform(dataPoint.timestamp, environment.dateTimeFormat))
-      //console.log(dataPoint)
-      descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).where(x=>x.workerJobType == targetJobType).count())
-      var jobsOfTargetType = from(dataPoint.jobsList).firstOrDefault(x=>x.jobType == targetJobType)
-      if (jobsOfTargetType == null)
-      {
-        descriptor.yJobsAxisData.push(0)
-      }
-      else
-      {
-        descriptor.yJobsAxisData.push(jobsOfTargetType.jobCount)
-      }
+      console.log(dataPoint)
+      descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).count())
+      var totaljobs = 0
+      dataPoint.registeredWorkers.forEach(element=>
+        {
+          totaljobs = totaljobs + element.currentJobs
+        })
+      descriptor.yJobsAxisData.push(totaljobs)
     })
     return descriptor
 

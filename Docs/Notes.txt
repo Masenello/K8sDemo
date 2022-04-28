@@ -28,6 +28,9 @@ kubectl port-forward [PODNAME] 1433:1433
 #get pod log
 kubectl logs [PODNAME]
 
+#view pod logs
+kubectl logs pod-name --tail=10
+
 
 https://localhost:5501/api/GetTestData
 
