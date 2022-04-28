@@ -4,17 +4,17 @@ docker login -u masenellomarco
 #Delete all deployments
 kubectl delete -f .k8deploy
 
-#1) .Net API image
-docker rmi masenellomarco/k8sdemoapi
-Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemoapi:latest -f k8sdemoapi/k8sdemoapi-dockerfile .
-docker push masenellomarco/k8sdemoapi:latest
+# #1) .Net API image
+# docker rmi masenellomarco/k8sdemoapi
+# Set-Location D:\Code\K8sDemo
+# docker build -t masenellomarco/k8sdemoapi:latest -f k8sdemoapi/k8sdemoapi-dockerfile .
+# docker push masenellomarco/k8sdemoapi:latest
 
-#2) .Net HUB image
-docker rmi masenellomarco/k8sdemohubmanager
-Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemohubmanager:latest -f k8sdemohubmanager/k8sdemohubmanager-dockerfile .
-docker push masenellomarco/k8sdemohubmanager:latest
+# #2) .Net HUB image
+# docker rmi masenellomarco/k8sdemohubmanager
+# Set-Location D:\Code\K8sDemo
+# docker build -t masenellomarco/k8sdemohubmanager:latest -f k8sdemohubmanager/k8sdemohubmanager-dockerfile .
+# docker push masenellomarco/k8sdemohubmanager:latest
 
 #3) .Net demo worker image
 docker rmi masenellomarco/k8sdemoworker
@@ -22,23 +22,23 @@ Set-Location D:\Code\K8sDemo
 docker build -t masenellomarco/k8sdemoworker:latest -f k8sdemoworker/k8sdemoworker-dockerfile .
 docker push masenellomarco/k8sdemoworker:latest
 
-#4) .Net logger image
-docker rmi masenellomarco/k8sdemologmanager
-Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemologmanager:latest -f k8sdemoworker/k8sdemologmanager-dockerfile .
-docker push masenellomarco/k8sdemologmanager:latest
+# #4) .Net logger image
+# docker rmi masenellomarco/k8sdemologmanager
+# Set-Location D:\Code\K8sDemo
+# docker build -t masenellomarco/k8sdemologmanager:latest -f k8sdemoworker/k8sdemologmanager-dockerfile .
+# docker push masenellomarco/k8sdemologmanager:latest
 
 #5) .Net director image
 docker rmi masenellomarco/k8sdemodirector
 Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemodirector:latest -f k8sdemoworker/k8sdemodirector-dockerfile .
+docker build -t masenellomarco/k8sdemodirector:latest -f k8sdemodirector/k8sdemodirector-dockerfile .
 docker push masenellomarco/k8sdemodirector:latest
 
-#6)Angular APP image
-docker rmi masenellomarco/k8sdemoapp
-Set-Location D:\Code\K8sDemo\K8sDemoApp
-docker build -t masenellomarco/k8sdemoapp:latest -f k8sdemoapp_dockerfile .
-docker push masenellomarco/k8sdemoapp:latest
+# #6)Angular APP image
+# docker rmi masenellomarco/k8sdemoapp
+# Set-Location D:\Code\K8sDemo\K8sDemoApp
+# docker build -t masenellomarco/k8sdemoapp:latest -f k8sdemoapp_dockerfile .
+# docker push masenellomarco/k8sdemoapp:latest
 
 # #7)RabbitMq image
 # docker rmi masenellomarco/k8sdemorabbitmq
@@ -55,4 +55,4 @@ docker push masenellomarco/k8sdemoapp:latest
 
 #Apply all deployments
 Set-Location D:\Code\K8sDemo
-c
+kubectl apply -f .k8deploy
