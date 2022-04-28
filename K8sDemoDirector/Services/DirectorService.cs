@@ -78,7 +78,7 @@ namespace K8sDemoDirector.Services
         }
 
         
-        private async void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
+        private async void  CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
             //_logger.LogInfo($"Director main cycle");
             //TODO Change to event based worker if possible
@@ -101,12 +101,14 @@ namespace K8sDemoDirector.Services
                         createdJob.Status = JobStatus.assigned;
                         createdJob.AssignmentDate = DateTime.Now;
                         await _context.SaveChangesAsync();
+                        //be sure that changes are saved in database before sending message to worker
                         _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
-                        {
-                            WorkerId = targetWorker.WorkerId,
-                            JobId = createdJob.Id
-                        });
+                                {
+                                    WorkerId = targetWorker.WorkerId,
+                                    JobId = createdJob.Id
+                                });
                         AddJobToRegistry(createdJob, targetWorker.WorkerId);
+
                     }
                     
                 } 
@@ -296,7 +298,7 @@ namespace K8sDemoDirector.Services
         
     #endregion
 
- 
+
 
 
 

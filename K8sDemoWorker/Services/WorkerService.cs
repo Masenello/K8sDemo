@@ -16,6 +16,7 @@ namespace K8sDemoWorker.Services
     public class WorkerService:EventWorkerService
     {
         private readonly JobType _targetJobType ;
+        private object lockvariable;
 
         public WorkerService(IRabbitConnector rabbitConnector, ILogger logger, AbstractWorkerJob workerJob, JobType targetJobType):base(rabbitConnector, logger,workerJob)
         {
@@ -54,12 +55,18 @@ namespace K8sDemoWorker.Services
 
         private void HandleDirectorAssignJobToWorker(DirectorAssignJobToWorker msg)
         {
-            //Discard jobs for other workers
-            if (msg.WorkerId != _workerId) return;
-
-            _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
-            //Start thread for job
-            DoWork(msg.JobId);
+            try
+            {
+                    //Discard jobs for other workers
+                    if (msg.WorkerId != _workerId) return;
+                    
+                    _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
+                    DoWork(msg.JobId);
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError($"Failed to start job with id: {msg.JobId} main task",ex);
+            }
         }
 
 

@@ -9,6 +9,8 @@ using K8sBackendShared.Jobs;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
+using System.Collections.Concurrent;
+using K8sBackendShared.Utils;
 
 namespace K8sDemoWorker.Jobs
 {
@@ -21,15 +23,21 @@ namespace K8sDemoWorker.Jobs
 
         public async override void DoWork(object workerParameters)
         {
-                _jobToProcessId = (int)workerParameters;
+                ThreadedQueue<object> argsQueue = workerParameters as ThreadedQueue<object>;
+
+                //_jobToProcessId = (int)workerParameters;
+                object tmp;
+                argsQueue.TryDequeue(out tmp);
+                _jobToProcessId=(int)tmp;
+
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
                     JobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
-                    if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
-                    if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
-
                     try 
                     {
+                        if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
+                        if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+
                         _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace K8sBackendShared.Workers
         protected readonly IRabbitConnector _rabbitConnector;
         protected readonly ILogger _logger;
 
+        protected ThreadedQueue<object> _jobQueue = new ThreadedQueue<object>();
 
         public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger, AbstractWorkerJob workerJob)
         {
@@ -50,10 +52,15 @@ namespace K8sBackendShared.Workers
 
         protected void DoWork(object args)
         {
-
-            Task.Run(() => _workerJob.DoWork(args));
-
+            _jobQueue.Enqueue(args);
+            Task.Run(() => _workerJob.DoWork(_jobQueue)).ContinueWith(t=>{
+                    if (t.IsFaulted)
+                    {
+                        throw t.Exception;
+                    }
+            });
             
+
         }
 
         public virtual Task StartAsync(CancellationToken stoppingToken)
