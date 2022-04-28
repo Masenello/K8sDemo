@@ -6,10 +6,9 @@ using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Messages
 {
-    public class DirectorStatusMessage
+    public class DirectorAssignJobToWorker
     {
-
-        public DateTime Timestamp { get; set; }
-        public List<WorkerDescriptorDto> RegisteredWorkers { get; set; }
+        public string WorkerId { get; set; }
+        public int JobId{ get; set; } 
     }
 }

@@ -1,10 +1,7 @@
 namespace K8sBackendShared.Messages
 {
-    public class JobRequestAssignResultMessage
+    public class WorkerRegisterToDirectorMessage
     {
-        public int JobId { get; set; }
-
         public string WorkerId { get; set; }
-        
     }
 }

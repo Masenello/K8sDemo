@@ -8,6 +8,7 @@ using System.Threading;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.Logging;
 
 namespace K8sDemoWorker.Jobs
 {
@@ -26,7 +27,6 @@ namespace K8sDemoWorker.Jobs
                     JobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
                     if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
-
 
                     try 
                     {
@@ -67,12 +67,20 @@ namespace K8sDemoWorker.Jobs
                     }     
                     catch(Exception e)
                     {
-                        //Set job to error status
                         _logger.LogError($"{targetJob.GenerateJobDescriptor()} in error", e);
+                        //Set job to error status on database
                         targetJob.Status = JobStatus.error;
                         targetJob.EndDate = DateTime.Now;
                         await _context.SaveChangesAsync();
-                        throw;
+                        //Report error to status monitoring
+                        JobStatusMessage jobStatus = new JobStatusMessage();
+                        jobStatus.JobId = targetJob.Id;
+                        jobStatus.Status = JobStatus.error;
+                        jobStatus.User = targetJob.User.UserName;
+                        jobStatus.StatusJobType = targetJob.Type;
+                        jobStatus.ProgressPercentage = 100.0;
+                        jobStatus.UserMessage = $"{targetJob.GenerateJobDescriptor()} in error".AddException(e);
+                        ReportWorkProgress(jobStatus);
                     }
                 }
             

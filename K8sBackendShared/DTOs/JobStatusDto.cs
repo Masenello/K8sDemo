@@ -10,5 +10,6 @@ namespace K8sBackendShared.DTOs
         public string User { get; set; }
         public int ProgressPercentage { get; set; }
         public string UserMessage { get; set; }
+        public string WorkerId { get; set; }
     }
 }

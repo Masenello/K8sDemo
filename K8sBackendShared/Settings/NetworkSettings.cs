@@ -16,7 +16,7 @@ namespace K8sBackendShared.Settings
         private static readonly string SqlServerDockerHost = "k8sDemo-database";
         private static readonly string SqlServerDebugHost = "host.docker.internal";
 
-        private static bool RunningInDocker()
+        public static bool RunningInDocker()
         {
             if ( Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is null)
             {

@@ -25,38 +25,12 @@ namespace K8sDemoDirector.Jobs
             _rabbitConnector = rabbitConnector;
             _insertedJobs = new ConcurrentDictionary<int,JobEntity>();
         }
-
-        public JobsAvailableMessage BuildJobsAvailableMessage()
-        {
-            JobsAvailableMessage msg = new JobsAvailableMessage();
-            foreach(var jobType  in _insertedJobs.ToList().GroupBy(x=>x.Value.Type))
-                {
-                    //Console.WriteLine($"{jobType.Key}:{jobType.Count()}");
-                    msg.JobsList.Add(new JobAvailableCount()
-                    {
-                        JobType = jobType.Key,
-                        JobCount = jobType.Count()
-                    });
-                } 
-                return msg;
-        }
-
+    
         public override void DoWork(object workerParameters)
         {
             try 
             {
-                using (var _context = (new DataContextFactory()).CreateDbContext(null))
-                {
-                    foreach(var createdJob in  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList())   
-                    {
-                        _insertedJobs.TryAdd(createdJob.Id, createdJob);
-                    } 
-
-                    if(_insertedJobs.Count()>0)
-                    {
-                        _rabbitConnector.Publish<JobsAvailableMessage>(BuildJobsAvailableMessage());
-                    }
-                }
+                //TODO Remove, just dummy!
             }     
             catch(Exception e)
             {

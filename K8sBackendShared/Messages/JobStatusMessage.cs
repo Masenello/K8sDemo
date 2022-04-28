@@ -12,5 +12,7 @@ namespace K8sBackendShared.Messages
         public double ProgressPercentage { get; set; }
         public string UserMessage { get; set; }
 
+        public string WorkerId { get; set; }
+
     }
 }

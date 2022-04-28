@@ -4,8 +4,8 @@ namespace K8sBackendShared.DTOs
 {
     public class WorkerDescriptorDto
     {
-        public JobType  WorkerJobType { get; set; }
         public string WorkerId { get; set; }
+        public int CurrentJobs { get; set; }
         
     }
 }

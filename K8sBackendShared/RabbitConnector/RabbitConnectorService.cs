@@ -9,6 +9,7 @@ using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
 using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
+using K8sBackendShared.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -39,7 +40,7 @@ namespace K8sBackendShared.RabbitConnector
 
         public async void Subscribe<T>(Action<T> subscribeAction)
         {
-            await  _rabbitBus.PubSub.SubscribeAsync<T>("",subscribeAction);  
+            await  _rabbitBus.PubSub.SubscribeAsync<T>(UniqueIdentifiers.GenerateDateTimeUniqueId(),subscribeAction);  
         }
 
         public async void Publish<T>(T message)
