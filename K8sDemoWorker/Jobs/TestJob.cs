@@ -25,11 +25,7 @@ namespace K8sDemoWorker.Jobs
         {
                 ThreadedQueue<object> argsQueue = workerParameters as ThreadedQueue<object>;
 
-                //_jobToProcessId = (int)workerParameters;
-                object tmp;
-                argsQueue.TryDequeue(out tmp);
-                _jobToProcessId=(int)tmp;
-
+                _jobToProcessId = (int)workerParameters;
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
                     JobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();

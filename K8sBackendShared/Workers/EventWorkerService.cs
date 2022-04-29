@@ -15,19 +15,17 @@ namespace K8sBackendShared.Workers
     public abstract class EventWorkerService:IHostedService
     {
         protected  string _workerId ="";
-        protected AbstractWorkerJob _workerJob = null;
         protected readonly IRabbitConnector _rabbitConnector;
         protected readonly ILogger _logger;
 
         protected ThreadedQueue<object> _jobQueue = new ThreadedQueue<object>();
 
-        public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger, AbstractWorkerJob workerJob)
+        public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger)
         {
             _rabbitConnector = rabbitConnector;
             _logger=logger;
 
-            _workerJob = workerJob;
-            _workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
+
 
             if (NetworkSettings.RunningInDocker())
             {
@@ -50,17 +48,26 @@ namespace K8sBackendShared.Workers
             _logger.LogInfo($"{nameof(CyclicWorkerService)}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% Message: {e.Status.UserMessage}");
         }
 
-        protected void DoWork(object args)
+        protected void DoWork(AbstractWorkerJob workerJob, object args)
         {
-            _jobQueue.Enqueue(args);
-            Task.Run(() => _workerJob.DoWork(_jobQueue)).ContinueWith(t=>{
+            //_jobQueue.Enqueue(args);
+            workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
+            var task =  Task.Run(() => workerJob.DoWork(args)).ContinueWith(t=>{
+                    //At the end of task:
+                    //Remove subscriptions
+                    workerJob.JobProgressChanged -= JobProgressChanged;  
+                    //Throw task exceptions (if any)
                     if (t.IsFaulted)
                     {
                         throw t.Exception;
                     }
+                    //Log cancelation (if occurred)
+                    if (t.IsCanceled)
+                    {
+                        _logger.LogError($"Task has been canceled");
+                    }
+                    
             });
-            
-
         }
 
         public virtual Task StartAsync(CancellationToken stoppingToken)

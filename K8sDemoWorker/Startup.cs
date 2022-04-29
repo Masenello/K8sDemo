@@ -25,10 +25,9 @@ namespace K8sDemoWorker
             services.AddHostedService<WorkerService>(x =>
                 new WorkerService(
                         x.GetRequiredService<IRabbitConnector>(),
-                        x.GetRequiredService<ILogger>(),
-                        new TestJob(x.GetRequiredService<ILogger>()),
-                        JobType.TestJob
-                )
+                        x.GetRequiredService<ILogger>()
+                        )
+                
             );
         }
     }

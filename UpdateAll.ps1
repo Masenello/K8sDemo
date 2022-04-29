@@ -34,11 +34,11 @@ Set-Location D:\Code\K8sDemo
 docker build -t masenellomarco/k8sdemodirector:latest -f k8sdemodirector/k8sdemodirector-dockerfile .
 docker push masenellomarco/k8sdemodirector:latest
 
-# #6)Angular APP image
-# docker rmi masenellomarco/k8sdemoapp
-# Set-Location D:\Code\K8sDemo\K8sDemoApp
-# docker build -t masenellomarco/k8sdemoapp:latest -f k8sdemoapp_dockerfile .
-# docker push masenellomarco/k8sdemoapp:latest
+#6)Angular APP image
+docker rmi masenellomarco/k8sdemoapp
+Set-Location D:\Code\K8sDemo\K8sDemoApp
+docker build -t masenellomarco/k8sdemoapp:latest -f k8sdemoapp_dockerfile .
+docker push masenellomarco/k8sdemoapp:latest
 
 # #7)RabbitMq image
 # docker rmi masenellomarco/k8sdemorabbitmq

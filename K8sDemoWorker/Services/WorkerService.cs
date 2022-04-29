@@ -10,17 +10,17 @@ using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 using K8sBackendShared.Utils;
 using K8sBackendShared.Workers;
+using K8sDemoWorker.Jobs;
 
 namespace K8sDemoWorker.Services
 {
     public class WorkerService:EventWorkerService
     {
-        private readonly JobType _targetJobType ;
+
         private object lockvariable;
 
-        public WorkerService(IRabbitConnector rabbitConnector, ILogger logger, AbstractWorkerJob workerJob, JobType targetJobType):base(rabbitConnector, logger,workerJob)
+        public WorkerService(IRabbitConnector rabbitConnector, ILogger logger):base(rabbitConnector, logger)
         {
-            _targetJobType = targetJobType;
             _logger.LogInfo($"Worker started with id: {_workerId}");
             WorkerRegisterToDirector();
         }
@@ -30,8 +30,6 @@ namespace K8sDemoWorker.Services
             _rabbitConnector.Subscribe<DirectorAssignJobToWorker>(HandleDirectorAssignJobToWorker);
             _rabbitConnector.Subscribe<DirectorStartedMessage>(HandleDirectorStartedMessage);
         }
-
-
 
         private void HandleDirectorStartedMessage(DirectorStartedMessage obj)
         {
@@ -59,9 +57,9 @@ namespace K8sDemoWorker.Services
             {
                     //Discard jobs for other workers
                     if (msg.WorkerId != _workerId) return;
-                    
                     _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
-                    DoWork(msg.JobId);
+                    //TODO Manage multiple job types
+                    DoWork(new TestJob(_logger), msg.JobId);
             }
             catch (System.Exception ex)
             {
