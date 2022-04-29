@@ -59,7 +59,7 @@ namespace K8sDemoWorker.Services
                     if (msg.WorkerId != _workerId) return;
                     _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
                     //TODO Manage multiple job types
-                    DoWork(new TestJob(_logger), msg.JobId);
+                    DoWork(new TestJob(_logger,_rabbitConnector, _workerId), msg.JobId);
             }
             catch (System.Exception ex)
             {

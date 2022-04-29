@@ -14,20 +14,20 @@ namespace K8sBackendShared.Jobs
 
         protected readonly ILogger _logger;
 
-        public AbstractWorkerJob(ILogger logger)
+        protected readonly IRabbitConnector _rabbitConnector;
+
+        public AbstractWorkerJob(ILogger logger, IRabbitConnector rabbitConnector)
         {
             _logger = logger;
+            _rabbitConnector = rabbitConnector;
         }
 
         public abstract void DoWork(object workerParameters);
 
         protected void ReportWorkProgress(JobStatusMessage newStatus) 
         {
-            if (JobProgressChanged != null)
-            {
-                JobProgressEventArgs myArgs = new JobProgressEventArgs(newStatus);
-                JobProgressChanged(this, myArgs);
-            }
+            _rabbitConnector.Publish(newStatus);
+            _logger.LogInfo($"{newStatus.StatusJobType}: Job Id:{newStatus.JobId} Status: {newStatus.Status} Progress: {newStatus.ProgressPercentage}% Message: {newStatus.UserMessage}");
         }
 
     }

@@ -17,8 +17,10 @@ namespace K8sDemoWorker.Jobs
     public class TestJob : AbstractWorkerJob
     {
         private int _jobToProcessId;
-        public TestJob(ILogger logger):base(logger)
+        private string _workerId;
+        public TestJob(ILogger logger, IRabbitConnector rabbitConnector, string workerId):base(logger,rabbitConnector)
         {     
+            _workerId = workerId;
         }
 
         public async override void DoWork(object workerParameters)
@@ -44,6 +46,7 @@ namespace K8sDemoWorker.Jobs
                         jobStatus.User = targetJob.User.UserName;
                         jobStatus.StatusJobType = targetJob.Type;
                         jobStatus.ProgressPercentage = 0.0;
+                        jobStatus.WorkerId = _workerId;
                         ReportWorkProgress(jobStatus);
 
                         Thread.Sleep(3000);
@@ -81,6 +84,7 @@ namespace K8sDemoWorker.Jobs
                         jobStatus.User = targetJob.User.UserName;
                         jobStatus.StatusJobType = targetJob.Type;
                         jobStatus.ProgressPercentage = 100.0;
+                        jobStatus.WorkerId = _workerId;
                         jobStatus.UserMessage = $"{targetJob.GenerateJobDescriptor()} in error".AddException(e);
                         ReportWorkProgress(jobStatus);
                     }

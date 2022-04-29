@@ -31,6 +31,7 @@ namespace K8sDemoDirector.Services
         private readonly ConcurrentDictionary<int,JobStatusMessage> _activeJobsRegistry;
 
         private readonly int _maxJobsPerWorker = 20;
+        private readonly int _maxWorkers = 2;
 
         private bool systemIsScalingUp=false;
         private bool systemIsScalingDown=false;
@@ -94,8 +95,8 @@ namespace K8sDemoDirector.Services
                 {
                     foreach(var createdJob in  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList())   
                     {
-                        //If system is scaling down avoid assigning jobs
-                        if(systemIsScalingDown) break;
+                        //If system is scaling down or max workers is reached, avoid assigning jobs
+                        if (systemIsScalingDown) break;
                         //Assign job to worker
                         var targetWorker = GetWorkerWithLessLoad();
                         if (targetWorker is null)
@@ -128,13 +129,13 @@ namespace K8sDemoDirector.Services
                             var jobToMonitor = _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == activeJob.Key);
                             
                             //TODO variable timeouts. Be carefull that cluster time zone is UTC!
-                            if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>60)
+                            if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
                             {
                                 //Job has timed out
                                 //update job on database
                                 jobToMonitor.EndDate = DateTime.UtcNow;
                                 jobToMonitor.Status= JobStatus.error;
-                                jobToMonitor.Errors = "Timeout";
+                                jobToMonitor.Errors = $"Director job monitoring, timeout on worker {activeJob.Value.WorkerId}";
                                 await _context.SaveChangesAsync();
                                 //notify clients
                                 JobStatusMessage msg = new JobStatusMessage()
@@ -144,7 +145,7 @@ namespace K8sDemoDirector.Services
                                     Status = JobStatus.error,
                                     ProgressPercentage = 100,
                                     User = jobToMonitor.User.UserName,
-                                    UserMessage = $"{jobToMonitor.GenerateJobDescriptor()} Timeout",
+                                    UserMessage = $"{jobToMonitor.GenerateJobDescriptor()}. Director job monitoring, timeout on worker {activeJob.Value.WorkerId}",
                                     WorkerId = activeJob.Value.WorkerId,
                                 };
                                 _rabbitConnector.Publish<JobStatusMessage>(msg);
@@ -296,7 +297,7 @@ namespace K8sDemoDirector.Services
             if (IsJobInActiveJobRegistry(newStatus.JobId))
                 {
                     _activeJobsRegistry.TryUpdate(newStatus.JobId, newStatus,_activeJobsRegistry[newStatus.JobId]);
-                    //_logger.LogInfo($"Job with id: {msg.JobId} from worker: {msg.WorkerId} inserted in active job registry");
+                    //_logger.LogInfo($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} status update to {newStatus.Status} in active job registry");
                 }
         }
 
@@ -306,7 +307,7 @@ namespace K8sDemoDirector.Services
             {
                 JobStatusMessage tmp;
                 _activeJobsRegistry.Remove(newStatus.JobId, out tmp);
-                //_logger.LogInfo($"Job with id: {msg.JobId} from worker: {msg.WorkerId} removed from active job registry");
+                //_logger.LogInfo($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} removed from active job registry");
                 if (newStatus.Status == JobStatus.error)
                 {
                     _logger.LogError($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} in error. {newStatus.UserMessage}");
@@ -327,14 +328,16 @@ namespace K8sDemoDirector.Services
         private void MonitorWorkerLoad()
         {
             //TODO variable threshold
-            if ((_workersRegistry.Count()>0) && (_workersRegistry.All(x=>x.Value.CurrentJobs >= _maxJobsPerWorker)))
+            if ((_workersRegistry.Count()>0) 
+            && ((_workersRegistry.Count() < _maxWorkers)) 
+            && (_workersRegistry.All(x=>x.Value.CurrentJobs >= _maxJobsPerWorker)))  //All existing workers are saturated
             {
                 WorkersScaleUp();
             }
 
             if (_workersRegistry.All(x=>x.Value.CurrentJobs==0))
             {
-                WorkersScaleDown();
+                //WorkersScaleDown();
             }
         }
 

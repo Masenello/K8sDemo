@@ -18,11 +18,10 @@ namespace K8sDemoDirector.Jobs
     {
 
         public ConcurrentDictionary<int,JobEntity> _insertedJobs {get; private set;}
-        private readonly IRabbitConnector _rabbitConnector;
 
-        public GetJobListJob(ILogger logger, IRabbitConnector rabbitConnector):base(logger)
+
+        public GetJobListJob(ILogger logger, IRabbitConnector rabbitConnector):base(logger, rabbitConnector)
         {
-            _rabbitConnector = rabbitConnector;
             _insertedJobs = new ConcurrentDictionary<int,JobEntity>();
         }
     
