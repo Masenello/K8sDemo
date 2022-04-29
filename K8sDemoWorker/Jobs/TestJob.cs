@@ -23,12 +23,10 @@ namespace K8sDemoWorker.Jobs
 
         public async override void DoWork(object workerParameters)
         {
-                ThreadedQueue<object> argsQueue = workerParameters as ThreadedQueue<object>;
-
                 _jobToProcessId = (int)workerParameters;
                 using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
-                    JobEntity targetJob = _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefault();
+                    JobEntity targetJob = await _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefaultAsync();
                     try 
                     {
                         if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
@@ -37,7 +35,7 @@ namespace K8sDemoWorker.Jobs
                         _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
 
                         //Main Action and progess report
                         JobStatusMessage jobStatus = new JobStatusMessage();

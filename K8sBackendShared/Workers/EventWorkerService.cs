@@ -48,14 +48,11 @@ namespace K8sBackendShared.Workers
             _logger.LogInfo($"{nameof(CyclicWorkerService)}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% Message: {e.Status.UserMessage}");
         }
 
-        protected void DoWork(AbstractWorkerJob workerJob, object args)
+        protected async void DoWork(AbstractWorkerJob workerJob, object args)
         {
             //_jobQueue.Enqueue(args);
             workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
             var task =  Task.Run(() => workerJob.DoWork(args)).ContinueWith(t=>{
-                    //At the end of task:
-                    //Remove subscriptions
-                    workerJob.JobProgressChanged -= JobProgressChanged;  
                     //Throw task exceptions (if any)
                     if (t.IsFaulted)
                     {
@@ -66,8 +63,7 @@ namespace K8sBackendShared.Workers
                     {
                         _logger.LogError($"Task has been canceled");
                     }
-                    
-            });
+            });  
         }
 
         public virtual Task StartAsync(CancellationToken stoppingToken)

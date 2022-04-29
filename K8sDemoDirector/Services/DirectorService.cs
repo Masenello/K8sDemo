@@ -30,6 +30,11 @@ namespace K8sDemoDirector.Services
 
         private readonly ConcurrentDictionary<int,JobStatusMessage> _activeJobsRegistry;
 
+        private readonly int _maxJobsPerWorker = 20;
+
+        private bool systemIsScalingUp=false;
+        private bool systemIsScalingDown=false;
+
 
         private readonly IK8s _k8sConnector;
         
@@ -72,7 +77,7 @@ namespace K8sDemoDirector.Services
             //Update job counts for workers
             foreach(var worker in _workersRegistry.Values)
             {
-                worker.CurrentJobs = _activeJobsRegistry.Where(x=>x.Value.WorkerId == worker.WorkerId).Count();
+                worker.CurrentJobs = _activeJobsRegistry.Where(x=>x.Value.WorkerId == worker.WorkerId ).Count();
                 //_logger.LogInfo($"Worker with id: {worker.WorkerId} has: {worker.CurrentJobs} active jobs");
             }
         }
@@ -80,85 +85,92 @@ namespace K8sDemoDirector.Services
         
         private async void  CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-            //_logger.LogInfo($"Director main cycle");
-            //TODO Change to event based worker if possible
+            //If system is scaling suspend job assignment
+                 //_logger.LogInfo($"Director main cycle");
+                //TODO Change to event based worker if possible
 
-            //Search for jobs created in database and assign them to workers
-            using (var _context = (new DataContextFactory()).CreateDbContext(null))
-            {
-                foreach(var createdJob in  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList())   
+                //Search for jobs created in database and assign them to workers
+                using (var _context = (new DataContextFactory()).CreateDbContext(null))
                 {
-                    //Assign job to worker
-                    var targetWorker = GetWorkerWithLessLoad();
-                    if (targetWorker is null)
+                    foreach(var createdJob in  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList())   
                     {
-                        //No workers registered, can't assign job
-                        break;
-                    }
-                    else
-                    {
-                        _logger.LogInfo($"Director assigning job with id: {createdJob.Id} to worker: {targetWorker.WorkerId}");
-                        createdJob.Status = JobStatus.assigned;
-                        createdJob.AssignmentDate = DateTime.Now;
-                        await _context.SaveChangesAsync();
-                        //be sure that changes are saved in database before sending message to worker
-                        _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
-                                {
-                                    WorkerId = targetWorker.WorkerId,
-                                    JobId = createdJob.Id
-                                });
-                        AddJobToRegistry(createdJob, targetWorker.WorkerId);
-
-                    }
-                    
-                } 
-
-                //Monitor active job for timeouts
-                foreach(var activeJob in _activeJobsRegistry.Where(x=>x.Value.Status== JobStatus.assigned
-                ||x.Value.Status== JobStatus.running))
-                {
-                    var jobToMonitor = _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == activeJob.Key);
-                    //TODO variable timeouts!
-                    if ((DateTime.Now - jobToMonitor.AssignmentDate).TotalSeconds>30)
-                    {
-                        //Job has timed out
-                        //update job on database
-                        jobToMonitor.EndDate = DateTime.Now;
-                        jobToMonitor.Status= JobStatus.error;
-                        jobToMonitor.Errors = "Timeout";
-                        await _context.SaveChangesAsync();
-                        //notify clients
-                        JobStatusMessage msg = new JobStatusMessage()
+                        //If system is scaling down avoid assigning jobs
+                        if(systemIsScalingDown) break;
+                        //Assign job to worker
+                        var targetWorker = GetWorkerWithLessLoad();
+                        if (targetWorker is null)
                         {
-                            JobId = jobToMonitor.Id,
-                            StatusJobType=jobToMonitor.Type,
-                            Status = JobStatus.error,
-                            ProgressPercentage = 100,
-                            User = jobToMonitor.User.UserName,
-                            UserMessage = $"{jobToMonitor.GenerateJobDescriptor()} Timeout",
-                            WorkerId = activeJob.Value.WorkerId,
-                        };
-                        _rabbitConnector.Publish<JobStatusMessage>(msg);
-                        //remove from active jobs list
-                        RemoveFromRegistry(msg);
+                            //No workers available
+                            break;
+                        }
+                        else
+                        {
+                            createdJob.Status = JobStatus.assigned;
+                            createdJob.AssignmentDate = DateTime.UtcNow;
+                            await _context.SaveChangesAsync();
+                            //be sure that changes are saved in database before sending message to worker
+                            _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
+                                    {
+                                        WorkerId = targetWorker.WorkerId,
+                                        JobId = createdJob.Id
+                                    });
+                            AddJobToRegistry(createdJob, targetWorker.WorkerId);
+                            _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}. Worker jobs: {_activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorker.WorkerId).Count()}");
+
+                        }
+                        
+                    } 
+
+                        //Monitor active job for timeouts
+                        foreach(var activeJob in _activeJobsRegistry.Where(x=>x.Value.Status== JobStatus.assigned
+                        ||x.Value.Status== JobStatus.running))
+                        {
+                            var jobToMonitor = _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == activeJob.Key);
+                            
+                            //TODO variable timeouts. Be carefull that cluster time zone is UTC!
+                            if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>60)
+                            {
+                                //Job has timed out
+                                //update job on database
+                                jobToMonitor.EndDate = DateTime.UtcNow;
+                                jobToMonitor.Status= JobStatus.error;
+                                jobToMonitor.Errors = "Timeout";
+                                await _context.SaveChangesAsync();
+                                //notify clients
+                                JobStatusMessage msg = new JobStatusMessage()
+                                {
+                                    JobId = jobToMonitor.Id,
+                                    StatusJobType=jobToMonitor.Type,
+                                    Status = JobStatus.error,
+                                    ProgressPercentage = 100,
+                                    User = jobToMonitor.User.UserName,
+                                    UserMessage = $"{jobToMonitor.GenerateJobDescriptor()} Timeout",
+                                    WorkerId = activeJob.Value.WorkerId,
+                                };
+                                _rabbitConnector.Publish<JobStatusMessage>(msg);
+                                //remove from active jobs list
+                                RemoveFromRegistry(msg);
+                            }
+                        }
                     }
-                }
-            }
+                
+
+        
 
             //Update Director Status
             DirectorStatusMessage newStatus = new DirectorStatusMessage()
             {
-                Timestamp = DateTime.Now,
+                Timestamp = DateTime.UtcNow,
                 RegisteredWorkers = _workersRegistry.Values.ToList(),
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 
             //Monitor worker scaling
-            if(cycleCounter % 10 == 0)
+            if (!(systemIsScalingUp || systemIsScalingDown))
             {
-                MonitorWorkNumber(newStatus);
+                MonitorWorkerLoad();
             }
-
+            
 
             
             cycleCounter+=1;
@@ -177,6 +189,7 @@ namespace K8sDemoDirector.Services
                         WorkerId = msg.WorkerId
                     });
                     _logger.LogInfo($"Worker {msg.WorkerId} registered, total workers: {_workersRegistry.Count}");
+                    systemIsScalingUp = false;
                 }
             }
             catch (System.Exception e)
@@ -197,7 +210,9 @@ namespace K8sDemoDirector.Services
                     WorkerDescriptorDto tmp;
                     _workersRegistry.TryRemove(target.Key, out tmp);
                     _logger.LogInfo($"Worker {msg.WorkerId} unregistered, total workers: {_workersRegistry.Count}");
+                    systemIsScalingDown = false;
                 }
+                
             }
             catch (System.Exception e)
             {
@@ -229,14 +244,22 @@ namespace K8sDemoDirector.Services
 
         private WorkerDescriptorDto GetWorkerWithLessLoad()
         {
-            if (_workersRegistry.Count()==0)
-            {
-                return null;
+            //Important note: jobs enter _activeJobsRegistry when ASSIGNED to worker. Jobs are counted on _workersRegistry when in RUNNING state.
+            //Check must be performed on _activeJobsRegistry to vaoid assigning to many jobs to a worker
+            if (_workersRegistry.Count==0) return null;
+            string targetWorkerId = _workersRegistry.First().Value.WorkerId;
+            foreach (var worker in _workersRegistry)
+            {   
+                if(_activeJobsRegistry.Where(x=>x.Value.WorkerId == worker.Value.WorkerId).Count() < _activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorkerId).Count())
+                {
+                    targetWorkerId = worker.Value.WorkerId;
+                }
             }
-            else
-            {
-                return _workersRegistry.OrderBy(x=>x.Value.CurrentJobs).First().Value;
-            }
+            var targetWorker = _workersRegistry.FirstOrDefault(x=>x.Value.WorkerId == targetWorkerId);
+            //A worker that is saturated is considered not available
+            if (targetWorker.Value.CurrentJobs >= _maxJobsPerWorker) return null;
+
+            return targetWorker.Value;
         }
     
     #endregion
@@ -286,7 +309,7 @@ namespace K8sDemoDirector.Services
                 //_logger.LogInfo($"Job with id: {msg.JobId} from worker: {msg.WorkerId} removed from active job registry");
                 if (newStatus.Status == JobStatus.error)
                 {
-                    _logger.LogError($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} in error");
+                    _logger.LogError($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} in error. {newStatus.UserMessage}");
                 }
                 else
                 {
@@ -298,71 +321,47 @@ namespace K8sDemoDirector.Services
         
     #endregion
 
-
-
-
-
-
-
-
-        
-    
-
-
-
         int cycleCounter = 0;
+  
 
-
-
-        private void MonitorWorkNumber(DirectorStatusMessage directorStatus)
+        private void MonitorWorkerLoad()
         {
-            // foreach(var jobType in directorStatus.GetWorkersTypes())
-            // {
-            //     _logger.LogInfo($"Job count: {directorStatus.GetJobsNumber(jobType)}");
-            //     //TODO parametrize treshold
-            //     if (directorStatus.GetJobsNumber(jobType) > 4)
-            //     {
-            //         //Spawn 1 worker
-            //         WorkersScaleUp(directorStatus,jobType);
-            //     }
+            //TODO variable threshold
+            if ((_workersRegistry.Count()>0) && (_workersRegistry.All(x=>x.Value.CurrentJobs >= _maxJobsPerWorker)))
+            {
+                WorkersScaleUp();
+            }
 
-            //     if (directorStatus.GetJobsNumber(jobType) == 0)
-            //     {
-            //         //Kill worker
-            //         WorkersScaleDown(directorStatus,jobType);
-            //     }
-            // }
+            if (_workersRegistry.All(x=>x.Value.CurrentJobs==0))
+            {
+                WorkersScaleDown();
+            }
         }
 
         int scalingTarget = 0;
-        
-        
-
-
-        //TODO parametric on worker pod deployment
-        private void WorkersScaleUp(DirectorStatusMessage directorStatus, JobType jobType)
+    
+        private void WorkersScaleUp()
         {
-            // scalingTarget = directorStatus.GetWorkersNumber(jobType)+1;
-            // _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-            // _logger.LogInfo($"Scaling up workers for job: {jobType} to {scalingTarget}");
+            systemIsScalingUp = true;
+            scalingTarget = _workersRegistry.Count()+1;
+            _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+            _logger.LogInfo($"Scaling up workers to {scalingTarget}");
         }
 
-        private void WorkersScaleDown(DirectorStatusMessage directorStatus, JobType jobType)
+        private void WorkersScaleDown()
         {
-            // //Always leave at least one worker 
-            // if (directorStatus.GetWorkersNumber(jobType)>1)
-            // {
-            //     //No jobs of that type must be running
-            //     using (var _context = (new DataContextFactory()).CreateDbContext(null))
-            //     {
-            //         if (_context.Jobs.Where(x=>x.Type == jobType && x.Status==JobStatus.running).Count() == 0)
-            //         {
-            //             scalingTarget = directorStatus.GetWorkersNumber(jobType)-1;
-            //             _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-            //             _logger.LogInfo($"Scaling down workers for job: {jobType} to {scalingTarget}");
-            //         }
-            //     }
-            // }      
+            
+
+            //Always leave at least one worker 
+            if (_workersRegistry.Count()>1)
+            {
+                {
+                    systemIsScalingDown = true;
+                    scalingTarget = _workersRegistry.Count()-1;
+                    _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+                    _logger.LogInfo($"Scaling down workers to {scalingTarget}");
+                }
+            }      
         }
     }
 }
