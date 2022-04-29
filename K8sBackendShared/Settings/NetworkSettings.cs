@@ -11,10 +11,12 @@ namespace K8sBackendShared.Settings
         private static readonly int RabbitBootTimeoutSeconds = 30;
 
         private static readonly string RabbitDockerHost = "k8sDemo-rabbitMq";
-        private static readonly string RabbitDebugHost = "host.docker.internal";
+        //private static readonly string RabbitDebugHost = "host.docker.internal";
+        private static readonly string RabbitDebugHost = "127.0.0.1";
 
         private static readonly string SqlServerDockerHost = "k8sDemo-database";
-        private static readonly string SqlServerDebugHost = "host.docker.internal";
+        //private static readonly string SqlServerDebugHost = "host.docker.internal";
+        private static readonly string SqlServerDebugHost = "127.0.0.1";
 
         public static bool RunningInDocker()
         {

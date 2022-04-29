@@ -35,6 +35,7 @@ namespace K8sDemoDirector.Services
 
         private bool systemIsScalingUp=false;
         private bool systemIsScalingDown=false;
+        private bool scalingEnabled = false;
 
 
         private readonly IK8s _k8sConnector;
@@ -167,7 +168,7 @@ namespace K8sDemoDirector.Services
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 
             //Monitor worker scaling
-            if (!(systemIsScalingUp || systemIsScalingDown))
+            if (!(systemIsScalingUp || systemIsScalingDown) && scalingEnabled)
             {
                 MonitorWorkerLoad();
             }
@@ -337,7 +338,7 @@ namespace K8sDemoDirector.Services
 
             if (_workersRegistry.All(x=>x.Value.CurrentJobs==0))
             {
-                //WorkersScaleDown();
+                WorkersScaleDown();
             }
         }
 
