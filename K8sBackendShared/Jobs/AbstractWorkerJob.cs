@@ -21,7 +21,7 @@ namespace K8sBackendShared.Jobs
             _rabbitConnector = rabbitConnector;
         }
 
-        public abstract void DoWork(object workerParameters);
+        public abstract void DoWork();
 
         protected void ReportWorkProgress(JobStatusMessage newStatus) 
         {

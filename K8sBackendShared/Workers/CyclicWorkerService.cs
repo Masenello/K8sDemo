@@ -62,7 +62,7 @@ namespace K8sBackendShared.Workers
                 Thread.Sleep(_cycleTime);   // If you need to make a pause between runs
                 //Console.WriteLine("Worker run started");
                 //Do Work!
-                _workerJob.DoWork(null);
+                _workerJob.DoWork();
                 //Console.WriteLine("Worker run completed");
                 if (MainCycleCompleted != null)
                 {

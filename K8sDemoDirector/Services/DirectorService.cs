@@ -29,7 +29,7 @@ namespace K8sDemoDirector.Services
         private readonly int _maxJobsPerWorker = 20;
         private readonly int _maxWorkers = 3;
         private bool scalingUpEnabled = true;
-        private bool scalingDownEnabled = false;
+        private bool scalingDownEnabled = true;
         //***************************
 
         private bool systemIsScalingUp=false;
@@ -89,7 +89,7 @@ namespace K8sDemoDirector.Services
             {
                 
                 var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
-                foreach(var createdJob in  uow.Jobs.GetJobsInStatus(JobStatus.created))   
+                foreach(var createdJob in await uow.Jobs.GetJobsInStatusAsync(JobStatus.created))   
                 {
                     //If system is scaling down or max workers is reached, avoid assigning jobs
                     if (systemIsScalingDown) break;
@@ -102,7 +102,7 @@ namespace K8sDemoDirector.Services
                     }
                     else
                     {
-                        uow.AssignJob(targetWorker.WorkerId, createdJob.Id);
+                        await uow.AssignJobAsync(targetWorker.WorkerId, createdJob.Id);
                         //be sure that changes are saved in database before sending message to worker
                         _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
                             {
@@ -119,12 +119,12 @@ namespace K8sDemoDirector.Services
                 foreach(var activeJob in _activeJobsRegistry.Where(x=>x.Value.Status== JobStatus.assigned
                         ||x.Value.Status== JobStatus.running))
                 {
-                    var jobToMonitor = uow.Jobs.GetJobWithId(activeJob.Key);
+                    var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
                             
                     //TODO variable timeouts. Be carefull that cluster time zone is UTC!
                     if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
                     {
-                        var timeoutMsg = uow.SetJobInTimeOut(jobToMonitor.Id);
+                        var timeoutMsg =await uow.SetJobInTimeOutAsync(jobToMonitor.Id);
                         _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
                         //remove from active jobs list
                         RemoveFromRegistry(timeoutMsg);

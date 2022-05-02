@@ -12,9 +12,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.Workers
 {
-    public abstract class EventWorkerService:IHostedService
+    public abstract class EventWorkerService : IHostedService
     {
-        protected  string _workerId ="";
+        protected string _workerId = "";
         protected readonly IRabbitConnector _rabbitConnector;
         protected readonly ILogger _logger;
 
@@ -23,7 +23,7 @@ namespace K8sBackendShared.Workers
         public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger)
         {
             _rabbitConnector = rabbitConnector;
-            _logger=logger;
+            _logger = logger;
 
 
 
@@ -42,28 +42,29 @@ namespace K8sBackendShared.Workers
         public abstract void Subscribe();
 
         private void JobProgressChanged(object sender, JobProgressEventArgs e)
-        { 
+        {
             e.Status.WorkerId = _workerId;
             _rabbitConnector.Publish(e.Status);
             _logger.LogInfo($"{nameof(CyclicWorkerService)}: Job Id:{e.Status.JobId} Status: {e.Status.Status} Progress: {e.Status.ProgressPercentage}% Message: {e.Status.UserMessage}");
         }
 
-        protected async void DoWork(AbstractWorkerJob workerJob, object args)
+        protected async void DoWork(AbstractWorkerJob workerJob)
         {
             //_jobQueue.Enqueue(args);
             workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
-            var task =  Task.Run(() => workerJob.DoWork(args)).ContinueWith(t=>{
-                    //Throw task exceptions (if any)
-                    if (t.IsFaulted)
-                    {
-                        throw t.Exception;
-                    }
-                    //Log cancelation (if occurred)
-                    if (t.IsCanceled)
-                    {
-                        _logger.LogError($"Task has been canceled");
-                    }
-            });  
+            await Task.Run(() => workerJob.DoWork()).ContinueWith(t =>
+            {
+                //Throw task exceptions (if any)
+                if (t.IsFaulted)
+                {
+                    throw t.Exception;
+                }
+                //Log cancelation (if occurred)
+                if (t.IsCanceled)
+                {
+                    _logger.LogError($"Task has been canceled");
+                }
+            });
         }
 
         public virtual Task StartAsync(CancellationToken stoppingToken)

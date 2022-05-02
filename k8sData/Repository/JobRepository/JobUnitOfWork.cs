@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using K8sBackendShared.Logging;
 using K8sCore.Interfaces.JobRepository;
 using K8sCore.Messages;
@@ -17,62 +18,62 @@ namespace K8sBackendShared.Repository.JobRepository
             _context = context;
             Jobs = new JobRepository(_context);
         }
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
         public void Dispose()
         {
             _context.Dispose();
         }
 
-        public JobStatusMessage AssignJob(string workerId, int jobId)
+        public async Task<JobStatusMessage> AssignJobAsync(string workerId, int jobId)
         {
-            var targetJob = Jobs.GetJobWithId(jobId);
+            var targetJob = Jobs.GetJobWithIdAsync(jobId).Result;
             targetJob.Status = K8sCore.Enums.JobStatus.assigned;
             targetJob.WorkerId = workerId;
             targetJob.AssignmentDate = DateTime.UtcNow;
-            Complete();
+            await CompleteAsync();
             return new JobStatusMessage(targetJob);
         }
 
-        public JobStatusMessage SetJobInRunningStatus(int jobId)
+        public async Task<JobStatusMessage> SetJobInRunningStatusAsync(int jobId)
         {
-            var targetJob = Jobs.GetJobWithId(jobId);
+            var targetJob = Jobs.GetJobWithIdAsync(jobId).Result;
             targetJob.Status = K8sCore.Enums.JobStatus.running;
             targetJob.StartDate = DateTime.UtcNow;
-            Complete();
+            await CompleteAsync();
             return new JobStatusMessage(targetJob);
         }
 
-        public JobStatusMessage SetJobInCompletedStatus(int jobId)
+        public async Task<JobStatusMessage> SetJobInCompletedStatusAsync(int jobId)
         {
-            var targetJob = Jobs.GetJobWithId(jobId);
+            var targetJob = Jobs.GetJobWithIdAsync(jobId).Result;
             targetJob.Status = K8sCore.Enums.JobStatus.completed;
             targetJob.EndDate = DateTime.UtcNow;
-            Complete();
+            await CompleteAsync();
             return new JobStatusMessage(targetJob);
         }
 
-        public JobStatusMessage SetJobInError(int jobId, Exception ex)
+        public async Task<JobStatusMessage> SetJobInErrorAsync(int jobId, Exception ex)
         {
-            var targetJob = Jobs.GetJobWithId(jobId);
+            var targetJob = Jobs.GetJobWithIdAsync(jobId).Result;
             targetJob.Status = K8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"{targetJob.GenerateJobDescriptor()} in error".AddException(ex);
-            Complete();
+            await CompleteAsync();
             return new JobStatusMessage(targetJob, targetJob.Errors);
         }
 
 
 
-        public JobStatusMessage SetJobInTimeOut(int jobId)
+        public async Task<JobStatusMessage> SetJobInTimeOutAsync(int jobId)
         {
-            var targetJob = Jobs.GetJobWithId(jobId);
+            var targetJob = Jobs.GetJobWithIdAsync(jobId).Result;
             targetJob.Status = K8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"Job timeout";
-            Complete();
+            await CompleteAsync();
             return new JobStatusMessage(targetJob, $"{targetJob.GenerateJobDescriptor()}. Job Timeout");
         }
 

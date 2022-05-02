@@ -17,7 +17,7 @@ namespace K8sDemoDirector.Jobs
             _insertedJobs = new ConcurrentDictionary<int,JobEntity>();
         }
     
-        public override void DoWork(object workerParameters)
+        public override void DoWork()
         {
             try 
             {

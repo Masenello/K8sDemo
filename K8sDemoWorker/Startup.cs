@@ -7,6 +7,7 @@ using K8sCore.Interfaces.JobRepository;
 using K8sData;
 using K8sData.Data;
 using K8sData.Settings;
+using K8sDemoWorker.Jobs;
 using K8sDemoWorker.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,28 +28,26 @@ namespace K8sDemoWorker
         {
 
             //***********   Database access layer *********************
-            //Director can access database through K8sData
+            //Director can access database through K8sData, register as transient to grant multi threading
             services.AddDbContext<DataContext>(options =>
                 {
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
-                });
+                        
+                }, ServiceLifetime.Transient);
+
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IJobUnitOfWork, JobUnitOfWork>();
             services.AddTransient<IJobRepository, JobRepository>();
             //***********************************************************    
 
+            services.AddTransient<TestJob>();
 
             services.AddSingleton<ILogger,RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
-            services.AddHostedService<WorkerService>(x =>
-                new WorkerService(
-                        services.BuildServiceProvider(),
-                        x.GetRequiredService<IRabbitConnector>(),
-                        x.GetRequiredService<ILogger>()
-                        )
-                
-            );
+
+            services.AddHostedService<WorkerService>();
+
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using K8sCore.Entities;
 using K8sCore.Enums;
 using K8sCore.Interfaces.JobRepository;
@@ -19,14 +20,14 @@ namespace K8sBackendShared.Repository.JobRepository
         }
 
 
-        public IEnumerable<JobEntity> GetJobsInStatus(JobStatus targetStatus)
+        public async Task<IEnumerable<JobEntity>> GetJobsInStatusAsync(JobStatus targetStatus)
         {
-            return  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList();
+            return await _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToListAsync();
         }
 
-        public JobEntity GetJobWithId(int Id)
+        public async Task<JobEntity> GetJobWithIdAsync(int Id)
         {
-            return  _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == Id);
+            return await _context.Jobs.Include(u=>u.User).FirstOrDefaultAsync(x=>x.Id == Id);
         }
 
     }

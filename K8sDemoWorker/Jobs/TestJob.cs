@@ -15,55 +15,57 @@ namespace K8sDemoWorker.Jobs
 {
     public class TestJob : AbstractWorkerJob
     {
-        private readonly IServiceProvider _serviceProvider;
+
+        private readonly IJobUnitOfWork _jobUow;
         private int _jobToProcessId;
         private string _workerId;
-        public TestJob(IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector, string workerId) : base(logger, rabbitConnector)
+        public TestJob(IJobUnitOfWork jobUow, ILogger logger, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
         {
-            _serviceProvider = serviceProvider;
-            _workerId = workerId;
+            _jobUow = jobUow;
         }
 
-        public async override void DoWork(object workerParameters)
+        public void InitService(string workerId, int jobToProcessId)
         {
-            _jobToProcessId = (int)workerParameters;
-            using (var scope = _serviceProvider.CreateScope())
+            _workerId = workerId;
+            _jobToProcessId = jobToProcessId;
+        }
+
+        public async override void DoWork()
+        {
+            JobEntity targetJob = await _jobUow.Jobs.GetJobWithIdAsync(_jobToProcessId);
+
+            try
             {
-                var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
-                JobEntity targetJob = uow.Jobs.GetJobWithId(_jobToProcessId);
+                if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
+                if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
 
-                try
-                {
-                    if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
-                    if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+                _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
+                JobStatusMessage statusMsg = await _jobUow.SetJobInRunningStatusAsync(targetJob.Id);
+                ReportWorkProgress(statusMsg);
+                Thread.Sleep(3000);
+                statusMsg.ProgressPercentage = 33.3;
+                ReportWorkProgress(statusMsg);
 
-                    _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
-                    JobStatusMessage statusMsg = uow.SetJobInRunningStatus(targetJob.Id);
-                    ReportWorkProgress(statusMsg);
-                    Thread.Sleep(3000);
-                    statusMsg.ProgressPercentage = 33.3;
-                    ReportWorkProgress(statusMsg);
+                Thread.Sleep(3000);
+                statusMsg.ProgressPercentage = 66.6;
+                ReportWorkProgress(statusMsg);
 
-                    Thread.Sleep(3000);
-                    statusMsg.ProgressPercentage = 66.6;
-                    ReportWorkProgress(statusMsg);
-
-                    Thread.Sleep(3000);
-                    statusMsg.ProgressPercentage = 100.0;
-                    statusMsg = uow.SetJobInCompletedStatus(targetJob.Id);
-                    ReportWorkProgress(statusMsg);
+                Thread.Sleep(3000);
+                statusMsg.ProgressPercentage = 100.0;
+                statusMsg = await _jobUow.SetJobInCompletedStatusAsync(targetJob.Id);
+                ReportWorkProgress(statusMsg);
 
 
-                    //Set job to completed status
-                    _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} completed");
-                }
-                catch (Exception e)
-                {
-                    JobStatusMessage errorStatus = uow.SetJobInError(targetJob.Id,e);
-                    _logger.LogError(errorStatus.UserMessage);
-                    ReportWorkProgress(errorStatus);
-                }
+                //Set job to completed status
+                _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} completed");
             }
+            catch (Exception e)
+            {
+                JobStatusMessage errorStatus = await _jobUow.SetJobInErrorAsync(targetJob.Id, e);
+                _logger.LogError(errorStatus.UserMessage);
+                ReportWorkProgress(errorStatus);
+            }
+
         }
     }
 }

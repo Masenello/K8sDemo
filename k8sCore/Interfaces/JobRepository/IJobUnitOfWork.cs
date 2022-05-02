@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using K8sCore.Messages;
 
 namespace K8sCore.Interfaces.JobRepository
@@ -6,12 +7,12 @@ namespace K8sCore.Interfaces.JobRepository
     public interface IJobUnitOfWork : IDisposable
     {
         IJobRepository Jobs { get; }
-        int Complete();
+        Task<int> CompleteAsync();
 
-        JobStatusMessage AssignJob(string workerId, int jobId);
-        JobStatusMessage SetJobInRunningStatus(int jobId);
-        JobStatusMessage SetJobInCompletedStatus(int jobId);
-        JobStatusMessage SetJobInTimeOut(int jobId);
-        JobStatusMessage SetJobInError(int jobId, Exception ex);
+        Task<JobStatusMessage> AssignJobAsync(string workerId, int jobId);
+        Task<JobStatusMessage> SetJobInRunningStatusAsync(int jobId);
+        Task<JobStatusMessage> SetJobInCompletedStatusAsync(int jobId);
+        Task<JobStatusMessage> SetJobInTimeOutAsync(int jobId);
+        Task<JobStatusMessage> SetJobInErrorAsync(int jobId, Exception ex);
     }
 }

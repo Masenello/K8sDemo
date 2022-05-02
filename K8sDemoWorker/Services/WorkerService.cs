@@ -1,4 +1,3 @@
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,16 +5,17 @@ using K8sBackendShared.Interfaces;
 using K8sBackendShared.Workers;
 using K8sCore.Messages;
 using K8sDemoWorker.Jobs;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace K8sDemoWorker.Services
 {
-    public class WorkerService:EventWorkerService
+    public class WorkerService : EventWorkerService
     {
-        private readonly IServiceProvider _serviceProvider;
 
-        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger):base(rabbitConnector, logger)
+        private readonly TestJob _testJob;
+        public WorkerService(TestJob testJob, IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
         {
-            _serviceProvider = serviceProvider;
+            _testJob = testJob;
             _logger.LogInfo($"Worker started with id: {_workerId}");
             WorkerRegisterToDirector();
         }
@@ -35,13 +35,13 @@ namespace K8sDemoWorker.Services
         public void WorkerRegisterToDirector()
         {
             _logger.LogInfo($"Worker: {_workerId} registering to director");
-            _rabbitConnector.Publish<WorkerRegisterToDirectorMessage>(new WorkerRegisterToDirectorMessage(){WorkerId = _workerId});
+            _rabbitConnector.Publish<WorkerRegisterToDirectorMessage>(new WorkerRegisterToDirectorMessage() { WorkerId = _workerId });
         }
 
-        public override Task  StopAsync(CancellationToken stoppingToken)
+        public override Task StopAsync(CancellationToken stoppingToken)
         {
             _logger.LogInfo($"Worker: {_workerId} unregistering from director");
-            _rabbitConnector.Publish<WorkerUnRegisterToDirectorMessage>(new WorkerUnRegisterToDirectorMessage(){WorkerId = _workerId});
+            _rabbitConnector.Publish<WorkerUnRegisterToDirectorMessage>(new WorkerUnRegisterToDirectorMessage() { WorkerId = _workerId });
             _logger.LogInfo($"{nameof(WorkerService)} stopped");
             return Task.CompletedTask;
         }
@@ -50,15 +50,18 @@ namespace K8sDemoWorker.Services
         {
             try
             {
-                    //Discard jobs for other workers
-                    if (msg.WorkerId != _workerId) return;
-                    _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
-                    //TODO Manage multiple job types
-                    DoWork(new TestJob(_serviceProvider,_logger,_rabbitConnector, _workerId), msg.JobId);
+                //Discard jobs for other workers
+                if (msg.WorkerId != _workerId) return;
+                _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
+                //TODO Manage multiple job types
+
+                _testJob.InitService(_workerId,msg.JobId);
+                DoWork(_testJob);
+
             }
             catch (System.Exception ex)
             {
-                _logger.LogError($"Failed to start job with id: {msg.JobId} main task",ex);
+                _logger.LogError($"Failed to start job with id: {msg.JobId} main task", ex);
             }
         }
 
