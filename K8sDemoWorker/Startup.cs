@@ -34,7 +34,7 @@ namespace K8sDemoWorker
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                         
-                }, ServiceLifetime.Transient);
+                });
 
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IJobUnitOfWork, JobUnitOfWork>();

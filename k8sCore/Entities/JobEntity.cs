@@ -27,6 +27,9 @@ namespace K8sCore.Entities
         public JobType Type {get; set;}
 
         public string WorkerId {get; set;}
+        public int TimeOutSeconds { get; set; }
+        
+        
 
 
         public string GenerateJobDescriptor()

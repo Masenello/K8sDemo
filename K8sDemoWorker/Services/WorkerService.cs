@@ -9,11 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace K8sDemoWorker.Services
 {
+
     public class WorkerService : EventWorkerService
     {
-
         private readonly TestJob _testJob;
-        public WorkerService(TestJob testJob, IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
+
+        public WorkerService(TestJob testJob, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
         {
             _testJob = testJob;
             _logger.LogInfo($"Worker started with id: {_workerId}");
@@ -53,11 +54,16 @@ namespace K8sDemoWorker.Services
                 //Discard jobs for other workers
                 if (msg.WorkerId != _workerId) return;
                 _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
-                //TODO Manage multiple job types
 
-                _testJob.InitService(_workerId,msg.JobId);
-                DoWork(_testJob);
-
+                switch (msg.JobType)
+                {
+                    case K8sCore.Enums.JobType.TestJob:
+                        _testJob.InitService(_workerId, msg.JobId);
+                        DoWork(_testJob);
+                        break;
+                    default:
+                        throw new Exception($"Unknown job type: {msg.JobType}");
+                }
             }
             catch (System.Exception ex)
             {

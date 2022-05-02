@@ -22,6 +22,7 @@ namespace K8sBackendShared.Workers
 
         public EventWorkerService(IRabbitConnector rabbitConnector, ILogger logger)
         {
+
             _rabbitConnector = rabbitConnector;
             _logger = logger;
 

@@ -28,8 +28,8 @@ namespace K8sDemoDirector.Services
         // ******  Settings *********
         private readonly int _maxJobsPerWorker = 20;
         private readonly int _maxWorkers = 3;
-        private bool scalingUpEnabled = true;
-        private bool scalingDownEnabled = true;
+        private bool scalingUpEnabled = false;
+        private bool scalingDownEnabled = false;
         //***************************
 
         private bool systemIsScalingUp=false;
@@ -107,7 +107,8 @@ namespace K8sDemoDirector.Services
                         _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
                             {
                                 WorkerId = targetWorker.WorkerId,
-                                JobId = createdJob.Id
+                                JobId = createdJob.Id,
+                                JobType = createdJob.Type,
                             });
                         AddJobToRegistry(createdJob, targetWorker.WorkerId);
                         _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}. Worker jobs: {_activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorker.WorkerId).Count()}");
@@ -120,8 +121,8 @@ namespace K8sDemoDirector.Services
                         ||x.Value.Status== JobStatus.running))
                 {
                     var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
-                            
-                    //TODO variable timeouts. Be carefull that cluster time zone is UTC!
+                    //TODO variable timeouts set on job creation        
+                    //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
                     if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
                     {
                         var timeoutMsg =await uow.SetJobInTimeOutAsync(jobToMonitor.Id);

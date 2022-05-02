@@ -14,6 +14,9 @@ namespace K8sCore.Messages
         public string UserMessage { get; set; }
         public string WorkerId { get; set; }
 
+        
+        
+
         public JobStatusMessage()
         {
 

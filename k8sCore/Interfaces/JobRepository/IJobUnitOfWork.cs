@@ -8,7 +8,6 @@ namespace K8sCore.Interfaces.JobRepository
     {
         IJobRepository Jobs { get; }
         Task<int> CompleteAsync();
-
         Task<JobStatusMessage> AssignJobAsync(string workerId, int jobId);
         Task<JobStatusMessage> SetJobInRunningStatusAsync(int jobId);
         Task<JobStatusMessage> SetJobInCompletedStatusAsync(int jobId);
