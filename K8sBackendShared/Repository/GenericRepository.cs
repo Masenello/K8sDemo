@@ -49,5 +49,7 @@ namespace K8sBackendShared.Repository
         {
             _context.Set<T>().RemoveRange(entities);
         }
+
+        
     }
 }

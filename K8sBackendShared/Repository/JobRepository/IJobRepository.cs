@@ -7,6 +7,8 @@ namespace K8sBackendShared.Repository.JobRepository
     public interface IJobRepository: IGenericRepository<JobEntity>
     {
         public IEnumerable<JobEntity> GetJobsInStatus(JobStatus targetStatus);
+
+        public JobEntity GetJobWithId(int Id);
         
     }
 }

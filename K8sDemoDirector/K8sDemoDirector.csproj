@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="7.2.15" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <PropertyGroup>

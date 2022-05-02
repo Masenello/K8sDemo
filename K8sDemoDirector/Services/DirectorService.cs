@@ -15,15 +15,20 @@ using K8sBackendShared.Interfaces;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.K8s;
 using K8sBackendShared.Messages;
+using K8sBackendShared.Repository;
+using K8sBackendShared.Repository.JobRepository;
 using K8sBackendShared.Workers;
 using K8sDemoDirector.Jobs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 
 namespace K8sDemoDirector.Services
 {
     public class DirectorService:CyclicWorkerService
     {
+
+        private readonly IServiceProvider _serviceProvider;
         private readonly GetJobListJob _getJobListJob;     
 
         private readonly ConcurrentDictionary<int,WorkerDescriptorDto> _workersRegistry;
@@ -42,9 +47,10 @@ namespace K8sDemoDirector.Services
 
         private readonly IK8s _k8sConnector;
         
-        public DirectorService(IK8s k8sConnector,IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
+        public DirectorService(IServiceProvider  serviceProvider, IK8s k8sConnector,IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
         :base(rabbitConnector,logger,cycleTime, workerJob)
         {
+            _serviceProvider = serviceProvider;
             _getJobListJob = workerJob;
             _k8sConnector = k8sConnector;
 
@@ -93,73 +99,70 @@ namespace K8sDemoDirector.Services
                  //_logger.LogInfo($"Director main cycle");
                 //TODO Change to event based worker if possible
 
-                //Search for jobs created in database and assign them to workers
-                using (var _context = (new DataContextFactory()).CreateDbContext(null))
+            
+            using(var scope = _serviceProvider.CreateScope()) 
+            {
+                var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
+                foreach(var createdJob in  uow.Jobs.GetJobsInStatus(JobStatus.created))   
                 {
-                    foreach(var createdJob in  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList())   
+                    //If system is scaling down or max workers is reached, avoid assigning jobs
+                    if (systemIsScalingDown) break;
+                    //Assign job to worker
+                    var targetWorker = GetWorkerWithLessLoad();
+                    if (targetWorker is null)
                     {
-                        //If system is scaling down or max workers is reached, avoid assigning jobs
-                        if (systemIsScalingDown) break;
-                        //Assign job to worker
-                        var targetWorker = GetWorkerWithLessLoad();
-                        if (targetWorker is null)
-                        {
-                            //No workers available
-                            break;
-                        }
-                        else
-                        {
-                            createdJob.Status = JobStatus.assigned;
-                            createdJob.AssignmentDate = DateTime.UtcNow;
-                            await _context.SaveChangesAsync();
-                            //be sure that changes are saved in database before sending message to worker
-                            _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
-                                    {
-                                        WorkerId = targetWorker.WorkerId,
-                                        JobId = createdJob.Id
-                                    });
-                            AddJobToRegistry(createdJob, targetWorker.WorkerId);
-                            _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}. Worker jobs: {_activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorker.WorkerId).Count()}");
-
-                        }
-                        
-                    } 
-
-                        //Monitor active job for timeouts
-                        foreach(var activeJob in _activeJobsRegistry.Where(x=>x.Value.Status== JobStatus.assigned
-                        ||x.Value.Status== JobStatus.running))
-                        {
-                            var jobToMonitor = _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == activeJob.Key);
-                            
-                            //TODO variable timeouts. Be carefull that cluster time zone is UTC!
-                            if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
-                            {
-                                //Job has timed out
-                                //update job on database
-                                jobToMonitor.EndDate = DateTime.UtcNow;
-                                jobToMonitor.Status= JobStatus.error;
-                                jobToMonitor.Errors = $"Director job monitoring, timeout on worker {activeJob.Value.WorkerId}";
-                                await _context.SaveChangesAsync();
-                                //notify clients
-                                JobStatusMessage msg = new JobStatusMessage()
-                                {
-                                    JobId = jobToMonitor.Id,
-                                    StatusJobType=jobToMonitor.Type,
-                                    Status = JobStatus.error,
-                                    ProgressPercentage = 100,
-                                    User = jobToMonitor.User.UserName,
-                                    UserMessage = $"{jobToMonitor.GenerateJobDescriptor()}. Director job monitoring, timeout on worker {activeJob.Value.WorkerId}",
-                                    WorkerId = activeJob.Value.WorkerId,
-                                };
-                                _rabbitConnector.Publish<JobStatusMessage>(msg);
-                                //remove from active jobs list
-                                RemoveFromRegistry(msg);
-                            }
-                        }
+                        //No workers available
+                        break;
                     }
-                
+                    else
+                    {
+                        createdJob.Status = JobStatus.assigned;
+                        createdJob.AssignmentDate = DateTime.UtcNow;
+                        uow.Complete();
+                        //be sure that changes are saved in database before sending message to worker
+                        _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
+                            {
+                                WorkerId = targetWorker.WorkerId,
+                                JobId = createdJob.Id
+                            });
+                        AddJobToRegistry(createdJob, targetWorker.WorkerId);
+                        _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}. Worker jobs: {_activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorker.WorkerId).Count()}");
+                    }
+                        
+                } 
 
-        
+                //Monitor active job for timeouts
+                foreach(var activeJob in _activeJobsRegistry.Where(x=>x.Value.Status== JobStatus.assigned
+                        ||x.Value.Status== JobStatus.running))
+                {
+                    var jobToMonitor = uow.Jobs.GetJobWithId(activeJob.Key);
+                            
+                    //TODO variable timeouts. Be carefull that cluster time zone is UTC!
+                    if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
+                    {
+                        //Job has timed out
+                        //update job on database
+                        jobToMonitor.EndDate = DateTime.UtcNow;
+                        jobToMonitor.Status= JobStatus.error;
+                        jobToMonitor.Errors = $"Director job monitoring, timeout on worker {activeJob.Value.WorkerId}";
+                        uow.Complete();
+                        //notify clients
+                        JobStatusMessage msg = new JobStatusMessage()
+                        {
+                            JobId = jobToMonitor.Id,
+                            StatusJobType=jobToMonitor.Type,
+                            Status = JobStatus.error,
+                            ProgressPercentage = 100,
+                            User = jobToMonitor.User.UserName,
+                            UserMessage = $"{jobToMonitor.GenerateJobDescriptor()}. Director job monitoring, timeout on worker {activeJob.Value.WorkerId}",
+                            WorkerId = activeJob.Value.WorkerId,
+                        };
+                        _rabbitConnector.Publish<JobStatusMessage>(msg);
+                        //remove from active jobs list
+                        RemoveFromRegistry(msg);
+                    }
+                }
+            }
 
             //Update Director Status
             DirectorStatusMessage newStatus = new DirectorStatusMessage()

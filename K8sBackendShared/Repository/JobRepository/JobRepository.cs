@@ -20,6 +20,11 @@ namespace K8sBackendShared.Repository.JobRepository
         {
             return  _context.Jobs.Where(x=>x.Status == JobStatus.created).Include(u=>u.User).ToList();
         }
+
+        public JobEntity GetJobWithId(int Id)
+        {
+            return  _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == Id);
+        }
     }
 
 }
