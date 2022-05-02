@@ -5,7 +5,7 @@ using K8sBackendShared.Enums;
 
 namespace K8sBackendShared.Entities
 {
-    public class JobEntity
+    public class JobEntity:BaseEntity
 
     {
         public int Id { get; set; }
