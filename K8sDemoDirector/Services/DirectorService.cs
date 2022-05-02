@@ -133,7 +133,7 @@ namespace K8sDemoDirector.Services
                     //TODO variable timeouts. Be carefull that cluster time zone is UTC!
                     if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
                     {
-                        var timeoutMsg = uow.JobTimeOut(jobToMonitor.Id);
+                        var timeoutMsg = uow.SetJobInTimeOut(jobToMonitor.Id);
                         _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
                         //remove from active jobs list
                         RemoveFromRegistry(timeoutMsg);
@@ -303,7 +303,7 @@ namespace K8sDemoDirector.Services
             }
         }
 
-          private int GetJobsAssignedToWorker(string workerId)
+        private int GetJobsAssignedToWorker(string workerId)
           {
               return _activeJobsRegistry.Where(x=>x.Value.WorkerId == workerId).Count();
           }

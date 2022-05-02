@@ -10,6 +10,6 @@ namespace K8sBackendShared.Repository
         int Complete();
 
         JobStatusMessage AssignJob(string workerId, int jobId);
-        JobStatusMessage JobTimeOut(int jobId);
+        JobStatusMessage SetJobInTimeOut(int jobId);
     }
 }

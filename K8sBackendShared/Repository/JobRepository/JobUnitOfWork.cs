@@ -34,7 +34,7 @@ namespace K8sBackendShared.Repository.JobRepository
             return new JobStatusMessage(targetJob);
         }
 
-        public JobStatusMessage JobTimeOut(int jobId)
+        public JobStatusMessage SetJobInTimeOut(int jobId)
         {
             var targetJob = Jobs.GetById(jobId);
             targetJob.Status = Enums.JobStatus.error;
