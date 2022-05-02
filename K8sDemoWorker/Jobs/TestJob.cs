@@ -18,13 +18,9 @@ namespace K8sDemoWorker.Jobs
         private readonly IServiceProvider _serviceProvider;
         private int _jobToProcessId;
         private string _workerId;
-        public TestJob(IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
+        public TestJob(string workerId, int jobToProcessId, IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
         {
             _serviceProvider = serviceProvider;
-        }
-
-        public void InitService(string workerId, int jobToProcessId)
-        {
             _workerId = workerId;
             _jobToProcessId = jobToProcessId;
         }
@@ -39,6 +35,8 @@ namespace K8sDemoWorker.Jobs
                 try
                 {
                     if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
+                    //If already set in error return (timeout by director)
+                    if (targetJob.Status == JobStatus.error) return;
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
 
                     _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");

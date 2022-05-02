@@ -84,13 +84,15 @@ namespace K8sDemoDirector.Services
 
         private async void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-
+            int jobsToAssign = 0;
             using (var scope = _serviceProvider.CreateScope())
             {
 
                 var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
+                
                 foreach (var createdJob in await uow.Jobs.GetJobsInStatusAsync(JobStatus.created))
                 {
+                    jobsToAssign +=1;
                     //If system is scaling down or max workers is reached, avoid assigning jobs
                     if (systemIsScalingDown) break;
                     //Assign job to worker
@@ -120,13 +122,13 @@ namespace K8sDemoDirector.Services
                 foreach (var activeJob in _activeJobsRegistry.Where(x => x.Value.Status == JobStatus.assigned
                         || x.Value.Status == JobStatus.running))
                 {
-                    var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
+                    //var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
                     //TODO variable timeouts set on job creation 
 
                     //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
-                    if ((jobToMonitor != null) && (DateTime.UtcNow - activeJob.Value.AssignmentDate).TotalSeconds > 30)
+                    if ((DateTime.UtcNow - activeJob.Value.CreationDate).TotalSeconds > 30)
                     {
-                        var timeoutMsg = await uow.SetJobInTimeOutAsync(jobToMonitor.Id);
+                        var timeoutMsg = await uow.SetJobInTimeOutAsync(activeJob.Value.JobId);
                         _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
                         //remove from active jobs list
                         RemoveFromRegistry(timeoutMsg);
@@ -139,6 +141,7 @@ namespace K8sDemoDirector.Services
             {
                 Timestamp = DateTime.UtcNow,
                 RegisteredWorkers = _workersRegistry.Values.ToList(),
+                TotalJobs = jobsToAssign + _activeJobsRegistry.Count(),
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 

@@ -31,7 +31,7 @@ export class DirectorStatusChartComponent implements OnInit {
         x: 'center'
       },
       legend: {
-        data: ['Workers', 'Active Jobs'],
+        data: ['Workers', 'Active Jobs', 'Total Jobs'],
         align: 'left',
         y: 'bottom',
       },
@@ -56,6 +56,12 @@ export class DirectorStatusChartComponent implements OnInit {
           type: 'line',
           showSymbol: false,
           data: chartDecriptor.yJobsAxisData,
+        },
+        {
+          name: 'Total Jobs',
+          type: 'line',
+          showSymbol: false,
+          data: chartDecriptor.yTotalJobsAxisData,
         },
       ],
     }

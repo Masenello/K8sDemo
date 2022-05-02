@@ -12,11 +12,10 @@ namespace K8sDemoWorker.Services
 
     public class WorkerService : EventWorkerService
     {
-        private readonly TestJob _testJob;
-
-        public WorkerService(TestJob testJob, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
+        private readonly IServiceProvider _serviceProvider;
+        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
         {
-            _testJob = testJob;
+            _serviceProvider = serviceProvider;
             _logger.LogInfo($"Worker started with id: {_workerId}");
             WorkerRegisterToDirector();
         }
@@ -58,8 +57,7 @@ namespace K8sDemoWorker.Services
                 switch (msg.JobType)
                 {
                     case K8sCore.Enums.JobType.TestJob:
-                        _testJob.InitService(_workerId, msg.JobId);
-                        DoWork(_testJob);
+                        DoWork(new TestJob(_workerId, msg.JobId, _serviceProvider, _logger, _rabbitConnector));
                         break;
                     default:
                         throw new Exception($"Unknown job type: {msg.JobType}");

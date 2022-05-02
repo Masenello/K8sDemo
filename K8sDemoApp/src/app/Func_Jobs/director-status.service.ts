@@ -53,12 +53,13 @@ export class DirectorStatusService {
       descriptor.xAxisData.push(this.datePipe.transform(dataPoint.timestamp, environment.dateTimeFormat))
       console.log(dataPoint)
       descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).count())
-      var totaljobs = 0
+      descriptor.yTotalJobsAxisData.push(dataPoint.totalJobs)
+      var activejobs = 0
       dataPoint.registeredWorkers.forEach(element=>
         {
-          totaljobs = totaljobs + element.currentJobs
+          activejobs = activejobs + element.currentJobs
         })
-      descriptor.yJobsAxisData.push(totaljobs)
+      descriptor.yJobsAxisData.push(activejobs)
     })
     return descriptor
 

@@ -9,5 +9,8 @@ namespace K8sCore.Messages
 
         public DateTime Timestamp { get; set; }
         public List<WorkerDescriptorDto> RegisteredWorkers { get; set; }
+        public int TotalJobs { get; set; }
+        
+        
     }
 }
