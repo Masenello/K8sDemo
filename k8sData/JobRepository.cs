@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using K8sBackendShared.Data;
-using K8sBackendShared.Entities;
-using K8sBackendShared.Enums;
-using K8sBackendShared.Messages;
+using k8sCore.Entities;
+using k8sCore.Enums;
+using k8sCore.Repository.JobRepository;
+using K8sData;
+using K8sData.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace K8sBackendShared.Repository.JobRepository

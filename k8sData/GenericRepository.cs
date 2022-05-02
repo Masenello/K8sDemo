@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using K8sBackendShared.Data;
-using K8sBackendShared.Entities;
+using k8sCore.Entities;
+using k8sCore.Repository;
+using k8sCore.Specifications;
+using k8sData;
+using K8sData.Data;
 
 namespace K8sData
 {
@@ -48,6 +51,11 @@ namespace K8sData
         public void RemoveRange(IEnumerable<T> entities)
         {
             _context.Set<T>().RemoveRange(entities);
+        }
+
+        public IEnumerable<T> FindWithSpecificationPattern(ISpecification<T> specification = null)
+        {
+            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
         }
 
         

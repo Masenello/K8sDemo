@@ -1,4 +1,4 @@
-using K8sBackendShared.Settings;
+using K8sData.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 

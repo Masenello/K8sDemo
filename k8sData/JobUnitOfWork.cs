@@ -1,6 +1,8 @@
 using System;
-using K8sBackendShared.Data;
-using K8sBackendShared.Messages;
+using k8sCore.Repository;
+using k8sCore.Repository.JobRepository;
+using K8sCore.Messages;
+using K8sData.Data;
 
 namespace K8sBackendShared.Repository.JobRepository
 {
@@ -27,7 +29,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage AssignJob(string workerId, int jobId)
         {
             var targetJob = Jobs.GetById(jobId);
-            targetJob.Status = Enums.JobStatus.assigned;
+            targetJob.Status = k8sCore.Enums.JobStatus.assigned;
             targetJob.WorkerId = workerId;
             targetJob.AssignmentDate = DateTime.UtcNow;
             Complete();
@@ -37,7 +39,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage SetJobInTimeOut(int jobId)
         {
             var targetJob = Jobs.GetById(jobId);
-            targetJob.Status = Enums.JobStatus.error;
+            targetJob.Status = k8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"Job timeout";
             Complete();

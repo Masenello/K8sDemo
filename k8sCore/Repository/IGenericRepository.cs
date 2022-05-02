@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using k8sCore.Entities;
+using k8sCore.Specifications;
 
 namespace k8sCore.Repository
 {
@@ -14,5 +15,6 @@ namespace k8sCore.Repository
         void AddRange(IEnumerable<T> entities);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
+        IEnumerable<T> FindWithSpecificationPattern(ISpecification<T> specification = null);
     }
 }

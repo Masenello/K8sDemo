@@ -14,10 +14,6 @@ namespace K8sBackendShared.Settings
         //private static readonly string RabbitDebugHost = "host.docker.internal";
         private static readonly string RabbitDebugHost = "127.0.0.1";
 
-        private static readonly string SqlServerDockerHost = "k8sDemo-database";
-        //private static readonly string SqlServerDebugHost = "host.docker.internal";
-        private static readonly string SqlServerDebugHost = "127.0.0.1";
-
         public static bool RunningInDocker()
         {
             if ( Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") is null)
@@ -35,18 +31,6 @@ namespace K8sBackendShared.Settings
                 hostName = RabbitDebugHost;
             }
             return $"host={hostName}";
-        }
-
-        public static string DatabaseConnectionStringResolver()
-        {
-            string hostName = SqlServerDockerHost;
-            if (!RunningInDocker())
-            {
-                hostName = SqlServerDebugHost;
-            }
-
-            return $"server={hostName};initial catalog=TestDatabase;persist security info=True;user id=sa;password=Pass@Word1;MultipleActiveResultSets=True;App=EntityFramework";
-            
         }
 
         //Returns true if rabbit management web page  is available, this means that boot phase is completed

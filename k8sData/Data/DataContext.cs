@@ -1,4 +1,5 @@
-using K8sBackendShared.Entities;
+
+using k8sCore.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace K8sData.Data
