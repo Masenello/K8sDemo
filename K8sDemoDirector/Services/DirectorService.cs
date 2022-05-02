@@ -95,11 +95,6 @@ namespace K8sDemoDirector.Services
         
         private async void  CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-            //If system is scaling suspend job assignment
-                 //_logger.LogInfo($"Director main cycle");
-                //TODO Change to event based worker if possible
-
-            
             using(var scope = _serviceProvider.CreateScope()) 
             {
                 var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
@@ -116,9 +111,7 @@ namespace K8sDemoDirector.Services
                     }
                     else
                     {
-                        createdJob.Status = JobStatus.assigned;
-                        createdJob.AssignmentDate = DateTime.UtcNow;
-                        uow.Complete();
+                        uow.AssignJob(targetWorker.WorkerId, createdJob.Id);
                         //be sure that changes are saved in database before sending message to worker
                         _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
                             {
@@ -140,26 +133,10 @@ namespace K8sDemoDirector.Services
                     //TODO variable timeouts. Be carefull that cluster time zone is UTC!
                     if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>30)
                     {
-                        //Job has timed out
-                        //update job on database
-                        jobToMonitor.EndDate = DateTime.UtcNow;
-                        jobToMonitor.Status= JobStatus.error;
-                        jobToMonitor.Errors = $"Director job monitoring, timeout on worker {activeJob.Value.WorkerId}";
-                        uow.Complete();
-                        //notify clients
-                        JobStatusMessage msg = new JobStatusMessage()
-                        {
-                            JobId = jobToMonitor.Id,
-                            StatusJobType=jobToMonitor.Type,
-                            Status = JobStatus.error,
-                            ProgressPercentage = 100,
-                            User = jobToMonitor.User.UserName,
-                            UserMessage = $"{jobToMonitor.GenerateJobDescriptor()}. Director job monitoring, timeout on worker {activeJob.Value.WorkerId}",
-                            WorkerId = activeJob.Value.WorkerId,
-                        };
-                        _rabbitConnector.Publish<JobStatusMessage>(msg);
+                        var timeoutMsg = uow.JobTimeOut(jobToMonitor.Id);
+                        _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
                         //remove from active jobs list
-                        RemoveFromRegistry(msg);
+                        RemoveFromRegistry(timeoutMsg);
                     }
                 }
             }

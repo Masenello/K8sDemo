@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using K8sBackendShared.Data;
 using K8sBackendShared.Entities;
 using K8sBackendShared.Enums;
+using K8sBackendShared.Messages;
 using Microsoft.EntityFrameworkCore;
 
 namespace K8sBackendShared.Repository.JobRepository
@@ -25,6 +26,7 @@ namespace K8sBackendShared.Repository.JobRepository
         {
             return  _context.Jobs.Include(u=>u.User).FirstOrDefault(x=>x.Id == Id);
         }
+
     }
 
 }

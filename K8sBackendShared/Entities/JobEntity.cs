@@ -26,10 +26,12 @@ namespace K8sBackendShared.Entities
 
         public JobType Type {get; set;}
 
+        public string WorkerId {get; set;}
+
 
         public string GenerateJobDescriptor()
         {
-            return ($"Job: {Id} of type: {Type} created by user: {User.UserName}");
+            return ($"Job: {Id} of type: {Type} user: {User.UserName} worker: {WorkerId} status: {Status}");
         }
         
     }

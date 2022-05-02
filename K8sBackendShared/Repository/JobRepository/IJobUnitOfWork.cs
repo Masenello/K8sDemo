@@ -1,4 +1,5 @@
 using System;
+using K8sBackendShared.Messages;
 using K8sBackendShared.Repository.JobRepository;
 
 namespace K8sBackendShared.Repository
@@ -7,5 +8,8 @@ namespace K8sBackendShared.Repository
     {
         IJobRepository Jobs { get; }
         int Complete();
+
+        JobStatusMessage AssignJob(string workerId, int jobId);
+        JobStatusMessage JobTimeOut(int jobId);
     }
 }
