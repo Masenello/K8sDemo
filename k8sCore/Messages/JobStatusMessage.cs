@@ -13,6 +13,12 @@ namespace K8sCore.Messages
         public double ProgressPercentage { get; set; }
         public string UserMessage { get; set; }
         public string WorkerId { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime AssignmentDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        
+        
 
         
         
@@ -30,6 +36,10 @@ namespace K8sCore.Messages
             UserMessage = userMessage;
             WorkerId = jobEntity.WorkerId;
             Status = jobEntity.Status;
+            CreationDate = jobEntity.CreationDate;
+            StartDate = jobEntity.StartDate;
+            AssignmentDate = jobEntity.AssignmentDate;
+            EndDate = jobEntity.EndDate;
 
             if (progressPercentage != -1)
             {
