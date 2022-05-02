@@ -1,5 +1,5 @@
 using System;
-using K8sBackendShared.Messages;
+using K8sCore.Messages;
 
 namespace K8sBackendShared.Jobs
 {

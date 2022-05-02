@@ -1,8 +1,7 @@
-using System;
+
 using EasyNetQ;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Messages;
-using K8sBackendShared.Settings;
+using K8sCore.Messages;
 
 namespace K8sBackendShared.Jobs
 {

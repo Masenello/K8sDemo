@@ -1,9 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using K8sBackendShared.Data;
-using K8sBackendShared.DTOs;
-using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

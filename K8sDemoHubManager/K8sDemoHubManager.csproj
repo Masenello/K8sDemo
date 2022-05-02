@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\K8sBackendShared\K8sBackendShared.csproj" />
+    <ProjectReference Include="..\K8sCore\K8sCore.csproj" />
   </ItemGroup>
 
 </Project>
