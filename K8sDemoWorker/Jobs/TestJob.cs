@@ -37,7 +37,13 @@ namespace K8sDemoWorker.Jobs
                         _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
                         targetJob.Status = JobStatus.running;
                         targetJob.StartDate = DateTime.Now;
+
+                        DateTime start = DateTime.Now;
                         await _context.SaveChangesAsync();
+                        if ((DateTime.Now - start).TotalSeconds > 5)
+                        {
+                            throw new Exception("Database write too slow");
+                        }
 
                         //Main Action and progess report
                         JobStatusMessage jobStatus = new JobStatusMessage();

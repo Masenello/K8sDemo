@@ -31,11 +31,13 @@ namespace K8sDemoDirector.Services
         private readonly ConcurrentDictionary<int,JobStatusMessage> _activeJobsRegistry;
 
         private readonly int _maxJobsPerWorker = 20;
-        private readonly int _maxWorkers = 2;
+        private readonly int _maxWorkers = 3;
 
         private bool systemIsScalingUp=false;
         private bool systemIsScalingDown=false;
-        private bool scalingEnabled = false;
+        private bool scalingUpEnabled = true;
+
+        private bool scalingDownEnabled = false;
 
 
         private readonly IK8s _k8sConnector;
@@ -168,7 +170,7 @@ namespace K8sDemoDirector.Services
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 
             //Monitor worker scaling
-            if (!(systemIsScalingUp || systemIsScalingDown) && scalingEnabled)
+            if (!(systemIsScalingUp || systemIsScalingDown))
             {
                 MonitorWorkerLoad();
             }
@@ -252,14 +254,14 @@ namespace K8sDemoDirector.Services
             string targetWorkerId = _workersRegistry.First().Value.WorkerId;
             foreach (var worker in _workersRegistry)
             {   
-                if(_activeJobsRegistry.Where(x=>x.Value.WorkerId == worker.Value.WorkerId).Count() < _activeJobsRegistry.Where(x=>x.Value.WorkerId == targetWorkerId).Count())
+                if(GetJobsAssignedToWorker(worker.Value.WorkerId)<GetJobsAssignedToWorker(targetWorkerId))
                 {
                     targetWorkerId = worker.Value.WorkerId;
                 }
             }
             var targetWorker = _workersRegistry.FirstOrDefault(x=>x.Value.WorkerId == targetWorkerId);
             //A worker that is saturated is considered not available
-            if (targetWorker.Value.CurrentJobs >= _maxJobsPerWorker) return null;
+            if (GetJobsAssignedToWorker(targetWorkerId) >= _maxJobsPerWorker) return null;
 
             return targetWorker.Value;
         }
@@ -320,6 +322,11 @@ namespace K8sDemoDirector.Services
                 
             }
         }
+
+          private int GetJobsAssignedToWorker(string workerId)
+          {
+              return _activeJobsRegistry.Where(x=>x.Value.WorkerId == workerId).Count();
+          }
         
     #endregion
 
@@ -330,13 +337,15 @@ namespace K8sDemoDirector.Services
         {
             //TODO variable threshold
             if ((_workersRegistry.Count()>0) 
+            && (scalingUpEnabled)
             && ((_workersRegistry.Count() < _maxWorkers)) 
             && (_workersRegistry.All(x=>x.Value.CurrentJobs >= _maxJobsPerWorker)))  //All existing workers are saturated
             {
                 WorkersScaleUp();
             }
 
-            if (_workersRegistry.All(x=>x.Value.CurrentJobs==0))
+            if (_workersRegistry.All(x=>x.Value.CurrentJobs==0)
+            && scalingDownEnabled)
             {
                 WorkersScaleDown();
             }

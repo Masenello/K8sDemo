@@ -139,6 +139,7 @@ spec:
         - --kubelet-preferred-address-types=InternalIP
         - --kubelet-use-node-status-port
         - --kubelet-insecure-tls
+        - --metric-resolution=3s
         image: k8s.gcr.io/metrics-server/metrics-server:v0.6.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
