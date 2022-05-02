@@ -1,26 +1,21 @@
+
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using K8sBackendShared.Data;
-using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Jobs;
-using K8sBackendShared.Messages;
-using K8sBackendShared.Settings;
-using K8sBackendShared.Utils;
 using K8sBackendShared.Workers;
+using K8sCore.Messages;
 using K8sDemoWorker.Jobs;
 
 namespace K8sDemoWorker.Services
 {
     public class WorkerService:EventWorkerService
     {
+        private readonly IServiceProvider _serviceProvider;
 
-        private object lockvariable;
-
-        public WorkerService(IRabbitConnector rabbitConnector, ILogger logger):base(rabbitConnector, logger)
+        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger):base(rabbitConnector, logger)
         {
+            _serviceProvider = serviceProvider;
             _logger.LogInfo($"Worker started with id: {_workerId}");
             WorkerRegisterToDirector();
         }
@@ -59,7 +54,7 @@ namespace K8sDemoWorker.Services
                     if (msg.WorkerId != _workerId) return;
                     _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
                     //TODO Manage multiple job types
-                    DoWork(new TestJob(_logger,_rabbitConnector, _workerId), msg.JobId);
+                    DoWork(new TestJob(_serviceProvider,_logger,_rabbitConnector, _workerId), msg.JobId);
             }
             catch (System.Exception ex)
             {

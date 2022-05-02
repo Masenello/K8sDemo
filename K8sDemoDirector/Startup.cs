@@ -1,11 +1,14 @@
-using K8sBackendShared.Data;
+
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.K8s;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
-using K8sBackendShared.Repository;
 using K8sBackendShared.Repository.JobRepository;
-using K8sBackendShared.Settings;
+using k8sCore.Interfaces;
+using k8sCore.Interfaces.JobRepository;
+using K8sData;
+using K8sData.Data;
+using K8sData.Settings;
 using K8sDemoDirector.Jobs;
 using K8sDemoDirector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,14 +28,17 @@ namespace K8sDemoDirector
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //***********   Database access layer *********************
+            //Director can access database through K8sData
             services.AddDbContext<DataContext>(options =>
                 {
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                 });
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IJobRepository, JobRepository>();
             services.AddTransient<IJobUnitOfWork, JobUnitOfWork>();
+            services.AddTransient<IJobRepository, JobRepository>();
+            //***********************************************************
 
             services.AddSingleton<ILogger,RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();

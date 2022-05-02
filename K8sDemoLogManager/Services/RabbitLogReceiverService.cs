@@ -1,13 +1,8 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
-using EasyNetQ;
-using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Messages;
-using K8sBackendShared.RabbitConnector;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using k8sCore.Enums;
+using K8sCore.Messages;
 using NLog;
 
 namespace K8sDemoLogManager.Services

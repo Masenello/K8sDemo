@@ -7,3 +7,7 @@
 - mettere tasto di refresh in Jobs queue per aggiornare la lista job da API
 - Dare possibilità di rimuovere job da Historical
 - Timeout per job 
+
+- K8sDemoHubManager refactor for UOW pattern currently has direct access to DataContext
+
+- K8sDemoApi refactor for UOW pattern currently has direct access to DataContext

@@ -2,26 +2,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using k8s;
-using k8s.Models;
-using k8s.Util.Common;
-using K8sBackendShared.Data;
-using K8sBackendShared.DTOs;
-using K8sBackendShared.Entities;
-using K8sBackendShared.Enums;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Jobs;
 using K8sBackendShared.K8s;
-using K8sBackendShared.Messages;
-using K8sBackendShared.Repository;
-using K8sBackendShared.Repository.JobRepository;
 using K8sBackendShared.Workers;
+using k8sCore.DTOs;
+using k8sCore.Entities;
+using k8sCore.Enums;
+using k8sCore.Interfaces.JobRepository;
+using K8sCore.Messages;
 using K8sDemoDirector.Jobs;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
 
 namespace K8sDemoDirector.Services
 {
@@ -35,16 +25,15 @@ namespace K8sDemoDirector.Services
 
         private readonly ConcurrentDictionary<int,JobStatusMessage> _activeJobsRegistry;
 
+        // ******  Settings *********
         private readonly int _maxJobsPerWorker = 20;
         private readonly int _maxWorkers = 3;
+        private bool scalingUpEnabled = true;
+        private bool scalingDownEnabled = false;
+        //***************************
 
         private bool systemIsScalingUp=false;
         private bool systemIsScalingDown=false;
-        private bool scalingUpEnabled = true;
-
-        private bool scalingDownEnabled = false;
-
-
         private readonly IK8s _k8sConnector;
         
         public DirectorService(IServiceProvider  serviceProvider, IK8s k8sConnector,IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
@@ -95,8 +84,10 @@ namespace K8sDemoDirector.Services
         
         private async void  CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
+            
             using(var scope = _serviceProvider.CreateScope()) 
             {
+                
                 var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
                 foreach(var createdJob in  uow.Jobs.GetJobsInStatus(JobStatus.created))   
                 {
@@ -311,7 +302,6 @@ namespace K8sDemoDirector.Services
     #endregion
 
         int cycleCounter = 0;
-  
 
         private void MonitorWorkerLoad()
         {

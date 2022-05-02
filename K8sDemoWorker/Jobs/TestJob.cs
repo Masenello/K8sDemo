@@ -1,102 +1,69 @@
 using System;
 using System.Linq;
-using K8sBackendShared.Data;
-using K8sBackendShared.Enums;
 using Microsoft.EntityFrameworkCore;
-using K8sBackendShared.Messages;
 using System.Threading;
 using K8sBackendShared.Jobs;
-using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
-using System.Collections.Concurrent;
-using K8sBackendShared.Utils;
+using k8sCore.Interfaces.JobRepository;
+using Microsoft.Extensions.DependencyInjection;
+using k8sCore.Entities;
+using k8sCore.Enums;
+using K8sCore.Messages;
 
 namespace K8sDemoWorker.Jobs
 {
     public class TestJob : AbstractWorkerJob
     {
+        private readonly IServiceProvider _serviceProvider;
         private int _jobToProcessId;
         private string _workerId;
-        public TestJob(ILogger logger, IRabbitConnector rabbitConnector, string workerId):base(logger,rabbitConnector)
-        {     
+        public TestJob(IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector, string workerId) : base(logger, rabbitConnector)
+        {
+            _serviceProvider = serviceProvider;
             _workerId = workerId;
         }
 
         public async override void DoWork(object workerParameters)
         {
-                _jobToProcessId = (int)workerParameters;
-                using (var _context = (new DataContextFactory()).CreateDbContext(null))
+            _jobToProcessId = (int)workerParameters;
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
+                JobEntity targetJob = uow.Jobs.GetJobWithId(_jobToProcessId);
+
+                try
                 {
-                    JobEntity targetJob = await _context.Jobs.Where(x=>x.Id == _jobToProcessId).Include(u=>u.User).FirstOrDefaultAsync();
-                    try 
-                    {
-                        if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
-                        if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
+                    if (targetJob is null) throw new Exception($"Job with Id: {_jobToProcessId} not found on database");
+                    if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
 
-                        _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
-                        targetJob.Status = JobStatus.running;
-                        targetJob.StartDate = DateTime.Now;
+                    _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
+                    JobStatusMessage statusMsg = uow.SetJobInRunningStatus(targetJob.Id);
+                    ReportWorkProgress(statusMsg);
+                    Thread.Sleep(3000);
+                    statusMsg.ProgressPercentage = 33.3;
+                    ReportWorkProgress(statusMsg);
 
-                        DateTime start = DateTime.Now;
-                        await _context.SaveChangesAsync();
-                        if ((DateTime.Now - start).TotalSeconds > 5)
-                        {
-                            throw new Exception("Database write too slow");
-                        }
+                    Thread.Sleep(3000);
+                    statusMsg.ProgressPercentage = 66.6;
+                    ReportWorkProgress(statusMsg);
 
-                        //Main Action and progess report
-                        JobStatusMessage jobStatus = new JobStatusMessage();
-                        jobStatus.JobId = targetJob.Id;
-                        jobStatus.Status = JobStatus.running;
-                        jobStatus.User = targetJob.User.UserName;
-                        jobStatus.StatusJobType = targetJob.Type;
-                        jobStatus.ProgressPercentage = 0.0;
-                        jobStatus.WorkerId = _workerId;
-                        ReportWorkProgress(jobStatus);
-
-                        Thread.Sleep(3000);
-                        jobStatus.ProgressPercentage = 33.3;
-                        ReportWorkProgress(jobStatus);
-
-                        Thread.Sleep(3000);
-                        jobStatus.ProgressPercentage = 66.6;
-                        ReportWorkProgress(jobStatus);
-
-                        Thread.Sleep(3000);
-                        jobStatus.ProgressPercentage = 100.0;
-                        jobStatus.Status = JobStatus.completed;
-                        ReportWorkProgress(jobStatus);
+                    Thread.Sleep(3000);
+                    statusMsg.ProgressPercentage = 100.0;
+                    statusMsg = uow.SetJobInCompletedStatus(targetJob.Id);
+                    ReportWorkProgress(statusMsg);
 
 
-                        //Set job to completed status
-                        _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} completed");
-                        targetJob.Status = JobStatus.completed;
-                        targetJob.EndDate = DateTime.Now;
-                        await _context.SaveChangesAsync();
-
-                    }     
-                    catch(Exception e)
-                    {
-                        _logger.LogError($"{targetJob.GenerateJobDescriptor()} in error", e);
-                        //Set job to error status on database
-                        targetJob.Status = JobStatus.error;
-                        targetJob.EndDate = DateTime.Now;
-                        await _context.SaveChangesAsync();
-                        //Report error to status monitoring
-                        JobStatusMessage jobStatus = new JobStatusMessage();
-                        jobStatus.JobId = targetJob.Id;
-                        jobStatus.Status = JobStatus.error;
-                        jobStatus.User = targetJob.User.UserName;
-                        jobStatus.StatusJobType = targetJob.Type;
-                        jobStatus.ProgressPercentage = 100.0;
-                        jobStatus.WorkerId = _workerId;
-                        jobStatus.UserMessage = $"{targetJob.GenerateJobDescriptor()} in error".AddException(e);
-                        ReportWorkProgress(jobStatus);
-                    }
+                    //Set job to completed status
+                    _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} completed");
                 }
-            
-
+                catch (Exception e)
+                {
+                    JobStatusMessage errorStatus = uow.SetJobInError(targetJob.Id,e);
+                    _logger.LogError(errorStatus.UserMessage);
+                    ReportWorkProgress(errorStatus);
+                }
+            }
         }
     }
 }

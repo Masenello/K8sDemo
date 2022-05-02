@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using k8sCore.Entities;
-using k8sCore.Repository;
+using k8sCore.Interfaces;
 using k8sCore.Specifications;
 using k8sData;
 using K8sData.Data;
 
 namespace K8sData
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity 
+    public class GenericRepository<T> : IGenericRepository<T>, IDisposable where T : BaseEntity 
     {
         protected readonly DataContext  _context;
         public GenericRepository(DataContext context)
@@ -58,6 +58,9 @@ namespace K8sData
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
         }
 
-        
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,16 +10,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using K8sDemoHubManager.Hubs;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using K8sBackendShared.Data;
 using Microsoft.EntityFrameworkCore;
-using K8sBackendShared.Settings;
 using K8sDemoHubManager.Interfaces;
 using K8sDemoHubManager.Services;
-using Microsoft.Extensions.Hosting.Internal;
 using K8sBackendShared.Utils;
 using K8sBackendShared.Logging;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.RabbitConnector;
+using K8sData.Data;
+using K8sData.Settings;
 
 namespace K8sDemoHubManager
 {

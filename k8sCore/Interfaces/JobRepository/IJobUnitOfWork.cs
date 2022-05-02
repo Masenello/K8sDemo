@@ -1,8 +1,7 @@
 using System;
-using k8sCore.Repository.JobRepository;
 using K8sCore.Messages;
 
-namespace k8sCore.Repository
+namespace k8sCore.Interfaces.JobRepository
 {
     public interface IJobUnitOfWork : IDisposable
     {
@@ -10,6 +9,9 @@ namespace k8sCore.Repository
         int Complete();
 
         JobStatusMessage AssignJob(string workerId, int jobId);
+        JobStatusMessage SetJobInRunningStatus(int jobId);
+        JobStatusMessage SetJobInCompletedStatus(int jobId);
         JobStatusMessage SetJobInTimeOut(int jobId);
+        JobStatusMessage SetJobInError(int jobId, Exception ex);
     }
 }

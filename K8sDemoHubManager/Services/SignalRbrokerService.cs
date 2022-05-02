@@ -1,10 +1,8 @@
-using System;
-using System.Linq;
+
 using System.Threading.Tasks;
-using K8sBackendShared.Data;
-using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Messages;
+using k8sCore.Entities;
+using K8sData.Data;
 using K8sDemoHubManager.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;

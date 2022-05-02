@@ -1,8 +1,9 @@
-using K8sBackendShared.Data;
+
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
-using K8sBackendShared.Settings;
+using K8sData.Data;
+using K8sData.Settings;
 using K8sDemoApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

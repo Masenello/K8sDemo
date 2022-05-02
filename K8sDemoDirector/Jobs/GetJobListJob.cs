@@ -1,16 +1,8 @@
 using System;
-using System.Linq;
-using K8sBackendShared.Data;
-using K8sBackendShared.Enums;
-using Microsoft.EntityFrameworkCore;
-using K8sBackendShared.Messages;
-using System.Threading;
 using K8sBackendShared.Jobs;
-using K8sBackendShared.Entities;
 using K8sBackendShared.Interfaces;
-using K8sBackendShared.Logging;
-using K8sBackendShared.Utils;
 using System.Collections.Concurrent;
+using k8sCore.Entities;
 
 namespace K8sDemoDirector.Jobs
 {

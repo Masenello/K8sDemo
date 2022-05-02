@@ -5,6 +5,7 @@ using EasyNetQ;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Messages;
 using K8sBackendShared.RabbitConnector;
+using K8sCore.Messages;
 using K8sDemoHubManager.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 

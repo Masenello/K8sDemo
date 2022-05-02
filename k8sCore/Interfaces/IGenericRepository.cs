@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using k8sCore.Entities;
 using k8sCore.Specifications;
 
-namespace k8sCore.Repository
+namespace k8sCore.Interfaces
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using K8sBackendShared.Entities;
-using K8sBackendShared.Enums;
+
+
+using k8sCore.Entities;
+using k8sCore.Enums;
 
 namespace K8sDemoHubManager.Interfaces
 {

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using k8sCore.Entities;
 using k8sCore.Enums;
-using k8sCore.Repository.JobRepository;
+using k8sCore.Interfaces.JobRepository;
+using K8sCore.Messages;
 using K8sData;
 using K8sData.Data;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace K8sBackendShared.Repository.JobRepository
         { 
 
         }
+
 
         public IEnumerable<JobEntity> GetJobsInStatus(JobStatus targetStatus)
         {
