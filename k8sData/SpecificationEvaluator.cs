@@ -1,5 +1,5 @@
 using System.Linq;
-using k8sCore.Specifications;
+using K8sCore.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace k8sData

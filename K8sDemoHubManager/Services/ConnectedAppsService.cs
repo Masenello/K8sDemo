@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using K8sBackendShared.Interfaces;
-using k8sCore.Entities;
-using k8sCore.Enums;
+using K8sCore.Entities;
+using K8sCore.Enums;
 using K8sData.Data;
 using K8sDemoHubManager.Interfaces;
 using Microsoft.EntityFrameworkCore;

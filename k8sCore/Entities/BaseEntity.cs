@@ -1,4 +1,4 @@
-namespace k8sCore.Entities
+namespace K8sCore.Entities
 {
     public class BaseEntity
     {

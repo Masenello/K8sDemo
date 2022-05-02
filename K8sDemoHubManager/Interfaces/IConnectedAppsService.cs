@@ -1,7 +1,7 @@
 
 
-using k8sCore.Entities;
-using k8sCore.Enums;
+using K8sCore.Entities;
+using K8sCore.Enums;
 
 namespace K8sDemoHubManager.Interfaces
 {

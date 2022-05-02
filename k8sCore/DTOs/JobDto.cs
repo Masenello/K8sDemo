@@ -1,8 +1,8 @@
 using System;
-using k8sCore.Entities;
-using k8sCore.Enums;
+using K8sCore.Entities;
+using K8sCore.Enums;
 
-namespace k8sCore.DTOs
+namespace K8sCore.DTOs
 {
     public class JobDto
     {

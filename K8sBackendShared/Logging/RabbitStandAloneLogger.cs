@@ -1,7 +1,7 @@
 using System;
 using EasyNetQ;
 using K8sBackendShared.Interfaces;
-using k8sCore.Enums;
+using K8sCore.Enums;
 using K8sCore.Messages;
 
 namespace K8sBackendShared.Logging

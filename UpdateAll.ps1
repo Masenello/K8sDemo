@@ -16,17 +16,17 @@ kubectl delete -f .k8deploy
 # docker build -t masenellomarco/k8sdemohubmanager:latest -f k8sdemohubmanager/k8sdemohubmanager-dockerfile .
 # docker push masenellomarco/k8sdemohubmanager:latest
 
-#3) .Net demo worker image
-docker rmi masenellomarco/k8sdemoworker
-Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemoworker:latest -f k8sdemoworker/k8sdemoworker-dockerfile .
-docker push masenellomarco/k8sdemoworker:latest
-
-# #4) .Net logger image
-# docker rmi masenellomarco/k8sdemologmanager
+# #3) .Net demo worker image
+# docker rmi masenellomarco/k8sdemoworker
 # Set-Location D:\Code\K8sDemo
-# docker build -t masenellomarco/k8sdemologmanager:latest -f k8sdemoworker/k8sdemologmanager-dockerfile .
-# docker push masenellomarco/k8sdemologmanager:latest
+# docker build -t masenellomarco/k8sdemoworker:latest -f k8sdemoworker/k8sdemoworker-dockerfile .
+# docker push masenellomarco/k8sdemoworker:latest
+
+#4) .Net logger image
+docker rmi masenellomarco/k8sdemologmanager
+Set-Location D:\Code\K8sDemo
+docker build -t masenellomarco/k8sdemologmanager:latest -f k8sdemologmanager/k8sdemologmanager-dockerfile .
+docker push masenellomarco/k8sdemologmanager:latest
 
 # #5) .Net director image
 # docker rmi masenellomarco/k8sdemodirector

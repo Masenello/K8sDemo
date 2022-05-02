@@ -1,7 +1,7 @@
 
 using System.Threading.Tasks;
 using K8sBackendShared.Interfaces;
-using k8sCore.Entities;
+using K8sCore.Entities;
 using K8sData.Data;
 using K8sDemoHubManager.Hubs;
 using Microsoft.AspNetCore.SignalR;

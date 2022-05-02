@@ -5,10 +5,10 @@ using System.Threading;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
-using k8sCore.Interfaces.JobRepository;
+using K8sCore.Interfaces.JobRepository;
 using Microsoft.Extensions.DependencyInjection;
-using k8sCore.Entities;
-using k8sCore.Enums;
+using K8sCore.Entities;
+using K8sCore.Enums;
 using K8sCore.Messages;
 
 namespace K8sDemoWorker.Jobs

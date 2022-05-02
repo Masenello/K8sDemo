@@ -1,6 +1,6 @@
-using k8sCore.Enums;
+using K8sCore.Enums;
 
-namespace k8sCore.DTOs
+namespace K8sCore.DTOs
 {
     public class WorkerDescriptorDto
     {

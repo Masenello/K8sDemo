@@ -1,7 +1,7 @@
 using System;
 using K8sCore.Messages;
 
-namespace k8sCore.Interfaces.JobRepository
+namespace K8sCore.Interfaces.JobRepository
 {
     public interface IJobUnitOfWork : IDisposable
     {

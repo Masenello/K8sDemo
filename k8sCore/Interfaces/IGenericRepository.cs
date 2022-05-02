@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using k8sCore.Entities;
-using k8sCore.Specifications;
+using K8sCore.Entities;
+using K8sCore.Specifications;
 
-namespace k8sCore.Interfaces
+namespace K8sCore.Interfaces
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

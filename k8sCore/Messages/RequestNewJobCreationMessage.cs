@@ -1,5 +1,5 @@
 using System;
-using k8sCore.Enums;
+using K8sCore.Enums;
 
 namespace K8sBackendShared.Messages
 {

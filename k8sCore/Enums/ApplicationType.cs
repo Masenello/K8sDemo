@@ -1,4 +1,4 @@
-namespace k8sCore.Enums
+namespace K8sCore.Enums
 {
     public enum ApplicationType
     {

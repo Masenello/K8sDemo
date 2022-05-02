@@ -24,7 +24,7 @@ namespace K8sDemoHubManager.Hubs
                 {
                     //Notify other users of this user log in
                     Clients.Others.SendAsync("UserIsOnLine",username);
-                    _connectedAppsService.AddAppToTable(username, k8sCore.Enums.ApplicationType.client,  Context.ConnectionId);
+                    _connectedAppsService.AddAppToTable(username, K8sCore.Enums.ApplicationType.client,  Context.ConnectionId);
 
                     
                     _logger.LogInfo($"User {username} logged in");

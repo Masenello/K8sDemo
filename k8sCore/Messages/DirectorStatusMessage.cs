@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using k8sCore.DTOs;
+using K8sCore.DTOs;
 
 namespace K8sCore.Messages
 {

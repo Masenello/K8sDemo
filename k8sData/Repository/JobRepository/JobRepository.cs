@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using k8sCore.Entities;
-using k8sCore.Enums;
-using k8sCore.Interfaces.JobRepository;
+using K8sCore.Entities;
+using K8sCore.Enums;
+using K8sCore.Interfaces.JobRepository;
 using K8sCore.Messages;
 using K8sData;
 using K8sData.Data;

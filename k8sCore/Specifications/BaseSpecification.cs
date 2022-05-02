@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace k8sCore.Specifications
+namespace K8sCore.Specifications
 {
 public class BaseSpecifcation<T> : ISpecification<T>
 {

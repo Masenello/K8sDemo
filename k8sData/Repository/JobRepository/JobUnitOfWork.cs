@@ -1,6 +1,6 @@
 using System;
 using K8sBackendShared.Logging;
-using k8sCore.Interfaces.JobRepository;
+using K8sCore.Interfaces.JobRepository;
 using K8sCore.Messages;
 using K8sData.Data;
 
@@ -29,7 +29,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage AssignJob(string workerId, int jobId)
         {
             var targetJob = Jobs.GetJobWithId(jobId);
-            targetJob.Status = k8sCore.Enums.JobStatus.assigned;
+            targetJob.Status = K8sCore.Enums.JobStatus.assigned;
             targetJob.WorkerId = workerId;
             targetJob.AssignmentDate = DateTime.UtcNow;
             Complete();
@@ -39,7 +39,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage SetJobInRunningStatus(int jobId)
         {
             var targetJob = Jobs.GetJobWithId(jobId);
-            targetJob.Status = k8sCore.Enums.JobStatus.running;
+            targetJob.Status = K8sCore.Enums.JobStatus.running;
             targetJob.StartDate = DateTime.UtcNow;
             Complete();
             return new JobStatusMessage(targetJob);
@@ -48,7 +48,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage SetJobInCompletedStatus(int jobId)
         {
             var targetJob = Jobs.GetJobWithId(jobId);
-            targetJob.Status = k8sCore.Enums.JobStatus.completed;
+            targetJob.Status = K8sCore.Enums.JobStatus.completed;
             targetJob.EndDate = DateTime.UtcNow;
             Complete();
             return new JobStatusMessage(targetJob);
@@ -57,7 +57,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage SetJobInError(int jobId, Exception ex)
         {
             var targetJob = Jobs.GetJobWithId(jobId);
-            targetJob.Status = k8sCore.Enums.JobStatus.error;
+            targetJob.Status = K8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"{targetJob.GenerateJobDescriptor()} in error".AddException(ex);
             Complete();
@@ -69,7 +69,7 @@ namespace K8sBackendShared.Repository.JobRepository
         public JobStatusMessage SetJobInTimeOut(int jobId)
         {
             var targetJob = Jobs.GetJobWithId(jobId);
-            targetJob.Status = k8sCore.Enums.JobStatus.error;
+            targetJob.Status = K8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"Job timeout";
             Complete();

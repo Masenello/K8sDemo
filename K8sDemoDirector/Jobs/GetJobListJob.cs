@@ -2,7 +2,7 @@ using System;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.Interfaces;
 using System.Collections.Concurrent;
-using k8sCore.Entities;
+using K8sCore.Entities;
 
 namespace K8sDemoDirector.Jobs
 {

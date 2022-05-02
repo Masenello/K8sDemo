@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using k8sCore.Enums;
+using K8sCore.Enums;
 using K8sCore.Messages;
 
 namespace K8sBackendShared.Logging

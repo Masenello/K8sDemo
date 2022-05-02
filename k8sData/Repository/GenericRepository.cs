@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using k8sCore.Entities;
-using k8sCore.Interfaces;
-using k8sCore.Specifications;
+using K8sCore.Entities;
+using K8sCore.Interfaces;
+using K8sCore.Specifications;
 using k8sData;
 using K8sData.Data;
 

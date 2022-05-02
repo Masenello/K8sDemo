@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using k8sCore.Entities;
-using k8sCore.Enums;
+using K8sCore.Entities;
+using K8sCore.Enums;
 using K8sCore.Messages;
 
-namespace k8sCore.Interfaces.JobRepository
+namespace K8sCore.Interfaces.JobRepository
 {
     public interface IJobRepository: IGenericRepository<JobEntity>
     {

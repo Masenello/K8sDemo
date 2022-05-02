@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using k8sCore.Enums;
+using K8sCore.Enums;
 
-namespace k8sCore.Entities
+namespace K8sCore.Entities
 {
     public class JobEntity:BaseEntity
 

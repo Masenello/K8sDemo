@@ -1,5 +1,5 @@
 
-using k8sCore.Entities;
+using K8sCore.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace K8sData.Data
