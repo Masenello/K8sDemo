@@ -11,9 +11,9 @@ namespace K8sCore.Entities
         public int Id { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
-        public DateTime AssignmentDate { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? AssignmentDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         [Required]
         public string Descritpion { get; set; }
         [Required]

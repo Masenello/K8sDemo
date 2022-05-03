@@ -84,15 +84,15 @@ namespace K8sDemoDirector.Services
 
         private async void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-            int jobsToAssign = 0;
+            IEnumerable<JobEntity> openJobs = new List<JobEntity>();
             using (var scope = _serviceProvider.CreateScope())
             {
 
                 var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
-                
-                foreach (var createdJob in await uow.Jobs.GetJobsInStatusAsync(JobStatus.created))
+                openJobs = await uow.Jobs.GetOpenJobs();
+                foreach (var createdJob in openJobs.Where(x=>x.Status== JobStatus.created))
                 {
-                    jobsToAssign +=1;
+                    
                     //If system is scaling down or max workers is reached, avoid assigning jobs
                     if (systemIsScalingDown) break;
                     //Assign job to worker
@@ -141,7 +141,7 @@ namespace K8sDemoDirector.Services
             {
                 Timestamp = DateTime.UtcNow,
                 RegisteredWorkers = _workersRegistry.Values.ToList(),
-                TotalJobs = jobsToAssign + _activeJobsRegistry.Count(),
+                TotalJobs = openJobs.Count(),
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 

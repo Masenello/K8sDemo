@@ -30,6 +30,10 @@ namespace K8sBackendShared.Repository.JobRepository
             return await _context.Jobs.Include(u=>u.User).FirstOrDefaultAsync(x=>x.Id == Id);
         }
 
+        public async Task<IEnumerable<JobEntity>> GetOpenJobs()
+        {
+            return await _context.Jobs.Where(x=>x.EndDate == null).Include(u=>u.User).ToListAsync();
+        }
     }
 
 }

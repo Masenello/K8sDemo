@@ -9,6 +9,8 @@ namespace K8sCore.Interfaces.JobRepository
     public interface IJobRepository: IGenericRepository<JobEntity>
     {
         public Task<IEnumerable<JobEntity>> GetJobsInStatusAsync(JobStatus targetStatus);
+
+        public Task<IEnumerable<JobEntity>> GetOpenJobs();
         public Task<JobEntity> GetJobWithIdAsync(int Id);
     }
 }

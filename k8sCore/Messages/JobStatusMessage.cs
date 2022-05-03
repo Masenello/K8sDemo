@@ -14,9 +14,9 @@ namespace K8sCore.Messages
         public string UserMessage { get; set; }
         public string WorkerId { get; set; }
         public DateTime CreationDate { get; set; }
-        public DateTime AssignmentDate { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? AssignmentDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         
         
 
