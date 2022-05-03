@@ -53,10 +53,10 @@ kubectl delete -f .k8deploy
 # docker push masenellomarco/k8sdemosqlserver:latest
 
 #9)MongoDb image
-docker rmi masenellomarco/k8sdemomongo
-Set-Location D:\Code\K8sDemo
-docker build -t masenellomarco/k8sdemomongo:latest -f K8sDemoMongodb/k8sdemomongo-dockerfile .
-docker push masenellomarco/k8sdemomongo:latest
+# docker rmi masenellomarco/k8sdemomongo
+# Set-Location D:\Code\K8sDemo
+# docker build -t masenellomarco/k8sdemomongo:latest -f K8sDemoMongodb/k8sdemomongo-dockerfile .
+# docker push masenellomarco/k8sdemomongo:latest
 
 
 #Apply all deployments

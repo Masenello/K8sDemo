@@ -31,7 +31,8 @@ spec:
               value: "sa"
             - name: MONGO_INITDB_ROOT_PASSWORD
               value: "Pass@Word1"
-          image: masenellomarco/k8sdemomongo:latest
+          #image: masenellomarco/k8sdemomongo:latest
+          image: mongo
           name: k8smongodbcontainer
           ports:
             - containerPort: 27017

@@ -14,7 +14,7 @@ spec:
       port: 27017
       targetPort: 27017
   selector:
-    io.kompose.service: k8sdemo-database
+    io.kompose.service: k8sdemo-mongodatabase
   type: LoadBalancer
 status:
   loadBalancer: {}
