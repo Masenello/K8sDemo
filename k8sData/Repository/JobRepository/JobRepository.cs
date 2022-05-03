@@ -10,7 +10,7 @@ using K8sData;
 using K8sData.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace K8sBackendShared.Repository.JobRepository
+namespace K8sData.Repository.JobRepository
 {
     public class JobRepository : GenericRepository<JobEntity>, IJobRepository
     {

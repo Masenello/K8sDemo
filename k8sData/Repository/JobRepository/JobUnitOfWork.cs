@@ -5,7 +5,7 @@ using K8sCore.Interfaces.JobRepository;
 using K8sCore.Messages;
 using K8sData.Data;
 
-namespace K8sBackendShared.Repository.JobRepository
+namespace K8sData.Repository.JobRepository
 {
     public class JobUnitOfWork : IJobUnitOfWork
     {

@@ -5,14 +5,13 @@ using System.Linq.Expressions;
 using K8sCore.Entities;
 using K8sCore.Interfaces;
 using K8sCore.Specifications;
-using k8sData;
-using K8sData.Data;
+using MongoDB.Driver;
 
-namespace K8sData.Repository
+namespace K8sDataMongo.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T>, IDisposable where T : BaseEntity 
     {
-        protected readonly DataContext  _context;
+        protected readonly IMongoCollection<JobEntity>  _context;
         public GenericRepository(DataContext context)
         {
             _context = context;

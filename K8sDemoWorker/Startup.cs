@@ -1,11 +1,12 @@
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
-using K8sBackendShared.Repository.JobRepository;
 using K8sCore.Interfaces;
 using K8sCore.Interfaces.JobRepository;
 using K8sData;
 using K8sData.Data;
+using K8sData.Repository;
+using K8sData.Repository.JobRepository;
 using K8sData.Settings;
 using K8sDemoWorker.Jobs;
 using K8sDemoWorker.Services;
