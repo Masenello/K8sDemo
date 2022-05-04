@@ -2,8 +2,11 @@
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
+using K8sCore.Interfaces.Mongo;
 using K8sData.Data;
 using K8sData.Settings;
+using K8sDataMongo.Repository;
+using K8sDataMongo.Repository.JobRepository;
 using K8sDemoApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +48,10 @@ namespace K8sDemoApi
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                 });
+
+            services.AddTransient(typeof(IGenericMongoRepository<>), typeof(GenericMongoRepository<>));
+            services.AddTransient<IJobRepository, JobRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

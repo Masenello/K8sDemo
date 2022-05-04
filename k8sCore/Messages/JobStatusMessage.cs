@@ -1,12 +1,13 @@
 using System;
 using K8sCore.Entities;
+using K8sCore.Entities.Mongo;
 using K8sCore.Enums;
 
 namespace K8sCore.Messages
 {
     public class JobStatusMessage
     {
-        public int JobId { get; set; }
+        public string JobId { get; set; }
         public JobType StatusJobType { get; set; }
         public JobStatus Status { get; set; }
         public string User { get; set; }
@@ -32,7 +33,7 @@ namespace K8sCore.Messages
         {
             JobId = jobEntity.Id;
             StatusJobType = jobEntity.Type;
-            User = jobEntity.User.UserName;
+            User = jobEntity.UserName;
             UserMessage = userMessage;
             WorkerId = jobEntity.WorkerId;
             Status = jobEntity.Status;

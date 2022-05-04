@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using K8sBackendShared.Interfaces;
 using K8sCore.Entities;
+using K8sCore.Entities.Ef;
 using K8sCore.Enums;
 using K8sData.Data;
 using K8sDemoHubManager.Interfaces;

@@ -5,7 +5,7 @@ namespace K8sCore.Messages
 {
     public class RequestNewJobCreationResultMessage
     {
-        public int JobId { get; set; }
+        public string JobId { get; set; }
         public DateTime CreationTime { get; set; }
         public string User { get; set; }
         public string UserMessage { get; set; }

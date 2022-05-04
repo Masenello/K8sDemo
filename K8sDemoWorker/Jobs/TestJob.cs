@@ -1,24 +1,24 @@
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using K8sBackendShared.Jobs;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Logging;
-using K8sCore.Interfaces.JobRepository;
 using Microsoft.Extensions.DependencyInjection;
 using K8sCore.Entities;
 using K8sCore.Enums;
 using K8sCore.Messages;
+using K8sCore.Interfaces.Mongo;
+using K8sCore.Entities.Mongo;
 
 namespace K8sDemoWorker.Jobs
 {
     public class TestJob : AbstractWorkerJob
     {
         private readonly IServiceProvider _serviceProvider;
-        private int _jobToProcessId;
+        private string _jobToProcessId;
         private string _workerId;
-        public TestJob(string workerId, int jobToProcessId, IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
+        public TestJob(string workerId, string jobToProcessId, IServiceProvider serviceProvider, ILogger logger, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
         {
             _serviceProvider = serviceProvider;
             _workerId = workerId;
@@ -29,8 +29,8 @@ namespace K8sDemoWorker.Jobs
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var _jobUow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
-                JobEntity targetJob = await _jobUow.Jobs.GetJobWithIdAsync(_jobToProcessId);
+                var _jobRepo = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+                JobEntity targetJob = await _jobRepo.GetByIdAsync(_jobToProcessId);
 
                 try
                 {
@@ -40,7 +40,7 @@ namespace K8sDemoWorker.Jobs
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
 
                     _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
-                    JobStatusMessage statusMsg = await _jobUow.SetJobInRunningStatusAsync(targetJob.Id);
+                    JobStatusMessage statusMsg = await _jobRepo.SetJobInRunningStatusAsync(targetJob.Id);
                     ReportWorkProgress(statusMsg);
                     Thread.Sleep(3000);
                     statusMsg.ProgressPercentage = 33.3;
@@ -52,7 +52,7 @@ namespace K8sDemoWorker.Jobs
 
                     Thread.Sleep(3000);
                     statusMsg.ProgressPercentage = 100.0;
-                    statusMsg = await _jobUow.SetJobInCompletedStatusAsync(targetJob.Id);
+                    statusMsg = await _jobRepo.SetJobInCompletedStatusAsync(targetJob.Id);
                     ReportWorkProgress(statusMsg);
 
 
@@ -61,7 +61,7 @@ namespace K8sDemoWorker.Jobs
                 }
                 catch (Exception e)
                 {
-                    JobStatusMessage errorStatus = await _jobUow.SetJobInErrorAsync(targetJob.Id, e);
+                    JobStatusMessage errorStatus = await _jobRepo.SetJobInErrorAsync(targetJob.Id, e);
                     _logger.LogError(errorStatus.UserMessage);
                     ReportWorkProgress(errorStatus);
                 }

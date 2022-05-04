@@ -1,7 +1,7 @@
 import { JobStatusEnum } from "../../_enum/JobStatusEnum";
 
 export interface JobStatusMessage{
-    jobId: number;
+    jobId: string;
     jobType:number;
     status:JobStatusEnum;
     user:string;

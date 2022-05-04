@@ -7,8 +7,9 @@ using K8sBackendShared.K8s;
 using K8sBackendShared.Workers;
 using K8sCore.DTOs;
 using K8sCore.Entities;
+using K8sCore.Entities.Mongo;
 using K8sCore.Enums;
-using K8sCore.Interfaces.JobRepository;
+using K8sCore.Interfaces.Mongo;
 using K8sCore.Messages;
 using K8sDemoDirector.Jobs;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,13 +24,13 @@ namespace K8sDemoDirector.Services
 
         private readonly ConcurrentDictionary<int, WorkerDescriptorDto> _workersRegistry;
 
-        private readonly ConcurrentDictionary<int, JobStatusMessage> _activeJobsRegistry;
+        private readonly ConcurrentDictionary<string, JobStatusMessage> _activeJobsRegistry;
 
         // ******  Settings *********
         private readonly int _maxJobsPerWorker = 20;
-        private readonly int _maxWorkers = 3;
-        private bool scalingUpEnabled = false;
-        private bool scalingDownEnabled = false;
+        private readonly int _maxWorkers = 20;
+        private bool scalingUpEnabled = true;
+        private bool scalingDownEnabled = true;
         //***************************
 
         private bool systemIsScalingUp = false;
@@ -46,7 +47,7 @@ namespace K8sDemoDirector.Services
             base.MainCycleCompleted += CyclicWorkerMainCycleCompleted;
 
             _workersRegistry = new ConcurrentDictionary<int, WorkerDescriptorDto>();
-            _activeJobsRegistry = new ConcurrentDictionary<int, JobStatusMessage>();
+            _activeJobsRegistry = new ConcurrentDictionary<string, JobStatusMessage>();
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
@@ -87,9 +88,9 @@ namespace K8sDemoDirector.Services
             IEnumerable<JobEntity> openJobs = new List<JobEntity>();
             using (var scope = _serviceProvider.CreateScope())
             {
-
-                var uow = scope.ServiceProvider.GetRequiredService<IJobUnitOfWork>();
-                openJobs = await uow.Jobs.GetOpenJobs();
+                //Create Scope to call transient service in singleton
+                var jobRepo = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+                openJobs = jobRepo.GetOpenJobs();
                 foreach (var createdJob in openJobs.Where(x=>x.Status== JobStatus.created))
                 {
                     
@@ -104,7 +105,7 @@ namespace K8sDemoDirector.Services
                     }
                     else
                     {
-                        await uow.AssignJobAsync(targetWorker.WorkerId, createdJob.Id);
+                        await jobRepo.AssignJobAsync(targetWorker.WorkerId, createdJob.Id);
                         //be sure that changes are saved in database before sending message to worker
                         _rabbitConnector.Publish<DirectorAssignJobToWorker>(new DirectorAssignJobToWorker()
                         {
@@ -128,7 +129,7 @@ namespace K8sDemoDirector.Services
                     //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
                     if ((DateTime.UtcNow - activeJob.Value.CreationDate).TotalSeconds > 30)
                     {
-                        var timeoutMsg = await uow.SetJobInTimeOutAsync(activeJob.Value.JobId);
+                        var timeoutMsg = await jobRepo.SetJobInTimeOutAsync(activeJob.Value.JobId);
                         _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
                         //remove from active jobs list
                         RemoveFromRegistry(timeoutMsg);
@@ -246,7 +247,7 @@ namespace K8sDemoDirector.Services
 
         #region Active Jobs Registry management
 
-        private bool IsJobInActiveJobRegistry(int jobId)
+        private bool IsJobInActiveJobRegistry(string jobId)
         {
             if (_activeJobsRegistry.Where(x => x.Key == jobId).Count() > 0)
             {

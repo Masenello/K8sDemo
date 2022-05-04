@@ -25,8 +25,8 @@ namespace K8sDataMongo.Settings
                 hostName = MongoServerDebugHost;
             }
 
-            return $"mongodb://sa:Pass%40Word1@{hostName}:27017/?authMechanism=DEFAULT";
-            
+            //return $"mongodb://sa:Pass%40Word1@{hostName}:27017/?authMechanism=DEFAULT";
+            return $"mongodb://sa:Pass%40Word1@{hostName}:27017/";
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using K8sBackendShared.Interfaces;
 using K8sCore.Entities;
+using K8sCore.Entities.Ef;
 using K8sData.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

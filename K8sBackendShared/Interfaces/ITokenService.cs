@@ -1,4 +1,5 @@
 using K8sCore.Entities;
+using K8sCore.Entities.Ef;
 
 namespace K8sBackendShared.Interfaces
 {

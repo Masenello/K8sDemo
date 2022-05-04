@@ -1,5 +1,6 @@
 
 using K8sCore.Entities;
+using K8sCore.Entities.Ef;
 using Microsoft.EntityFrameworkCore;
 
 namespace K8sData.Data
@@ -12,7 +13,6 @@ namespace K8sData.Data
         }
 
         public DbSet<TestDataEntity> Data {get;set;}
-        public DbSet<JobEntity> Jobs {get;set;}
         public DbSet<AppUserEntity> Users { get; set; }
         public DbSet<ConnectedAppEntity> ConnectedApps { get; set; }
         

@@ -2,11 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using K8sCore.Enums;
 
-namespace K8sCore.Entities
+namespace K8sCore.Entities.Ef
 {
-    public class ConnectedAppEntity
+    public class ConnectedAppEntity:BaseEfEntity
     {
-        public int Id { get; set; }
         [Required]
         public string ConnectionId { get; set; }
         public virtual AppUserEntity User {get; set;}

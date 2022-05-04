@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using K8sBackendShared.Interfaces;
-using K8sCore.Entities;
+using K8sCore.Entities.Ef;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

@@ -5,14 +5,11 @@ using K8sCore.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace K8sCore.Entities
+namespace K8sCore.Entities.Mongo
 {
-    public class JobEntity:BaseEntity
+    public class JobEntity:BaseMongoEntity
 
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public int Id { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
         public DateTime? AssignmentDate { get; set; }
@@ -23,22 +20,14 @@ namespace K8sCore.Entities
         [Required]
         public JobStatus Status { get; set; }
         public string Errors { get; set; }
-        public virtual AppUserEntity User {get; set;}
-        [Required]
-        [ForeignKey(nameof(User))]
-        public int UserId {get; set;}
-
+        public string UserName {get; set;}
         public JobType Type {get; set;}
-
         public string WorkerId {get; set;}
         public int TimeOutSeconds { get; set; }
-        
-        
-
 
         public string GenerateJobDescriptor()
         {
-            return ($"Job: {Id} of type: {Type} user: {User.UserName} worker: {WorkerId} status: {Status}");
+            return ($"Job: {Id} of type: {Type} user: {UserName} worker: {WorkerId} status: {Status}");
         }
         
     }

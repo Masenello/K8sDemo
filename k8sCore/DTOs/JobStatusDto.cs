@@ -6,7 +6,7 @@ namespace K8sCore.DTOs
 {
     public class JobStatusDto
     {
-        public int JobId { get; set; }
+        public string JobId { get; set; }
         public JobType JobType { get; set; }
         public JobStatus Status { get; set; }
         public string User { get; set; }

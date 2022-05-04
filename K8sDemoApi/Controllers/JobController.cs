@@ -8,7 +8,10 @@ using K8sBackendShared.Messages;
 using K8sBackendShared.Settings;
 using K8sCore.DTOs;
 using K8sCore.Entities;
+using K8sCore.Entities.Ef;
+using K8sCore.Entities.Mongo;
 using K8sCore.Enums;
+using K8sCore.Interfaces.Mongo;
 using K8sCore.Messages;
 using K8sData.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -20,40 +23,36 @@ namespace K8sDemoApi.Controllers
 
     public class JobController :BaseApiController
     {
-        private readonly DataContext _context;
+        private readonly IJobRepository _jobRepo;
 
-        public JobController(DataContext context, ILogger logger):base(logger)
+        
+
+        //TODO Do with unito of work!!!
+        public JobController( IJobRepository jobRepo, ILogger logger):base(logger)
         {
-            _context = context;
+            _jobRepo = jobRepo;
         }
         
         [Authorize]
         [HttpPost("RequestNewJob")]
         public async Task<ActionResult<RequestNewJobCreationResultMessage>> RequestNewJob(RequestNewJobCreationMessage requestFromClient)
         {
-            //Retrieve user entity from database
-            AppUserEntity jobUser =await _context.Users.FirstOrDefaultAsync(x=>x.UserName== requestFromClient.User);
-            if (jobUser is null)
-            {
-                return BadRequest($"User:{requestFromClient.User} not found on database");
-            }
 
             //Add new job in Jobs database table with status INSERTED
             JobEntity newJob = new JobEntity();
             newJob.CreationDate = DateTime.Now;
             newJob.Descritpion= requestFromClient.RequestedJobType.ToString();
             newJob.Status = JobStatus.created;
-            newJob.UserId = jobUser.Id;
+            newJob.UserName = requestFromClient.User;
             newJob.Type = requestFromClient.RequestedJobType;
-            _context.Jobs.Add(newJob);
-            await _context.SaveChangesAsync();
-            _logger.LogInfo($"Job: {newJob.Id} of type: {newJob.Descritpion} created by user: {jobUser.UserName} inserted in database");
+            await _jobRepo.AddAsync(newJob);
+            _logger.LogInfo($"Job: {newJob.Id} of type: {newJob.Descritpion} created by user: {newJob.UserName} inserted in database");
 
             //Reply to Client
             RequestNewJobCreationResultMessage newJobResult = new RequestNewJobCreationResultMessage();
             newJobResult.CreationTime = DateTime.Now;
             newJobResult.JobId = newJob.Id;
-            newJobResult.User = jobUser.UserName;
+            newJobResult.User = newJob.UserName;
             newJobResult.JobType = newJob.Type;
             newJobResult.JobStatus = newJob.Status;
             newJobResult.UserMessage = "";
@@ -67,10 +66,7 @@ namespace K8sDemoApi.Controllers
         {
             List<JobStatusDto> userPendingJobs = new List<JobStatusDto>();
 
-            foreach (var job in await _context.Jobs.Where(x=>x.User.UserName == username 
-            && (x.Status == JobStatus.created 
-            || x.Status == JobStatus.assigned 
-            ||x.Status == JobStatus.running)).ToListAsync())
+            foreach (var job in _jobRepo.GetOpenJobs())
             {
                 JobStatusDto jobStatus = new JobStatusDto()
                 {
@@ -92,7 +88,7 @@ namespace K8sDemoApi.Controllers
         {
             List<JobDto> userPendingJobs = new List<JobDto>();
 
-            foreach (var job in await _context.Jobs.Where(x=>x.User.UserName == username).ToListAsync())
+            foreach (var job in _jobRepo.Find(x=>x.UserName == username))
             {
                 JobDto jobDto = new JobDto(job);
                 userPendingJobs.Add(jobDto);
