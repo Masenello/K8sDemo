@@ -40,7 +40,7 @@ namespace K8sDemoApi.Controllers
 
             //Add new job in Jobs database table with status INSERTED
             JobEntity newJob = new JobEntity();
-            newJob.CreationDate = DateTime.Now;
+            newJob.CreationDate = DateTime.UtcNow;
             newJob.Descritpion= requestFromClient.RequestedJobType.ToString();
             newJob.Status = JobStatus.created;
             newJob.UserName = requestFromClient.User;
@@ -50,7 +50,7 @@ namespace K8sDemoApi.Controllers
 
             //Reply to Client
             RequestNewJobCreationResultMessage newJobResult = new RequestNewJobCreationResultMessage();
-            newJobResult.CreationTime = DateTime.Now;
+            newJobResult.CreationTime = DateTime.UtcNow;
             newJobResult.JobId = newJob.Id;
             newJobResult.User = newJob.UserName;
             newJobResult.JobType = newJob.Type;

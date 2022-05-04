@@ -40,6 +40,7 @@ namespace K8sDemoWorker.Jobs
                     if (targetJob.Status != JobStatus.assigned) throw new Exception($"Job with Id: {_jobToProcessId} is in status: {targetJob.Status}, expected status: {JobStatus.assigned}");
 
                     _logger.LogInfo($"{targetJob.GenerateJobDescriptor()} running");
+                    
                     JobStatusMessage statusMsg = await _jobRepo.SetJobInRunningStatusAsync(targetJob.Id);
                     ReportWorkProgress(statusMsg);
                     Thread.Sleep(3000);

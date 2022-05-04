@@ -24,11 +24,9 @@ namespace K8sDemoDirector.Services
 
         private readonly ConcurrentDictionary<int, WorkerDescriptorDto> _workersRegistry;
 
-        private readonly ConcurrentDictionary<string, JobStatusMessage> _activeJobsRegistry;
-
         // ******  Settings *********
         private readonly int _maxJobsPerWorker = 20;
-        private readonly int _maxWorkers = 20;
+        private readonly int _maxWorkers = 10;
         private bool scalingUpEnabled = true;
         private bool scalingDownEnabled = true;
         //***************************
@@ -36,6 +34,8 @@ namespace K8sDemoDirector.Services
         private bool systemIsScalingUp = false;
         private bool systemIsScalingDown = false;
         private readonly IK8s _k8sConnector;
+
+        private List<JobEntity> openJobs = new List<JobEntity>();
 
         public DirectorService(IServiceProvider serviceProvider, IK8s k8sConnector, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
         : base(rabbitConnector, logger, cycleTime, workerJob)
@@ -47,7 +47,6 @@ namespace K8sDemoDirector.Services
             base.MainCycleCompleted += CyclicWorkerMainCycleCompleted;
 
             _workersRegistry = new ConcurrentDictionary<int, WorkerDescriptorDto>();
-            _activeJobsRegistry = new ConcurrentDictionary<string, JobStatusMessage>();
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
@@ -63,29 +62,22 @@ namespace K8sDemoDirector.Services
             switch (msg.Status)
             {
                 case (JobStatus.running):
-                    UpdateJobStatusInRegistry(msg);
+                    //UpdateJobStatusInRegistry(msg);
                     break;
                 case (JobStatus.completed):
                 case (JobStatus.error):
-                    RemoveFromRegistry(msg);
+                    //RemoveFromRegistry(msg);
                     break;
                 default:
                     throw new Exception($"Unknown job status {msg.Status}");
 
             }
 
-            //Update job counts for workers
-            foreach (var worker in _workersRegistry.Values)
-            {
-                worker.CurrentJobs = _activeJobsRegistry.Where(x => x.Value.WorkerId == worker.WorkerId).Count();
-                //_logger.LogInfo($"Worker with id: {worker.WorkerId} has: {worker.CurrentJobs} active jobs");
-            }
         }
 
 
         private async void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
-            IEnumerable<JobEntity> openJobs = new List<JobEntity>();
             using (var scope = _serviceProvider.CreateScope())
             {
                 //Create Scope to call transient service in singleton
@@ -113,31 +105,34 @@ namespace K8sDemoDirector.Services
                             JobId = createdJob.Id,
                             JobType = createdJob.Type,
                         });
-                        AddJobToRegistry(createdJob, targetWorker.WorkerId);
-                        _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}. Worker jobs: {_activeJobsRegistry.Where(x => x.Value.WorkerId == targetWorker.WorkerId).Count()}");
+                        _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}");
                     }
 
                 }
 
                 //Monitor active job for timeouts
-                foreach (var activeJob in _activeJobsRegistry.Where(x => x.Value.Status == JobStatus.assigned
-                        || x.Value.Status == JobStatus.running))
+                foreach (var openJob in openJobs)
                 {
                     //var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
                     //TODO variable timeouts set on job creation 
 
                     //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
-                    if ((DateTime.UtcNow - activeJob.Value.CreationDate).TotalSeconds > 30)
+                    if ((DateTime.UtcNow - openJob.CreationDate).TotalSeconds > 30)
                     {
-                        var timeoutMsg = await jobRepo.SetJobInTimeOutAsync(activeJob.Value.JobId);
+                        var timeoutMsg = await jobRepo.SetJobInTimeOutAsync(openJob.Id);
                         _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
-                        //remove from active jobs list
-                        RemoveFromRegistry(timeoutMsg);
                     }
                 }
             }
 
             //Update Director Status
+            
+            //Update job counts for workers
+            foreach (var worker in _workersRegistry.Values)
+            {
+                worker.CurrentJobs = openJobs.Where(x => x.WorkerId == worker.WorkerId).Count();
+                //_logger.LogInfo($"Worker with id: {worker.WorkerId} has: {worker.CurrentJobs} active jobs");
+            }
             DirectorStatusMessage newStatus = new DirectorStatusMessage()
             {
                 Timestamp = DateTime.UtcNow,
@@ -228,79 +223,14 @@ namespace K8sDemoDirector.Services
             //Important note: jobs enter _activeJobsRegistry when ASSIGNED to worker. Jobs are counted on _workersRegistry when in RUNNING state.
             //Check must be performed on _activeJobsRegistry to vaoid assigning to many jobs to a worker
             if (_workersRegistry.Count == 0) return null;
-            string targetWorkerId = _workersRegistry.First().Value.WorkerId;
-            foreach (var worker in _workersRegistry)
-            {
-                if (GetJobsAssignedToWorker(worker.Value.WorkerId) < GetJobsAssignedToWorker(targetWorkerId))
-                {
-                    targetWorkerId = worker.Value.WorkerId;
-                }
-            }
-            var targetWorker = _workersRegistry.FirstOrDefault(x => x.Value.WorkerId == targetWorkerId);
+            var targetWorker= _workersRegistry.OrderBy(x=>x.Value.CurrentJobs).First();
             //A worker that is saturated is considered not available
-            if (GetJobsAssignedToWorker(targetWorkerId) >= _maxJobsPerWorker) return null;
-
+            if (targetWorker.Value.CurrentJobs >= _maxJobsPerWorker) return null;
             return targetWorker.Value;
         }
 
         #endregion
 
-        #region Active Jobs Registry management
-
-        private bool IsJobInActiveJobRegistry(string jobId)
-        {
-            if (_activeJobsRegistry.Where(x => x.Key == jobId).Count() > 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private void AddJobToRegistry(JobEntity targetJob, string workerId)
-        {
-            if (!IsJobInActiveJobRegistry(targetJob.Id))
-            {
-                JobStatusMessage addMsg = new JobStatusMessage(targetJob);
-                addMsg.WorkerId = workerId;
-                _activeJobsRegistry.TryAdd(targetJob.Id, addMsg);
-                //_logger.LogInfo($"Job with id: {msg.JobId} from worker: {msg.WorkerId} inserted in active job registry");
-            }
-        }
-
-        private void UpdateJobStatusInRegistry(JobStatusMessage newStatus)
-        {
-            if (IsJobInActiveJobRegistry(newStatus.JobId))
-            {
-                _activeJobsRegistry.TryUpdate(newStatus.JobId, newStatus, _activeJobsRegistry[newStatus.JobId]);
-                //_logger.LogInfo($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} status update to {newStatus.Status} in active job registry");
-            }
-        }
-
-        private void RemoveFromRegistry(JobStatusMessage newStatus)
-        {
-            if (IsJobInActiveJobRegistry(newStatus.JobId))
-            {
-                JobStatusMessage tmp;
-                _activeJobsRegistry.Remove(newStatus.JobId, out tmp);
-                //_logger.LogInfo($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} removed from active job registry");
-                if (newStatus.Status == JobStatus.error)
-                {
-                    _logger.LogError($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} in error. {newStatus.UserMessage}");
-                }
-                else
-                {
-                    _logger.LogInfo($"Job with id: {newStatus.JobId} from worker: {newStatus.WorkerId} completed");
-                }
-
-            }
-        }
-
-        private int GetJobsAssignedToWorker(string workerId)
-        {
-            return _activeJobsRegistry.Where(x => x.Value.WorkerId == workerId).Count();
-        }
-
-        #endregion
 
         int cycleCounter = 0;
 
@@ -327,7 +257,8 @@ namespace K8sDemoDirector.Services
         private void WorkersScaleUp()
         {
             systemIsScalingUp = true;
-            scalingTarget = _workersRegistry.Count() + 1;
+            //scalingTarget = _workersRegistry.Count() + 1;
+            scalingTarget = (openJobs.Count() +  _maxJobsPerWorker -1) / _maxJobsPerWorker;
             _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
             _logger.LogInfo($"Scaling up workers to {scalingTarget}");
         }
