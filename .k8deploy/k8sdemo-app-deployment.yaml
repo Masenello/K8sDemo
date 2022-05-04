@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: k8sdemo-app
   name: k8sdemo-app
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       io.kompose.service: k8sdemo-app

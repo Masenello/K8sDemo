@@ -11,7 +11,8 @@ import { DirectorStatusService } from '../director-status.service';
 })
 export class DirectorStatusChartComponent implements OnInit {
 
-  options : any
+  jobsChartOptions : any
+  workersChartOptions : any
 
  
 
@@ -25,13 +26,48 @@ export class DirectorStatusChartComponent implements OnInit {
   buildChart(chartDecriptor: jobChartDescriptor)
   {
 
-    this.options= {
+    this.jobsChartOptions= {
       title: {
         text: chartDecriptor.chartTitle,
         x: 'center'
       },
       legend: {
-        data: ['Workers', 'Active Jobs', 'Total Jobs'],
+        data: ['Active Jobs', 'Total Jobs'],
+        align: 'left',
+        y: 'bottom',
+      },
+      tooltip: {},
+      xAxis: {
+        data: chartDecriptor.xAxisData,
+        silent: false,
+        splitLine: {
+          show: false,
+        },
+      },
+      yAxis: {},
+      series: [
+        {
+          name: 'Active Jobs',
+          type: 'line',
+          showSymbol: false,
+          data: chartDecriptor.yJobsAxisData,
+        },
+        {
+          name: 'Total Jobs',
+          type: 'line',
+          showSymbol: false,
+          data: chartDecriptor.yTotalJobsAxisData,
+        },
+      ],
+    }
+
+    this.workersChartOptions= {
+      title: {
+        text: chartDecriptor.chartTitle,
+        x: 'center'
+      },
+      legend: {
+        data: ['Workers'],
         align: 'left',
         y: 'bottom',
       },
@@ -50,18 +86,6 @@ export class DirectorStatusChartComponent implements OnInit {
           type: 'line',
           showSymbol: false,
           data: chartDecriptor.yWorkerAxisData,
-        },
-        {
-          name: 'Active Jobs',
-          type: 'line',
-          showSymbol: false,
-          data: chartDecriptor.yJobsAxisData,
-        },
-        {
-          name: 'Total Jobs',
-          type: 'line',
-          showSymbol: false,
-          data: chartDecriptor.yTotalJobsAxisData,
         },
       ],
     }

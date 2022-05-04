@@ -50,31 +50,9 @@ namespace K8sDemoDirector.Services
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
-            _rabbitConnector.Subscribe<JobStatusMessage>(HandleJobStatusMessage);
-
             _rabbitConnector.Publish<DirectorStartedMessage>(new DirectorStartedMessage());
 
         }
-
-        private void HandleJobStatusMessage(JobStatusMessage msg)
-        {
-            //_logger.LogInfo($"Received job status message");
-            switch (msg.Status)
-            {
-                case (JobStatus.running):
-                    //UpdateJobStatusInRegistry(msg);
-                    break;
-                case (JobStatus.completed):
-                case (JobStatus.error):
-                    //RemoveFromRegistry(msg);
-                    break;
-                default:
-                    throw new Exception($"Unknown job status {msg.Status}");
-
-            }
-
-        }
-
 
         private async void CyclicWorkerMainCycleCompleted(object sender, EventArgs e)
         {
@@ -146,10 +124,6 @@ namespace K8sDemoDirector.Services
             {
                 MonitorWorkerLoad();
             }
-
-
-
-            cycleCounter += 1;
         }
 
         #region Worker registry management
@@ -220,8 +194,6 @@ namespace K8sDemoDirector.Services
 
         private WorkerDescriptorDto GetWorkerWithLessLoad()
         {
-            //Important note: jobs enter _activeJobsRegistry when ASSIGNED to worker. Jobs are counted on _workersRegistry when in RUNNING state.
-            //Check must be performed on _activeJobsRegistry to vaoid assigning to many jobs to a worker
             if (_workersRegistry.Count == 0) return null;
             var targetWorker= _workersRegistry.OrderBy(x=>x.Value.CurrentJobs).First();
             //A worker that is saturated is considered not available
@@ -230,9 +202,6 @@ namespace K8sDemoDirector.Services
         }
 
         #endregion
-
-
-        int cycleCounter = 0;
 
         private void MonitorWorkerLoad()
         {
