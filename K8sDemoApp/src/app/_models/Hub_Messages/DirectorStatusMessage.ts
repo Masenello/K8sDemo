@@ -5,6 +5,8 @@ export interface DirectorStatusMessage{
     timestamp: Date,
     registeredWorkers: Array<WorkerDescriptor>,
     totalJobs:number,
+    maxConcurrentTasks:number,
+    maxWorkers:number,
 }
 
 export interface WorkerDescriptor{

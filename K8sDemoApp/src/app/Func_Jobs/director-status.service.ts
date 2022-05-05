@@ -42,7 +42,9 @@ export class DirectorStatusService {
   buildChartData(): jobChartDescriptor
   {
     var descriptor: jobChartDescriptor = new jobChartDescriptor()
-    descriptor.chartTitle = `Director status`
+    descriptor.jobChartTitle = `Active jobs`
+    descriptor.workersChartTitle = `Registered workers`
+    //Remove older data when Max points is reached
     if (this.directorStatusDataBuffer.length == this.directorStatusDataBufferMaxPoints)
     {
       this.directorStatusDataBuffer.shift()
@@ -52,7 +54,9 @@ export class DirectorStatusService {
     {
       descriptor.xAxisData.push(this.datePipe.transform(dataPoint.timestamp, environment.dateTimeFormat))
       console.log(dataPoint)
+
       descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).count())
+      descriptor.yMaxWorkersAxisData.push(dataPoint.maxWorkers)
       descriptor.yTotalJobsAxisData.push(dataPoint.totalJobs)
       var activejobs = 0
       dataPoint.registeredWorkers.forEach(element=>
@@ -60,6 +64,7 @@ export class DirectorStatusService {
           activejobs = activejobs + element.currentJobs
         })
       descriptor.yJobsAxisData.push(activejobs)
+      descriptor.yMaxJobsAxisData.push(dataPoint.maxConcurrentTasks)
     })
     return descriptor
 

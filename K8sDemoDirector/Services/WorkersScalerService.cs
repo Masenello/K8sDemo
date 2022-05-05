@@ -7,14 +7,30 @@ using K8sDemoDirector.Interfaces;
 
 namespace K8sDemoDirector.Services
 {
-    public class WorkersScalerService:IWorkersScaler
+    public class WorkersScalerService : IWorkersScaler
     {
-        private int _maxJobsPerWorker { get; set; }= 20;
-        private int _maxWorkers { get; set; }= 10;
-        private bool ScalingEnabled { get; set; }= true;
+        public int MaxJobsPerWorker { get; private set;} = 20;
+        public int MaxWorkers { get; private set; } = 10;
+        private bool ScalingEnabled { get; set; } = true;
         int scalingTarget = 1;
 
         public bool SystemIsScaling { get; private set; }
+        public bool SystemIsScalingDown { get
+        {
+            if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count > scalingTarget))
+            {
+                return true;
+            }
+            return false;
+        } }
+        public bool SystemIsScalingUp { get
+        {
+            if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count < scalingTarget))
+            {
+                return true;
+            }
+            return false;
+        } }
 
         private readonly IK8s _k8sConnector;
         private readonly ILogger _logger;
@@ -28,8 +44,8 @@ namespace K8sDemoDirector.Services
         }
 
         public void MonitorWorkersScaling(int openJobsCount)
-        {   
-            if(SystemIsScaling)
+        {
+            if (SystemIsScaling)
             {
                 if (_registryManager.WorkersRegistry.Count == scalingTarget)
                 {
@@ -42,8 +58,8 @@ namespace K8sDemoDirector.Services
                 int currentWorkers = _registryManager.WorkersRegistry.Count;
                 //TODO variable threshold
                 if ((currentWorkers > 0)
-                && ((currentWorkers < _maxWorkers))
-                && (_registryManager.WorkersRegistry.All(x => x.Value.CurrentJobs >= _maxJobsPerWorker)))  //All existing workers are saturated
+                && ((currentWorkers < MaxWorkers))
+                && (_registryManager.WorkersRegistry.All(x => x.Value.CurrentJobs >= MaxJobsPerWorker)))  //All existing workers are saturated
                 {
                     WorkersScaleUp(openJobsCount);
                 }
@@ -58,16 +74,17 @@ namespace K8sDemoDirector.Services
         public WorkerDescriptorDto GetWorkerWithLessLoad()
         {
             if (_registryManager.WorkersRegistry.Count == 0) return null;
-            var targetWorker= _registryManager.WorkersRegistry.OrderBy(x=>x.Value.CurrentJobs).First();
+            var targetWorker = _registryManager.WorkersRegistry.OrderBy(x => x.Value.CurrentJobs).First();
             //A worker that is saturated is considered not available
-            if (targetWorker.Value.CurrentJobs >= _maxJobsPerWorker) return null;
+            if (targetWorker.Value.CurrentJobs >= MaxJobsPerWorker) return null;
             return targetWorker.Value;
         }
 
         private void WorkersScaleUp(int openJobsCount)
         {
             SystemIsScaling = true;
-            scalingTarget = (openJobsCount +  _maxJobsPerWorker -1) / _maxJobsPerWorker;
+            scalingTarget = (openJobsCount + MaxJobsPerWorker - 1) / MaxJobsPerWorker;
+            if (scalingTarget > MaxWorkers) scalingTarget = MaxWorkers;
             _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
             _logger.LogInfo($"Scaling up workers to: {scalingTarget}");
         }

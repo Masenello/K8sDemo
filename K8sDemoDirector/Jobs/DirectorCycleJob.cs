@@ -34,8 +34,10 @@ namespace K8sDemoDirector.Jobs
             openJobs = _jobRepo.GetOpenJobs();
             await AssignJobsToWorkersAsync();
             _registryManager.UpdateJobCounts(openJobs);
-            UpdateDirectorStatus();
             _workersScaler.MonitorWorkersScaling(openJobs.Count);
+            await MonitorJobsForTimeoutsAsync();
+            UpdateDirectorStatus();
+
         }
 
         private async Task AssignJobsToWorkersAsync()
@@ -44,8 +46,7 @@ namespace K8sDemoDirector.Jobs
             {
 
                 //If system is scaling DOWN or max workers is reached, avoid assigning jobs
-                //TODO evaulate if necessary to use scaling UP and DOWN separetely
-                if (_workersScaler.SystemIsScaling) break;
+                if (_workersScaler.SystemIsScalingDown) break;
                 //Assign job to worker
                 var targetWorker = _workersScaler.GetWorkerWithLessLoad();
                 if (targetWorker is null)
@@ -75,7 +76,6 @@ namespace K8sDemoDirector.Jobs
             {
                 //var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
                 //TODO variable timeouts set on job creation 
-
                 //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
                 if ((DateTime.UtcNow - openJob.CreationDate).TotalSeconds > 30)
                 {
@@ -92,6 +92,8 @@ namespace K8sDemoDirector.Jobs
                 Timestamp = DateTime.UtcNow,
                 RegisteredWorkers = _registryManager.WorkersRegistry.Values.ToList(),
                 TotalJobs = openJobs.Count(),
+                MaxWorkers = _workersScaler.MaxWorkers,
+                MaxConcurrentTasks = _registryManager.WorkersRegistry.Count * _workersScaler.MaxJobsPerWorker
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
         }

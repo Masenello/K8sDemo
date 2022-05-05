@@ -14,8 +14,6 @@ export class DirectorStatusChartComponent implements OnInit {
   jobsChartOptions : any
   workersChartOptions : any
 
- 
-
   constructor(private directorStatusService:DirectorStatusService) {
     this.directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage)=>{
       this.buildChart(this.directorStatusService.buildChartData())
@@ -28,11 +26,11 @@ export class DirectorStatusChartComponent implements OnInit {
 
     this.jobsChartOptions= {
       title: {
-        text: chartDecriptor.chartTitle,
+        text: chartDecriptor.jobChartTitle,
         x: 'center'
       },
       legend: {
-        data: ['Active Jobs', 'Total Jobs'],
+        data: ['Active Jobs', 'Total Jobs', 'Max Jobs'],
         align: 'left',
         y: 'bottom',
       },
@@ -49,25 +47,31 @@ export class DirectorStatusChartComponent implements OnInit {
         {
           name: 'Active Jobs',
           type: 'line',
-          showSymbol: false,
+          showSymbol: true,
           data: chartDecriptor.yJobsAxisData,
         },
         {
           name: 'Total Jobs',
           type: 'line',
-          showSymbol: false,
+          showSymbol: true,
           data: chartDecriptor.yTotalJobsAxisData,
+        },
+        {
+          name: 'Max Jobs',
+          type: 'line',
+          showSymbol: false,
+          data: chartDecriptor.yMaxJobsAxisData,
         },
       ],
     }
 
     this.workersChartOptions= {
       title: {
-        text: chartDecriptor.chartTitle,
+        text: chartDecriptor.workersChartTitle,
         x: 'center'
       },
       legend: {
-        data: ['Workers'],
+        data: ['Workers','Max Workers'],
         align: 'left',
         y: 'bottom',
       },
@@ -84,8 +88,14 @@ export class DirectorStatusChartComponent implements OnInit {
         {
           name: 'Workers',
           type: 'line',
-          showSymbol: false,
+          showSymbol: true,
           data: chartDecriptor.yWorkerAxisData,
+        },
+        {
+          name: 'Max Workers',
+          type: 'line',
+          showSymbol: false,
+          data: chartDecriptor.yMaxWorkersAxisData,
         },
       ],
     }
