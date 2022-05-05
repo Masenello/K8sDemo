@@ -6,6 +6,7 @@ using K8sBackendShared.RabbitConnector;
 using K8sCore.Interfaces.Mongo;
 using K8sDataMongo.Repository;
 using K8sDataMongo.Repository.JobRepository;
+using K8sDemoDirector.Interfaces;
 using K8sDemoDirector.Jobs;
 using K8sDemoDirector.Services;
 using Microsoft.Extensions.Configuration;
@@ -32,11 +33,14 @@ namespace K8sDemoDirector
             services.AddSingleton<ILogger,RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
             services.AddSingleton<IK8s, KubernetesConnectorService>();
+            services.AddSingleton<IWorkersRegistryManager, WorkersRegistryManagerService>();
+            services.AddSingleton<IWorkersScaler, WorkersScalerService>();
 
             services.AddHostedService<DirectorService>(x =>
                 new DirectorService(
                         services.BuildServiceProvider(),
-                        x.GetRequiredService<IK8s>(),
+                        x.GetRequiredService<IWorkersScaler>(),
+                        x.GetRequiredService<IWorkersRegistryManager>(),
                         x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
                         1000,

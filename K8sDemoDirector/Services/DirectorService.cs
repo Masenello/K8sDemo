@@ -11,6 +11,7 @@ using K8sCore.Entities.Mongo;
 using K8sCore.Enums;
 using K8sCore.Interfaces.Mongo;
 using K8sCore.Messages;
+using K8sDemoDirector.Interfaces;
 using K8sDemoDirector.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,38 +19,24 @@ namespace K8sDemoDirector.Services
 {
     public class DirectorService : CyclicWorkerService
     {
-
         private readonly IServiceProvider _serviceProvider;
         private readonly GetJobListJob _getJobListJob;
-
-        private readonly ConcurrentDictionary<int, WorkerDescriptorDto> _workersRegistry;
-
-        // ******  Settings *********
-        private readonly int _maxJobsPerWorker = 20;
-        private readonly int _maxWorkers = 10;
-        private bool scalingUpEnabled = true;
-        private bool scalingDownEnabled = true;
-        //***************************
-
-        private bool systemIsScalingUp = false;
-        private bool systemIsScalingDown = false;
-        private readonly IK8s _k8sConnector;
-
+        private readonly IWorkersScaler _workersScaler;
+        private readonly IWorkersRegistryManager _registryManager;
         private List<JobEntity> openJobs = new List<JobEntity>();
 
-        public DirectorService(IServiceProvider serviceProvider, IK8s k8sConnector, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
+        public DirectorService(IServiceProvider serviceProvider, IWorkersScaler workersScaler,IWorkersRegistryManager registryManager, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, GetJobListJob workerJob)
         : base(rabbitConnector, logger, cycleTime, workerJob)
         {
             _serviceProvider = serviceProvider;
             _getJobListJob = workerJob;
-            _k8sConnector = k8sConnector;
+            _workersScaler=workersScaler;
+            _registryManager = registryManager;
+            
 
             base.MainCycleCompleted += CyclicWorkerMainCycleCompleted;
 
-            _workersRegistry = new ConcurrentDictionary<int, WorkerDescriptorDto>();
 
-            _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
-            _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
             _rabbitConnector.Publish<DirectorStartedMessage>(new DirectorStartedMessage());
 
         }
@@ -64,10 +51,11 @@ namespace K8sDemoDirector.Services
                 foreach (var createdJob in openJobs.Where(x=>x.Status== JobStatus.created))
                 {
                     
-                    //If system is scaling down or max workers is reached, avoid assigning jobs
-                    if (systemIsScalingDown) break;
+                    //If system is scaling DOWN or max workers is reached, avoid assigning jobs
+                    //TODO evaulate if necessary to use scaling UP and DOWN separetely
+                    if (_workersScaler.SystemIsScaling) break;
                     //Assign job to worker
-                    var targetWorker = GetWorkerWithLessLoad();
+                    var targetWorker = _workersScaler.GetWorkerWithLessLoad();
                     if (targetWorker is null)
                     {
                         //No workers available
@@ -103,149 +91,23 @@ namespace K8sDemoDirector.Services
                 }
             }
 
-            //Update Director Status
-            
             //Update job counts for workers
-            foreach (var worker in _workersRegistry.Values)
-            {
-                worker.CurrentJobs = openJobs.Where(x => x.WorkerId == worker.WorkerId).Count();
-                //_logger.LogInfo($"Worker with id: {worker.WorkerId} has: {worker.CurrentJobs} active jobs");
-            }
+            _registryManager.UpdateJobCounts(openJobs);
+            
+            //Update Director Status
             DirectorStatusMessage newStatus = new DirectorStatusMessage()
             {
                 Timestamp = DateTime.UtcNow,
-                RegisteredWorkers = _workersRegistry.Values.ToList(),
+                RegisteredWorkers = _registryManager.WorkersRegistry.Values.ToList(),
                 TotalJobs = openJobs.Count(),
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
 
             //Monitor worker scaling
-            if (!(systemIsScalingUp || systemIsScalingDown))
-            {
-                MonitorWorkerLoad();
-            }
-        }
-
-        #region Worker registry management
-        private void HandleWorkerRegisterMessage(WorkerRegisterToDirectorMessage msg)
-        {
-            try
-            {
-                var target = _workersRegistry.FirstOrDefault(x => x.Value.WorkerId == msg.WorkerId);
-                if (!WorkerIsRegistered(msg.WorkerId))
-                {
-                    _workersRegistry.TryAdd(GenerateKeyForWorkerRegistry(), new WorkerDescriptorDto()
-                    {
-                        WorkerId = msg.WorkerId
-                    });
-                    _logger.LogInfo($"Worker {msg.WorkerId} registered, total workers: {_workersRegistry.Count}");
-                    systemIsScalingUp = false;
-                }
-            }
-            catch (System.Exception e)
-            {
-
-                _logger.LogError($"Failed to add worker: {msg.WorkerId} to worker registry", e);
-            }
+            _workersScaler.MonitorWorkersLoad(openJobs.Count);
 
         }
 
-        private void HandleWorkerUnregisterMessage(WorkerUnRegisterToDirectorMessage msg)
-        {
-            try
-            {
-                var target = _workersRegistry.FirstOrDefault(x => x.Value.WorkerId == msg.WorkerId);
-                if (WorkerIsRegistered(msg.WorkerId))
-                {
-                    WorkerDescriptorDto tmp;
-                    _workersRegistry.TryRemove(target.Key, out tmp);
-                    _logger.LogInfo($"Worker {msg.WorkerId} unregistered, total workers: {_workersRegistry.Count}");
-                    systemIsScalingDown = false;
-                }
 
-            }
-            catch (System.Exception e)
-            {
-                _logger.LogError($"Failed to remove worker: {msg.WorkerId} from worker registry", e);
-            }
-
-        }
-
-        private int GenerateKeyForWorkerRegistry()
-        {
-            if (_workersRegistry.Count() == 0)
-            {
-                return 1;
-            }
-            else
-            {
-                return (_workersRegistry.Keys.Max() + 1);
-            }
-        }
-
-        private bool WorkerIsRegistered(string workerId)
-        {
-            if (_workersRegistry.Count(x => x.Value.WorkerId == workerId) > 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private WorkerDescriptorDto GetWorkerWithLessLoad()
-        {
-            if (_workersRegistry.Count == 0) return null;
-            var targetWorker= _workersRegistry.OrderBy(x=>x.Value.CurrentJobs).First();
-            //A worker that is saturated is considered not available
-            if (targetWorker.Value.CurrentJobs >= _maxJobsPerWorker) return null;
-            return targetWorker.Value;
-        }
-
-        #endregion
-
-        private void MonitorWorkerLoad()
-        {
-            //TODO variable threshold
-            if ((_workersRegistry.Count() > 0)
-            && (scalingUpEnabled)
-            && ((_workersRegistry.Count() < _maxWorkers))
-            && (_workersRegistry.All(x => x.Value.CurrentJobs >= _maxJobsPerWorker)))  //All existing workers are saturated
-            {
-                WorkersScaleUp();
-            }
-
-            if (_workersRegistry.All(x => x.Value.CurrentJobs == 0)
-            && scalingDownEnabled)
-            {
-                WorkersScaleDown();
-            }
-        }
-
-        int scalingTarget = 0;
-
-        private void WorkersScaleUp()
-        {
-            systemIsScalingUp = true;
-            //scalingTarget = _workersRegistry.Count() + 1;
-            scalingTarget = (openJobs.Count() +  _maxJobsPerWorker -1) / _maxJobsPerWorker;
-            _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-            _logger.LogInfo($"Scaling up workers to {scalingTarget}");
-        }
-
-        private void WorkersScaleDown()
-        {
-
-
-            //Always leave at least one worker 
-            if (_workersRegistry.Count() > 1)
-            {
-                {
-                    systemIsScalingDown = true;
-                    scalingTarget = _workersRegistry.Count() - 1;
-                    _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-                    _logger.LogInfo($"Scaling down workers to {scalingTarget}");
-                }
-            }
-        }
     }
 }
