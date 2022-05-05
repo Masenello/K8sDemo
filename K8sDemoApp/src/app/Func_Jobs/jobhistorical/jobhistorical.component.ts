@@ -55,12 +55,12 @@ export class JobhistoricalComponent implements OnInit {
       formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
     },
     {
-      header: 'Description',
-      field: 'description'
-    },
-    {
       header: 'Errors',
       field: 'errors'
+    },
+    {
+      header: 'Worker',
+      field: 'workerId'
     },
 ];
 

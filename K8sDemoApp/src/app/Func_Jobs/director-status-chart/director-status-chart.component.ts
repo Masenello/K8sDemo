@@ -27,7 +27,7 @@ export class DirectorStatusChartComponent implements OnInit {
     this.initOpts = {
       renderer: 'svg',
       width: 900,
-      height: 350
+      height: 320
     };
 
     this.jobsChartOptions= {

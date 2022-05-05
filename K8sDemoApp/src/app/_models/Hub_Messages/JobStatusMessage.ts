@@ -7,4 +7,5 @@ export interface JobStatusMessage{
     user:string;
     progressPercentage:number;
     userMessage:string;
+    endDate:Date;
 }

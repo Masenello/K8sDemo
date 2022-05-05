@@ -72,9 +72,24 @@ export class JobmanagerComponent implements OnInit {
     else
     {
         //Update job in list
-        tmpJob.progressPercentage = jobStatus.progressPercentage;
-        tmpJob.status = jobStatus.status;
-        tmpJob.userMessage = jobStatus.userMessage;
+        if (jobStatus.endDate != null)
+        {
+          //Remove element (job completed)
+          var index =  this.currentJobsTmp.findIndex(x => x.jobId==jobStatus.jobId);
+          if (index > -1) {
+            this.currentJobsTmp.splice(index, 1);
+          }
+        }
+        else
+        {
+          //Update element (job in progress)
+          tmpJob.progressPercentage = jobStatus.progressPercentage;
+          tmpJob.status = jobStatus.status;
+          tmpJob.userMessage = jobStatus.userMessage;
+        }
+
+
+
     }
     //TODO Remove completed jobs from list, now they are only hidden!
     this.internalJobsList.next(this.currentJobsTmp);
@@ -98,7 +113,8 @@ export class JobmanagerComponent implements OnInit {
           status: result.jobStatus,
           user:result.user,
           progressPercentage: 0,
-          userMessage: result.userMessage
+          userMessage: result.userMessage,
+          endDate: null,
         });
 
     },error=>{

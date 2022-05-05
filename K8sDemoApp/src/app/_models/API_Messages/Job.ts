@@ -10,4 +10,5 @@ export interface Job{
     description:string;
     errors:string;
     jobType:JobTypeEnum;
+    workerId:string;
 }

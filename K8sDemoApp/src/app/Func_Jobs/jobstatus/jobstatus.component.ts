@@ -12,8 +12,6 @@ export class JobstatusComponent implements OnInit {
   @Input() job: JobStatusMessage;
 
 
-
-
   constructor() {
 
   }

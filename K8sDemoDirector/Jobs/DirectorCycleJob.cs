@@ -93,7 +93,7 @@ namespace K8sDemoDirector.Jobs
                 RegisteredWorkers = _registryManager.WorkersRegistry.Values.ToList(),
                 TotalJobs = openJobs.Count(),
                 MaxWorkers = _workersScaler.MaxWorkers,
-                MaxConcurrentTasks = _registryManager.WorkersRegistry.Count * _workersScaler.MaxJobsPerWorker
+                MaxConcurrentTasks = _workersScaler.SystemCurrentJobsCapacity,
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
         }

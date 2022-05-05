@@ -16,6 +16,7 @@ namespace K8sCore.DTOs
         public string Description { get; set; }
         public string Errors { get; set; }
         public JobType JobType { get; set; }
+        public string WorkerId { get; set; }
 
         public JobDto()
         {
@@ -33,6 +34,7 @@ namespace K8sCore.DTOs
             Description = jobEntity.Descritpion;
             Errors = jobEntity.Errors;
             JobType = jobEntity.Type;
+            WorkerId = jobEntity.WorkerId;
 
         }
     }
