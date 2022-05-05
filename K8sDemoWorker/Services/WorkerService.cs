@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Workers;
 using K8sCore.Messages;
+using K8sDemoWorker.Interfaces;
 using K8sDemoWorker.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,18 +13,19 @@ namespace K8sDemoWorker.Services
 
     public class WorkerService : EventWorkerService
     {
+
         private readonly IServiceProvider _serviceProvider;
-        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
+        private readonly ITestJob _testJob;
+        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, ITestJob testJob) : base(rabbitConnector, logger)
         {
             _serviceProvider = serviceProvider;
-            _logger.LogInfo($"Worker started with id: {_workerId}");
-            WorkerRegisterToDirector();
-        }
+            _testJob = testJob;
 
-        public override void Subscribe()
-        {
             _rabbitConnector.Subscribe<DirectorAssignJobToWorker>(HandleDirectorAssignJobToWorker);
             _rabbitConnector.Subscribe<DirectorStartedMessage>(HandleDirectorStartedMessage);
+
+            _logger.LogInfo($"Worker started with id: {_workerId}");
+            WorkerRegisterToDirector();
         }
 
         private void HandleDirectorStartedMessage(DirectorStartedMessage obj)
@@ -54,13 +56,18 @@ namespace K8sDemoWorker.Services
                 if (msg.WorkerId != _workerId) return;
                 _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
 
-                switch (msg.JobType)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    case K8sCore.Enums.JobType.TestJob:
-                        DoWork(new TestJob(_workerId, msg.JobId, _serviceProvider, _logger, _rabbitConnector));
-                        break;
-                    default:
-                        throw new Exception($"Unknown job type: {msg.JobType}");
+                    switch (msg.JobType)
+                    {
+                        case K8sCore.Enums.JobType.TestJob:
+                            _testJob.WorkerId = _workerId;
+                            _testJob.DatabaseJobId = msg.JobId;
+                            _testJob.DoWorkAsync();
+                            break;
+                        default:
+                            throw new Exception($"Unknown job type: {msg.JobType}");
+                    }
                 }
             }
             catch (System.Exception ex)

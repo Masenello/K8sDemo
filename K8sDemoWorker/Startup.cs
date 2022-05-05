@@ -4,6 +4,7 @@ using K8sBackendShared.RabbitConnector;
 using K8sCore.Interfaces.Mongo;
 using K8sDataMongo.Repository;
 using K8sDataMongo.Repository.JobRepository;
+using K8sDemoWorker.Interfaces;
 using K8sDemoWorker.Jobs;
 using K8sDemoWorker.Services;
 using Microsoft.Extensions.Configuration;
@@ -29,17 +30,17 @@ namespace K8sDemoWorker
             //     {
             //         options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
             //                 sqlServerOptions => sqlServerOptions.CommandTimeout(180));
-                        
+
             //     });
 
             services.AddTransient(typeof(IGenericMongoRepository<>), typeof(GenericMongoRepository<>));
             services.AddTransient<IJobRepository, JobRepository>();
             //***********************************************************    
 
-            //services.AddTransient<TestJob>();
-
-            services.AddSingleton<ILogger,RabbitLoggerService>();
+            services.AddSingleton<ILogger, RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
+
+            services.AddTransient<ITestJob, TestJob>();
 
             services.AddHostedService<WorkerService>();
 
