@@ -1,5 +1,4 @@
-<div>
-    <div echarts [options]="jobsChartOptions" class="demo-chart"></div>
-    <div echarts [options]="workersChartOptions" class="demo-chart"></div>
-    
+<div class="grid-container-element">
+    <div class=".grid-child-element-jobChart" echarts [initOpts]="initOpts" [options]="jobsChartOptions"></div>
+    <div class=".grid-child-element-workerChart" echarts [initOpts]="initOpts" [options]="workersChartOptions"></div>
 </div>

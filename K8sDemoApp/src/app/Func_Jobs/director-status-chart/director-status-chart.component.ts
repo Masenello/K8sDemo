@@ -13,6 +13,7 @@ export class DirectorStatusChartComponent implements OnInit {
 
   jobsChartOptions : any
   workersChartOptions : any
+  initOpts:any
 
   constructor(private directorStatusService:DirectorStatusService) {
     this.directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage)=>{
@@ -23,18 +24,24 @@ export class DirectorStatusChartComponent implements OnInit {
 
   buildChart(chartDecriptor: jobChartDescriptor)
   {
+    this.initOpts = {
+      renderer: 'svg',
+      width: 900,
+      height: 350
+    };
 
     this.jobsChartOptions= {
       title: {
-        text: chartDecriptor.jobChartTitle,
-        x: 'center'
+        // text: chartDecriptor.jobChartTitle,
+        // x: 'center'
       },
       legend: {
         data: ['Active Jobs', 'Total Jobs', 'Max Jobs'],
         align: 'left',
-        y: 'bottom',
+        y: 'top',
       },
-      tooltip: {},
+      tooltip: {
+      },
       xAxis: {
         data: chartDecriptor.xAxisData,
         silent: false,
@@ -59,6 +66,9 @@ export class DirectorStatusChartComponent implements OnInit {
         {
           name: 'Max Jobs',
           type: 'line',
+          itemStyle: {
+            color: 'rgb(255,0,0)'
+          },
           showSymbol: false,
           data: chartDecriptor.yMaxJobsAxisData,
         },
@@ -67,13 +77,13 @@ export class DirectorStatusChartComponent implements OnInit {
 
     this.workersChartOptions= {
       title: {
-        text: chartDecriptor.workersChartTitle,
-        x: 'center'
+        // text: chartDecriptor.workersChartTitle,
+        // x: 'center'
       },
       legend: {
         data: ['Workers','Max Workers'],
         align: 'left',
-        y: 'bottom',
+        y: 'top',
       },
       tooltip: {},
       xAxis: {
@@ -94,6 +104,9 @@ export class DirectorStatusChartComponent implements OnInit {
         {
           name: 'Max Workers',
           type: 'line',
+          itemStyle: {
+            color: 'rgb(255,0,0)'
+          },
           showSymbol: false,
           data: chartDecriptor.yMaxWorkersAxisData,
         },
