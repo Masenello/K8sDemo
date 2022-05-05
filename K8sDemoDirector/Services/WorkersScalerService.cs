@@ -27,7 +27,7 @@ namespace K8sDemoDirector.Services
             _registryManager = registryManager;
         }
 
-        public void MonitorWorkersLoad(int openJobsCount)
+        public void MonitorWorkersScaling(int openJobsCount)
         {   
             if(SystemIsScaling)
             {

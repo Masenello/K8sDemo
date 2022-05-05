@@ -7,7 +7,7 @@ namespace K8sDemoDirector.Interfaces
     {
 
         public bool SystemIsScaling { get; }
-        public void MonitorWorkersLoad(int openJobsCount);
+        public void MonitorWorkersScaling(int openJobsCount);
 
         public WorkerDescriptorDto GetWorkerWithLessLoad();
     }

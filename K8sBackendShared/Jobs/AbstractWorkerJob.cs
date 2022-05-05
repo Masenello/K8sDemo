@@ -1,4 +1,5 @@
 
+using System.Threading.Tasks;
 using EasyNetQ;
 using K8sBackendShared.Interfaces;
 using K8sCore.Messages;
@@ -21,7 +22,7 @@ namespace K8sBackendShared.Jobs
             _rabbitConnector = rabbitConnector;
         }
 
-        public abstract void DoWork();
+        public abstract Task DoWorkAsync();
 
         protected void ReportWorkProgress(JobStatusMessage newStatus) 
         {

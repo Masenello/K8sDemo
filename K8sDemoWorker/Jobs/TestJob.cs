@@ -25,7 +25,7 @@ namespace K8sDemoWorker.Jobs
             _jobToProcessId = jobToProcessId;
         }
 
-        public async override void DoWork()
+        public async override void DoWorkAsync()
         {
             using (var scope = _serviceProvider.CreateScope())
             {

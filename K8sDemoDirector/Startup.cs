@@ -36,17 +36,17 @@ namespace K8sDemoDirector
             services.AddSingleton<IWorkersRegistryManager, WorkersRegistryManagerService>();
             services.AddSingleton<IWorkersScaler, WorkersScalerService>();
 
+            services.AddTransient<IDirectorCycleJob, DirectorCycleJob>();
+
             services.AddHostedService<DirectorService>(x =>
                 new DirectorService(
                         services.BuildServiceProvider(),
-                        x.GetRequiredService<IWorkersScaler>(),
-                        x.GetRequiredService<IWorkersRegistryManager>(),
                         x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
-                        1000,
-                        new GetJobListJob(x.GetRequiredService<ILogger>(), x.GetRequiredService<IRabbitConnector>())  
-                )
-            );
+                        x.GetRequiredService<IDirectorCycleJob>(),
+                        1000)
+                );
+            
         }
     }
 }

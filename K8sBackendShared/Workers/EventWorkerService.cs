@@ -53,7 +53,7 @@ namespace K8sBackendShared.Workers
         {
             //_jobQueue.Enqueue(args);
             workerJob.JobProgressChanged += new AbstractWorkerJob.JobProgressChangedHandler(JobProgressChanged);
-            await Task.Run(() => workerJob.DoWork()).ContinueWith(t =>
+            await Task.Run(() => workerJob.DoWorkAsync()).ContinueWith(t =>
             {
                 //Throw task exceptions (if any)
                 if (t.IsFaulted)
