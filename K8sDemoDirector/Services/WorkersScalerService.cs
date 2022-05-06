@@ -10,7 +10,7 @@ namespace K8sDemoDirector.Services
     public class WorkersScalerService : IWorkersScaler
     {
         public int MaxJobsPerWorker { get; private set;} = 20;
-        public int MaxWorkers { get; private set; } = 10;
+        public int MaxWorkers { get; private set; } = 5;
         private bool ScalingEnabled { get; set; } = true;
 
 
@@ -73,7 +73,7 @@ namespace K8sDemoDirector.Services
 
                 if (_registryManager.WorkersRegistry.All(x => x.Value.CurrentJobs == 0)) //All workers are idle
                 {
-                    WorkersScaleDown(currentWorkers);
+                    //WorkersScaleDown(currentWorkers);
                 }
             }
         }

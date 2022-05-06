@@ -7,8 +7,9 @@ namespace K8sDemoDirector.Interfaces
 {
     public interface IWorkersRegistryManager
     {
-        public ConcurrentDictionary<int, WorkerDescriptorDto> WorkersRegistry { get;}
+        public ConcurrentDictionary<int, WorkerDescriptorDto> WorkersRegistry { get; }
 
         public void UpdateJobCounts(List<JobEntity> openJobs);
+        public void AssignJobToWorker(string workerId);
     }
 }

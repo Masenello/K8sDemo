@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.Workers;
+using K8sCore.Interfaces.Mongo;
 using K8sCore.Messages;
 using K8sDemoWorker.Interfaces;
 using K8sDemoWorker.Jobs;
@@ -24,6 +25,7 @@ namespace K8sDemoWorker.Services
 
             _logger.LogInfo($"Worker started with id: {_workerId}");
             WorkerRegisterToDirector();
+
         }
 
         private void HandleDirectorStartedMessage(DirectorStartedMessage obj)

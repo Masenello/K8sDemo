@@ -62,7 +62,7 @@ namespace K8sDemoWorker.Jobs
             }
             catch (Exception e)
             {
-                JobStatusMessage errorStatus = await _jobRepo.SetJobInErrorAsync(targetJob.Id, e);
+                JobStatusMessage errorStatus = await _jobRepo.SetJobInErrorAsync(targetJob.Id,targetJob.WorkerId, e);
                 _logger.LogError(errorStatus.UserMessage);
                 ReportWorkProgress(errorStatus);
             }

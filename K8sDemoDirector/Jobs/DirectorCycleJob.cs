@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using K8sCore.Enums;
 using System.Threading.Tasks;
+using K8sBackendShared.Utils;
 
 namespace K8sDemoDirector.Jobs
 {
@@ -22,6 +23,8 @@ namespace K8sDemoDirector.Jobs
 
         private List<JobEntity> openJobs = new List<JobEntity>();
 
+        private string uniqueId = UniqueIdentifiers.GenerateDateTimeUniqueId();
+
         public DirectorCycleJob(IJobRepository jobRepo, ILogger logger, IWorkersScaler workersScaler, IWorkersRegistryManager registryManager, IRabbitConnector rabbitConnector) : base(logger, rabbitConnector)
         {
             _jobRepo = jobRepo;
@@ -31,20 +34,21 @@ namespace K8sDemoDirector.Jobs
 
         public override async Task DoWorkAsync()
         {
+            _logger.LogInfo($"Starting director cycle with id {uniqueId}");
             openJobs = _jobRepo.GetOpenJobs();
             await AssignJobsToWorkersAsync();
             _registryManager.UpdateJobCounts(openJobs);
             _workersScaler.MonitorWorkersScaling(openJobs.Count);
             await MonitorJobsForTimeoutsAsync();
             UpdateDirectorStatus();
+            _logger.LogInfo($"Completing director cycle with id {uniqueId}");
 
         }
 
         private async Task AssignJobsToWorkersAsync()
         {
-            foreach (var createdJob in openJobs.Where(x => x.Status == JobStatus.created))
+            foreach (var createdJob in openJobs.Where(x => x.Status == JobStatus.created).OrderBy(x => x.CreationDate).ToList())
             {
-
                 //If system is scaling DOWN or max workers is reached, avoid assigning jobs
                 if (_workersScaler.SystemIsScalingDown) break;
                 //Assign job to worker
@@ -64,6 +68,7 @@ namespace K8sDemoDirector.Jobs
                         JobId = createdJob.Id,
                         JobType = createdJob.Type,
                     });
+                    _registryManager.AssignJobToWorker(targetWorker.WorkerId);
                     _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}");
                 }
             }
@@ -79,8 +84,9 @@ namespace K8sDemoDirector.Jobs
                 //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
                 if ((DateTime.UtcNow - openJob.CreationDate).TotalSeconds > 60)
                 {
-                    var timeoutMsg = await _jobRepo.SetJobInTimeOutAsync(openJob.Id);
+                    var timeoutMsg = await _jobRepo.SetJobInTimeOutAsync(openJob.Id, openJob.WorkerId);
                     _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);
+                    _logger.LogError($"Director set job: {openJob.Id} assigned to worker: {openJob.WorkerId} to timeout");
                 }
             }
         }

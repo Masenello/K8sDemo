@@ -8,7 +8,7 @@ using K8sCore.Messages;
 
 namespace K8sCore.Interfaces.Mongo
 {
-    public interface IJobRepository: IGenericMongoRepository<JobEntity>
+    public interface IJobRepository : IGenericMongoRepository<JobEntity>
     {
         public List<JobEntity> GetJobsInStatus(JobStatus targetStatus);
         public List<JobEntity> GetOpenJobs();
@@ -18,8 +18,8 @@ namespace K8sCore.Interfaces.Mongo
 
         public Task<JobStatusMessage> SetJobInCompletedStatusAsync(string jobId);
 
-        public Task<JobStatusMessage> SetJobInErrorAsync(string jobId, Exception ex);
-        public Task<JobStatusMessage> SetJobInTimeOutAsync(string jobId);
+        public Task<JobStatusMessage> SetJobInErrorAsync(string jobId, string workerId, Exception ex);
+        public Task<JobStatusMessage> SetJobInTimeOutAsync(string jobId, string workerId);
 
     }
 }

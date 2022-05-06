@@ -11,21 +11,21 @@ namespace K8sDataMongo.Repository.JobRepository
 {
     public class JobRepository : GenericMongoRepository<JobEntity>, IJobRepository
     {
-        public JobRepository(): base()
-        { 
+        public JobRepository() : base()
+        {
 
         }
 
         public List<JobEntity> GetJobsInStatus(JobStatus targetStatus)
         {
-            return Find(x=>x.Status==JobStatus.created);
+            return Find(x => x.Status == targetStatus);
         }
 
         public List<JobEntity> GetOpenJobs()
         {
             //return FindAsync(x=>x.EndDate == null);
-            
-            return Find(x=>x.EndDate == null);
+
+            return Find(x => x.EndDate == null);
         }
 
         public async Task<JobStatusMessage> AssignJobAsync(string workerId, string jobId)
@@ -56,7 +56,7 @@ namespace K8sDataMongo.Repository.JobRepository
             return new JobStatusMessage(targetJob);
         }
 
-        public async Task<JobStatusMessage> SetJobInErrorAsync(string jobId, Exception ex)
+        public async Task<JobStatusMessage> SetJobInErrorAsync(string jobId, string workerId, Exception ex)
         {
             var targetJob = await GetByIdAsync(jobId);
             targetJob.Status = K8sCore.Enums.JobStatus.error;
@@ -68,12 +68,13 @@ namespace K8sDataMongo.Repository.JobRepository
 
 
 
-        public async Task<JobStatusMessage> SetJobInTimeOutAsync(string jobId)
+        public async Task<JobStatusMessage> SetJobInTimeOutAsync(string jobId, string workerId)
         {
             var targetJob = await GetByIdAsync(jobId);
             targetJob.Status = K8sCore.Enums.JobStatus.error;
             targetJob.EndDate = DateTime.UtcNow;
             targetJob.Errors = $"Job timeout";
+            targetJob.WorkerId = workerId;
             await UpdateAsync(jobId, targetJob);
             return new JobStatusMessage(targetJob, $"{targetJob.GenerateJobDescriptor()}. Job Timeout");
         }

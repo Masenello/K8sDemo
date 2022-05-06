@@ -28,7 +28,7 @@ namespace K8sDemoHubManager.Services
                 ConnectedAppEntity connectedClient = await _context.ConnectedApps.FirstOrDefaultAsync(x=>x.User.UserName == targetUser);
                 if (connectedClient != null)
                 {
-                    _logger.LogInfo($"{nameof(SignalRbrokerService)}: Forwarding message: {typeof(T).Name} to client with connection id: {connectedClient.Id}");
+                    //_logger.LogInfo($"{nameof(SignalRbrokerService)}: Forwarding message: {typeof(T).Name} to client with connection id: {connectedClient.Id}");
                     await _hub.Clients.Clients(connectedClient.ConnectionId).SendAsync(typeof(T).Name, msg);
                     
                 }

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.Workers
 {
-    public abstract class CyclicWorkerService<T>: IHostedService where T : IJob 
+    public abstract class CyclicWorkerService<T> : IHostedService where T : IJob
     {
         protected BackgroundWorker _bw = new BackgroundWorker();
         protected readonly IRabbitConnector _rabbitConnector;
@@ -45,20 +45,27 @@ namespace K8sBackendShared.Workers
             {
                 while (!_bw.CancellationPending)
                 {
+                    // _logger.LogInfo($"Starting cycle");
+                    // DateTime startCycle = DateTime.Now;
                     Thread.Sleep(_cycleTime);
                     //To make pauses
                     //Create Scope to call transient service in singleton hosted service
                     using (var scope = _serviceProvider.CreateScope())
                     {
+                        // _logger.LogInfo($"Starting cycle operations");
+                        // DateTime start = DateTime.Now;
                         //Do Work!
                         var transientService = scope.ServiceProvider.GetRequiredService<T>();
                         transientService.DoWorkAsync();
+                        //_logger.LogInfo($"Ending cycle operations. Duration {(DateTime.Now - start).TotalMilliseconds} [ms]");
                     }
+                    //_logger.LogInfo($"Ending cycle. Duration {(DateTime.Now - startCycle).TotalMilliseconds} [ms]");
+
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError($"Error on cyclic worker main cycle:",ex);
+                _logger.LogError($"Error on cyclic worker main cycle:", ex);
             }
 
 

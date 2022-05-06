@@ -36,12 +36,22 @@ namespace K8sDemoDirector.Services
             }
         }
 
+        public void AssignJobToWorker(string workerId)
+        {
+            WorkersRegistry.Values.FirstOrDefault(x=>x.WorkerId == workerId).CurrentJobs +=1;
+        }
+    
+
         private void HandleWorkerRegisterMessage(WorkerRegisterToDirectorMessage msg)
         {
             try
             {
                 var target = WorkersRegistry.FirstOrDefault(x => x.Value.WorkerId == msg.WorkerId);
-                if (!WorkerIsRegistered(msg.WorkerId))
+                if (WorkerIsRegistered(msg.WorkerId))
+                {
+                    _logger.LogWarning($"Worker with id: {msg.WorkerId} restarted after error");
+                }
+                else
                 {
                     WorkersRegistry.TryAdd(GenerateKeyForWorkerRegistry(), new WorkerDescriptorDto()
                     {
