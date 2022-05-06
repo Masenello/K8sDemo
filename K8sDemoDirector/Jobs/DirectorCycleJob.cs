@@ -77,7 +77,7 @@ namespace K8sDemoDirector.Jobs
                 //var jobToMonitor = await uow.Jobs.GetJobWithIdAsync(activeJob.Key);
                 //TODO variable timeouts set on job creation 
                 //if ((jobToMonitor != null) && (DateTime.UtcNow - jobToMonitor.AssignmentDate).TotalSeconds>jobToMonitor.TimeOutSeconds)
-                if ((DateTime.UtcNow - openJob.CreationDate).TotalSeconds > 30)
+                if ((DateTime.UtcNow - openJob.CreationDate).TotalSeconds > 60)
                 {
                     var timeoutMsg = await _jobRepo.SetJobInTimeOutAsync(openJob.Id);
                     _rabbitConnector.Publish<JobStatusMessage>(timeoutMsg);

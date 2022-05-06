@@ -23,6 +23,8 @@ namespace K8sDemoDirector.Services
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
+
+            _rabbitConnector.Publish<DirectorStartedMessage>(new DirectorStartedMessage());
         }
 
         public void UpdateJobCounts(List<JobEntity> openJobs)

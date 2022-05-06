@@ -17,19 +17,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace K8sDemoDirector.Services
 {
-    public class DirectorService : CyclicWorkerService
+    public class DirectorService : CyclicWorkerService<IDirectorCycleJob>
     {
         private readonly IServiceProvider _serviceProvider;
 
 
 
-        public DirectorService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, IJob job, int cycleTime)
-        : base(serviceProvider, rabbitConnector, logger, cycleTime, job)
+        public DirectorService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime)
+        : base(serviceProvider, rabbitConnector, logger, cycleTime)
         {
-            _rabbitConnector.Publish<DirectorStartedMessage>(new DirectorStartedMessage());
+
         }
-
-
 
     }
 }

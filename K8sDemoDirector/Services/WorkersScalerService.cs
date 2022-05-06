@@ -60,10 +60,10 @@ namespace K8sDemoDirector.Services
                 }
             }
 
-            if ((!SystemIsScaling) && ScalingEnabled)
+            //if ((!SystemIsScaling) && ScalingEnabled)
+            if (ScalingEnabled)
             {
                 int currentWorkers = _registryManager.WorkersRegistry.Count;
-                //TODO variable threshold
                 if ((currentWorkers > 0)
                 && (currentWorkers < MaxWorkers)
                 && (SystemCurrentJobsCapacity<openJobsCount)) 
@@ -90,10 +90,22 @@ namespace K8sDemoDirector.Services
         private void WorkersScaleUp(int openJobsCount)
         {
             SystemIsScaling = true;
-            scalingTarget = (openJobsCount + MaxJobsPerWorker - 1) / MaxJobsPerWorker;
-            if (scalingTarget > MaxWorkers) scalingTarget = MaxWorkers;
-            _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-            _logger.LogInfo($"Scaling up workers to: {scalingTarget}");
+            //If current workers requirement is higher than the current scaling target use the highest one
+            int tmpScalingTarget= (openJobsCount + MaxJobsPerWorker - 1) / MaxJobsPerWorker;
+
+            if (tmpScalingTarget > MaxWorkers) 
+            {
+                tmpScalingTarget = MaxWorkers;
+            }
+            if (tmpScalingTarget > scalingTarget)
+            {
+                scalingTarget = tmpScalingTarget;
+                _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+                _logger.LogInfo($"Scaling up workers to: {scalingTarget}");
+            }
+
+
+            
         }
 
         private void WorkersScaleDown(int currentWorkers)

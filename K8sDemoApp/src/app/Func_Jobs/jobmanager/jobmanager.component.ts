@@ -18,31 +18,29 @@ import { JobTypeEnumNamePipe } from '../jobEnumsPipes';
   styleUrls: ['./jobmanager.component.css']
 })
 export class JobmanagerComponent implements OnInit {
-  
+
   @Input() targetJobType: JobTypeEnum;
-  internalJobsList =new Subject<JobStatusMessage[]>();
+  internalJobsList = new Subject<JobStatusMessage[]>();
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
-  jobsListHeader:string;
-  internalJobsListActiveJobsNumber =new BehaviorSubject<number>(0);
+  jobsListHeader: string;
+  internalJobsListActiveJobsNumber = new BehaviorSubject<number>(0);
+  jobsToAdd: number = 50
 
   constructor(public accountService: AccountService,
-    public jobService : JobService,
+    public jobService: JobService,
     private toastr: ToastrService,
-    private hub:HubService,
-    private jobTypeEnumNamePipe:JobTypeEnumNamePipe) 
-    {
-      //Subscribe to Job updates from HUB
-      this.hub.receivedNewJobStatusEvent.subscribe((jobStatus:JobStatusMessage)=> 
-      {
-        //console.log(jobStatus);
-        if (jobStatus.status == JobStatusEnum.error)
-        {
-          this.toastr.error(`${jobStatus.userMessage}`)
-        }
-        this.updateInternalJobsList(jobStatus);
-      })
+    private hub: HubService,
+    private jobTypeEnumNamePipe: JobTypeEnumNamePipe) {
+    //Subscribe to Job updates from HUB
+    this.hub.receivedNewJobStatusEvent.subscribe((jobStatus: JobStatusMessage) => {
+      //console.log(jobStatus);
+      if (jobStatus.status == JobStatusEnum.error) {
+        this.toastr.error(`${jobStatus.userMessage}`)
+      }
+      this.updateInternalJobsList(jobStatus);
+    })
 
-      
+
 
   }
 
@@ -50,79 +48,86 @@ export class JobmanagerComponent implements OnInit {
     this.getUserPendingJobs();
   }
 
-  getUserPendingJobs()
-  {
-    this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username).subscribe((userPendingJobs)=> 
-    {
+  getUserPendingJobs() {
+    //Clean current list
+    this.resetJobsList()
+    //Populate list with data from database
+    this.jobService.getUserPendingJobs(this.accountService.currentUser.value.username).subscribe((userPendingJobs) => {
       userPendingJobs.forEach(element => {
         this.updateInternalJobsList(element);
       });
-      
+
     })
   }
 
-  updateInternalJobsList(jobStatus:JobStatusMessage)
-  {
-    var tmpJob:JobStatusMessage = from(this.currentJobsTmp).where(x=>x.jobId == jobStatus.jobId).firstOrDefault();
-    if (tmpJob == null)
-    {
+  resetJobsList() {
+    this.currentJobsTmp = new Array<JobStatusMessage>();
+    this.internalJobsList.next(this.currentJobsTmp);
+    this.internalJobsListActiveJobsNumber.next(0)
+  }
+
+  updateInternalJobsList(jobStatus: JobStatusMessage) {
+    var tmpJob: JobStatusMessage = from(this.currentJobsTmp).where(x => x.jobId == jobStatus.jobId).firstOrDefault();
+    if (tmpJob == null) {
       //Job is not in list, add it
       this.currentJobsTmp.push(jobStatus);
     }
-    else
-    {
-        //Update job in list
-        if (jobStatus.endDate != null)
-        {
-          //Remove element (job completed)
-          var index =  this.currentJobsTmp.findIndex(x => x.jobId==jobStatus.jobId);
-          if (index > -1) {
-            this.currentJobsTmp.splice(index, 1);
-          }
+    else {
+      //Update job in list
+      if (jobStatus.endDate != null) {
+        //Remove element (job completed)
+        var index = this.currentJobsTmp.findIndex(x => x.jobId == jobStatus.jobId);
+        if (index > -1) {
+          this.currentJobsTmp.splice(index, 1);
         }
-        else
-        {
-          //Update element (job in progress)
-          tmpJob.progressPercentage = jobStatus.progressPercentage;
-          tmpJob.status = jobStatus.status;
-          tmpJob.userMessage = jobStatus.userMessage;
-        }
+      }
+      else {
+        //Update element (job in progress)
+        tmpJob.progressPercentage = jobStatus.progressPercentage;
+        tmpJob.status = jobStatus.status;
+        tmpJob.userMessage = jobStatus.userMessage;
+      }
 
 
 
     }
-    //TODO Remove completed jobs from list, now they are only hidden!
+
     this.internalJobsList.next(this.currentJobsTmp);
-    this.jobsListHeader= `${from(this.currentJobsTmp).where(x=>x.status == JobStatusEnum.completed).count()} Pending jobs for user: ${this.accountService.currentUser.value.username}`;
-    this.internalJobsListActiveJobsNumber.next(from(this.currentJobsTmp).where(x=>x.status != JobStatusEnum.completed).count())
+    this.internalJobsListActiveJobsNumber.next(from(this.currentJobsTmp).where(x => x.endDate == null).count())
   }
 
   sendTestJobRequest() {
-    let jobRequest:TestJobCreationRequest =  
+
+    for (let i = 0; i < this.jobsToAdd; i++) {
+      this.addNewTestJob();
+    }
+
+
+  }
+
+  addNewTestJob() {
+    let jobRequest: TestJobCreationRequest =
     {
-      user:this.accountService.currentUser.getValue()?.username!,
+      user: this.accountService.currentUser.getValue()?.username!,
       requestDateTime: new Date(),
-      requestJobType:0
+      requestJobType: 0
     };
-    this.jobService.sendJobCreationRequest(jobRequest).subscribe(result =>{
+    this.jobService.sendJobCreationRequest(jobRequest).subscribe(result => {
       this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
       this.updateInternalJobsList(
         {
           jobId: result.jobId,
           jobType: result.jobType,
           status: result.jobStatus,
-          user:result.user,
+          user: result.user,
           progressPercentage: 0,
           userMessage: result.userMessage,
           endDate: null,
         });
 
-    },error=>{
+    }, error => {
       console.log(error);
       this.toastr.error(error.error);
     });
   }
-
-
-
 }

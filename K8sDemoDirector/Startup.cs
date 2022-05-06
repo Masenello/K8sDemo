@@ -43,7 +43,6 @@ namespace K8sDemoDirector
                         services.BuildServiceProvider(),
                         x.GetRequiredService<IRabbitConnector>(),
                         x.GetRequiredService<ILogger>(),
-                        x.GetRequiredService<IDirectorCycleJob>(),
                         1000)
                 );
             

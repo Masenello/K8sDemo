@@ -10,16 +10,15 @@ using Microsoft.Extensions.Hosting;
 
 namespace K8sBackendShared.Workers
 {
-    public abstract class CyclicWorkerService : IHostedService
+    public abstract class CyclicWorkerService<T>: IHostedService where T : IJob 
     {
-        protected IJob _job = null;
         protected BackgroundWorker _bw = new BackgroundWorker();
         protected readonly IRabbitConnector _rabbitConnector;
         private readonly IServiceProvider _serviceProvider;
         protected readonly ILogger _logger;
         private int _cycleTime = 500;
 
-        public CyclicWorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime, IJob job)
+        public CyclicWorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, int cycleTime)
         {
             _rabbitConnector = rabbitConnector;
             _logger = logger;
@@ -30,8 +29,6 @@ namespace K8sBackendShared.Workers
             _bw.WorkerSupportsCancellation = true;
             _bw.DoWork += BackgroundWorkerOnDoWork;
             _bw.RunWorkerCompleted += BackgroundWorkerOnWorkCompleted;
-
-            _job = job;
 
             _bw.RunWorkerAsync();
         }
@@ -44,16 +41,26 @@ namespace K8sBackendShared.Workers
 
         private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
         {
-            while (!_bw.CancellationPending)
+            try
             {
-                Thread.Sleep(_cycleTime);   // If you need to make a pause between runs
-                //Create Scope to call transient service in singleton hosted service
-                using (var scope = _serviceProvider.CreateScope())
+                while (!_bw.CancellationPending)
                 {
-                    //Do Work!
-                    _job.DoWorkAsync();
+                    Thread.Sleep(_cycleTime);
+                    //To make pauses
+                    //Create Scope to call transient service in singleton hosted service
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        //Do Work!
+                        var transientService = scope.ServiceProvider.GetRequiredService<T>();
+                        transientService.DoWorkAsync();
+                    }
                 }
             }
+            catch (System.Exception ex)
+            {
+                _logger.LogError($"Error on cyclic worker main cycle:",ex);
+            }
+
 
         }
 
@@ -67,13 +74,13 @@ namespace K8sBackendShared.Workers
 
         public virtual Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInfo($"{nameof(CyclicWorkerService)} started");
+            _logger.LogInfo($"{nameof(CyclicWorkerService<T>)} started");
             return Task.CompletedTask;
         }
 
         public virtual Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInfo($"{nameof(CyclicWorkerService)} stopped");
+            _logger.LogInfo($"{nameof(CyclicWorkerService<T>)} stopped");
             return Task.CompletedTask;
         }
     }

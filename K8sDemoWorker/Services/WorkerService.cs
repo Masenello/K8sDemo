@@ -15,11 +15,9 @@ namespace K8sDemoWorker.Services
     {
 
         private readonly IServiceProvider _serviceProvider;
-        private readonly ITestJob _testJob;
-        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger, ITestJob testJob) : base(rabbitConnector, logger)
+        public WorkerService(IServiceProvider serviceProvider, IRabbitConnector rabbitConnector, ILogger logger) : base(rabbitConnector, logger)
         {
             _serviceProvider = serviceProvider;
-            _testJob = testJob;
 
             _rabbitConnector.Subscribe<DirectorAssignJobToWorker>(HandleDirectorAssignJobToWorker);
             _rabbitConnector.Subscribe<DirectorStartedMessage>(HandleDirectorStartedMessage);
@@ -55,15 +53,15 @@ namespace K8sDemoWorker.Services
                 //Discard jobs for other workers
                 if (msg.WorkerId != _workerId) return;
                 _logger.LogInfo($"Worker: {_workerId} received Job with Id: {msg.JobId} from director");
-
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     switch (msg.JobType)
                     {
                         case K8sCore.Enums.JobType.TestJob:
-                            _testJob.WorkerId = _workerId;
-                            _testJob.DatabaseJobId = msg.JobId;
-                            _testJob.DoWorkAsync();
+                            var transientService = scope.ServiceProvider.GetRequiredService<ITestJob>();
+                            transientService.WorkerId = _workerId;
+                            transientService.DatabaseJobId = msg.JobId;
+                            transientService.DoWorkAsync();
                             break;
                         default:
                             throw new Exception($"Unknown job type: {msg.JobType}");
