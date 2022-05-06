@@ -113,7 +113,7 @@ export class JobmanagerComponent implements OnInit {
       requestJobType: 0
     };
     this.jobService.sendJobCreationRequest(jobRequest).subscribe(result => {
-      this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
+      //this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
       this.updateInternalJobsList(
         {
           jobId: result.jobId,
