@@ -1,11 +1,15 @@
 import { DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { from } from 'linq-to-typescript';
+import { Observable } from 'rxjs/internal/Observable';
+import { map } from 'rxjs/internal/operators/map';
 import { Subject } from 'rxjs/internal/Subject';
 import { environment } from 'src/environments/environment';
 import { AccountService } from '../Func_Login/account.service';
 import { HubService } from '../services/hub.service';
 import { JobTypeEnum } from '../_enum/JobTypeEnum';
+import { SetDirectorParametersRequest } from '../_models/API_Messages/SetDirectorParameters';
 import { DirectorStatusMessage } from '../_models/Hub_Messages/DirectorStatusMessage';
 import { jobChartDescriptor } from '../_models/jobChartDescriptor';
 
@@ -14,12 +18,14 @@ import { jobChartDescriptor } from '../_models/jobChartDescriptor';
 })
 export class DirectorStatusService {
 
+  baseUrl = environment.apiUrl + "DirectorManagement/";
+
   public newDirectorStatus : Subject<DirectorStatusMessage> = new Subject<DirectorStatusMessage> ();
   datePipe = new DatePipe('en-US');
   directorStatusDataBuffer:Array<DirectorStatusMessage>  = [];
   directorStatusDataBufferMaxPoints = 200
 
-  constructor(private hub: HubService) {
+  constructor(private hub: HubService, private http: HttpClient) {
     this.hub.receivedNewDirectorStatusEvent.subscribe((data:DirectorStatusMessage)=>
     { 
       //console.log(data)
@@ -53,7 +59,7 @@ export class DirectorStatusService {
     this.directorStatusDataBuffer.forEach((dataPoint)=>
     {
       descriptor.xAxisData.push(this.datePipe.transform(dataPoint.timestamp, environment.dateTimeFormat))
-      console.log(dataPoint)
+      //console.log(dataPoint)
 
       descriptor.yWorkerAxisData.push(from(dataPoint.registeredWorkers).count())
       descriptor.yMaxWorkersAxisData.push(dataPoint.maxWorkers)
@@ -79,4 +85,15 @@ export class DirectorStatusService {
     //   program: "Application"
     // })
   }
+
+  sendSetDirectorParameters(directorParameters: SetDirectorParametersRequest):Observable<any>
+  {
+    console.log(directorParameters);
+    console.log(this.baseUrl +  "SetDirectorParameters")
+    return this.http.post(this.baseUrl + 
+      "SetDirectorParameters", directorParameters)
+    }
+
+
+
 }

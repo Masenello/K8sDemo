@@ -1,0 +1,31 @@
+<mat-card class="text-center">
+  <mat-card-title>Director parameters</mat-card-title>
+  <form (ngSubmit)="onSubmit()" class="vertical low-margin">
+    <mat-checkbox class="example-margin" name="scalingEnabled" [(ngModel)]="parameters.scalingEnabled">Enable workers
+      scaling</mat-checkbox>
+
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Max Jobs Per Worker</mat-label>
+      <input type="number" name="maxJobsPerWorker" matInput required [(ngModel)]="parameters.maxJobsPerWorker">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="width: 250px;">
+      <mat-label>Max Workers</mat-label>
+      <input type="number" name="maxWorkers" matInput required [(ngModel)]="parameters.maxWorkers">
+    </mat-form-field>
+
+
+
+    <mat-form-field appearance="outline" style="width: 250px;">
+      <mat-label>Scale down idle time</mat-label>
+      <input type="number" name="idleSecondsBeforeScaleDown" matInput required
+        [(ngModel)]="parameters.idleSecondsBeforeScaleDown">
+    </mat-form-field>
+
+
+
+    <button mat-flat-button class="btn-primary" style="margin-top: 20px;" type="submit">Apply Settings</button>
+  </form>
+</mat-card>

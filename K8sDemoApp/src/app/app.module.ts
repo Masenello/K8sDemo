@@ -51,6 +51,7 @@ import { GuiGridModule } from '@generic-ui/ngx-grid';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { DirectorStatusChartComponent } from './Func_Jobs/director-status-chart/director-status-chart.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { DirectorSetParametersComponent } from './Func_Jobs/director-set-parameters/director-set-parameters.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     LogViewerPipe,
     JobhistoricalComponent,
     DirectorStatusChartComponent,
+    DirectorSetParametersComponent,
   ],
   imports: [
     BrowserModule,

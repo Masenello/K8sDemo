@@ -1,7 +1,7 @@
 
 .grid-container-element{ 
     display: grid; 
-    grid-template-columns: 3fr 1fr; 
+    grid-template-columns: 2fr 1fr 1fr; 
     grid-template-rows: 50px 680px; 
     grid-gap: 2px; 
     /* border: 1px solid black;  */
@@ -12,22 +12,11 @@
 .grid-child-element-jobsCommands { 
     margin: 2px; 
     grid-column-start: 1;
-    grid-column-end: span 2;
+    grid-column-end: span 3;
     grid-row-start: 1;
     grid-row-end: span 1;
     border: 1px solid black ;
     border-radius:5px 
-}
-
-.grid-child-element-jobsQueue { 
-    margin: 2px; 
-    grid-column-start: 2;
-    grid-column-end: span 1;
-    grid-row-start: 2;
-    grid-row-end: span 1;
-    border: 1px solid black ;
-    border-radius:5px; 
-    
 }
 
 .grid-child-element-jobStatusChart { 
@@ -39,6 +28,32 @@
     border: 1px solid black ;
     border-radius:5px 
 }
+
+.grid-child-element-directorSettings { 
+    margin: 2px; 
+    grid-column-start: 2;
+    grid-column-end: span 1;
+    grid-row-start: 2;
+    grid-row-end: span 1;
+    border: 1px solid black ;
+    border-radius:5px; 
+    
+}
+
+.grid-child-element-jobsQueue { 
+    margin: 2px; 
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    grid-row-start: 2;
+    grid-row-end: span 1;
+    border: 1px solid black ;
+    border-radius:5px; 
+    
+}
+
+
+
+
 
 .cdk-virtual-scroll-data-source-example .example-viewport {
     min-height: 600px;

@@ -1,13 +1,8 @@
-- Controllare cosa succede se più processi sono in subscription sullo stesso messaggio. Riscontrata anomalia nel forward dei log dove un 
-    servizio di forwarding dell'Hub era in subscription al messaggio dei log. Allo stesso messaggio è in subscription anche il logmanager. 
-    Si è notato che alcuni log generati dall'hub non venivano ricevuti dal logmanager. Si è quindi creato un nuovo messaggio per il forward dei log 
-    in subscription solo all'hub e non al logmanager che lo genera.
 
-- Accedere ai log da API (download log + archivi)
 - mettere tasto di refresh in Jobs queue per aggiornare la lista job da API
 - Dare possibilità di rimuovere job da Historical
-- Timeout per job 
-
 - K8sDemoHubManager refactor for UOW pattern currently has direct access to DataContext
-
 - K8sDemoApi refactor for UOW pattern currently has direct access to DataContext
+- Use secrets and config map on containers
+- Unified logs collection with
+

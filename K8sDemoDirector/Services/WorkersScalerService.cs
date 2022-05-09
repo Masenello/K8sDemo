@@ -1,54 +1,77 @@
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.K8s;
 using K8sCore.DTOs;
+using K8sCore.Messages;
 using K8sDemoDirector.Interfaces;
 
 namespace K8sDemoDirector.Services
 {
     public class WorkersScalerService : IWorkersScaler
     {
-        public int MaxJobsPerWorker { get; private set;} = 20;
+        public int MaxJobsPerWorker { get; private set; } = 20;
         public int MaxWorkers { get; private set; } = 5;
         private bool ScalingEnabled { get; set; } = true;
-        private int IdleCyclesBeforeScaleDown { get; set; } = 30;
+        private int IdleSecondsBeforeScaleDown { get; set; } = 30;
 
 
         public bool SystemIsScaling { get; private set; }
-        public bool SystemIsScalingDown { get
+        public bool SystemIsScalingDown
         {
-            if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count > scalingTarget))
+            get
             {
-                return true;
+                if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count > scalingTarget))
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
-        } }
-        public bool SystemIsScalingUp { get
+        }
+        public bool SystemIsScalingUp
         {
-            if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count < scalingTarget))
+            get
             {
-                return true;
+                if ((SystemIsScaling) && (_registryManager.WorkersRegistry.Count < scalingTarget))
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
-        } }
+        }
 
-        public int SystemCurrentJobsCapacity{ get
+        public int SystemCurrentJobsCapacity
         {
-            return _registryManager.WorkersRegistry.Count * MaxJobsPerWorker;
-        } }
+            get
+            {
+                return _registryManager.WorkersRegistry.Count * MaxJobsPerWorker;
+            }
+        }
 
         int scalingTarget = 1;
 
         private readonly IK8s _k8sConnector;
         private readonly ILogger _logger;
         private readonly IWorkersRegistryManager _registryManager;
+        private readonly IRabbitConnector _rabbitConnector;
 
-        public WorkersScalerService(IWorkersRegistryManager registryManager, IK8s k8sConnector, ILogger logger)
+        public WorkersScalerService(IWorkersRegistryManager registryManager, IRabbitConnector rabbitConnector, IK8s k8sConnector, ILogger logger)
         {
             _k8sConnector = k8sConnector;
             _logger = logger;
             _registryManager = registryManager;
+            _rabbitConnector = rabbitConnector;
+
+            _rabbitConnector.Subscribe<SetDirectorParametersMessage>(SetDirectorParametersMessageHandler);
+        }
+
+        private void SetDirectorParametersMessageHandler(SetDirectorParametersMessage msg)
+        {
+            MaxJobsPerWorker = msg.MaxJobsPerWorker;
+            MaxWorkers = msg.MaxWorkers;
+            ScalingEnabled = msg.ScalingEnabled;
+            IdleSecondsBeforeScaleDown = msg.IdleSecondsBeforeScaleDown;
         }
 
         public void MonitorWorkersScaling(int openJobsCount)
@@ -67,7 +90,7 @@ namespace K8sDemoDirector.Services
                 int currentWorkers = _registryManager.WorkersRegistry.Count;
                 if ((currentWorkers > 0)
                 && (currentWorkers < MaxWorkers)
-                && (SystemCurrentJobsCapacity<openJobsCount)) 
+                && (SystemCurrentJobsCapacity < openJobsCount))
                 {
                     WorkersScaleUp(openJobsCount);
                 }
@@ -92,9 +115,9 @@ namespace K8sDemoDirector.Services
         {
             SystemIsScaling = true;
             //If current workers requirement is higher than the current scaling target use the highest one
-            int tmpScalingTarget= (openJobsCount + MaxJobsPerWorker - 1) / MaxJobsPerWorker;
+            int tmpScalingTarget = (openJobsCount + MaxJobsPerWorker - 1) / MaxJobsPerWorker;
 
-            if (tmpScalingTarget > MaxWorkers) 
+            if (tmpScalingTarget > MaxWorkers)
             {
                 tmpScalingTarget = MaxWorkers;
             }
@@ -106,20 +129,22 @@ namespace K8sDemoDirector.Services
             }
 
 
-            
+
         }
 
-        private int idleCyclesBeforeScaleDownCounter = 0;
+        private DateTime? idleTimeStart;
 
         private void WorkersScaleDown(int currentWorkers)
         {
-            
+
             //Always leave at least one worker 
             if (currentWorkers == 1) return;
-            if (idleCyclesBeforeScaleDownCounter >= IdleCyclesBeforeScaleDown) 
+            if (idleTimeStart.HasValue)
             {
+                //Scale down only after idle time has passed
+                if ((DateTime.Now - idleTimeStart.Value).TotalSeconds >= IdleSecondsBeforeScaleDown)
                 {
-                    idleCyclesBeforeScaleDownCounter = 0;
+                    idleTimeStart = null;
                     SystemIsScaling = true;
                     scalingTarget = currentWorkers - 1;
                     _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
@@ -128,7 +153,7 @@ namespace K8sDemoDirector.Services
             }
             else
             {
-                idleCyclesBeforeScaleDownCounter +=1;
+                idleTimeStart = DateTime.Now;
             }
         }
     }
