@@ -53,6 +53,7 @@ import { DirectorStatusChartComponent } from './Func_Jobs/director-status-chart/
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DirectorSetParametersComponent } from './Func_Jobs/director-set-parameters/director-set-parameters.component';
 import { DirectorStatusLoadComponent } from './Func_Jobs/director-status-load/director-status-load.component';
+import { NgxGaugeModule } from 'ngx-gauge';
 
 @NgModule({
   declarations: [
@@ -112,7 +113,8 @@ import { DirectorStatusLoadComponent } from './Func_Jobs/director-status-load/di
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
-    ScrollingModule
+    ScrollingModule,
+    NgxGaugeModule
 
 
   ],

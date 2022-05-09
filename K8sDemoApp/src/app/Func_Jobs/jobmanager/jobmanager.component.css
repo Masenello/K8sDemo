@@ -51,8 +51,16 @@
     
 }
 
-
-
+.grid-child-element-loadGauge { 
+    margin: 2px; 
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    grid-row-start: 2;
+    grid-row-end: span 1;
+    border: 1px solid black ;
+    border-radius:5px; 
+    
+}
 
 
 .cdk-virtual-scroll-data-source-example .example-viewport {
@@ -66,5 +74,4 @@
     flex-direction:column;
   }
   
-
 

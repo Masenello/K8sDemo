@@ -9,50 +9,28 @@ import { DirectorStatusService } from '../director-status.service';
 })
 export class DirectorStatusLoadComponent implements OnInit {
 
-  gaugeChartOptions: any
+  gaugeValue = 0;
+  gaugeLabel = "Jobs";
+  foregroundColor = "#2ecc71";
 
 
   constructor(private directorStatusService: DirectorStatusService) {
 
     directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage) => {
       var freejobs = status.maxConcurrentTasks - status.totalJobs;
-      if (freejobs < 0) freejobs = 0;
-      this.buildChart(status.totalJobs, freejobs);
+      if (status.totalJobs > status.maxConcurrentTasks)
+      {
+        this.foregroundColor = "#e74c3c"
+      }
+      else
+      {
+        this.foregroundColor = "#2ecc71"
+      }
+
+      this.gaugeValue= status.totalJobs
     })
   }
 
   ngOnInit(): void {
   }
-
-  buildChart(currentJobs: number, freeJobs: number) {
-    this.gaugeChartOptions = {
-      title: {
-        text: 'Director load',
-        x: 'center'
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b} : {c} ({d}%)'
-      },
-      legend: {
-        x: 'center',
-        y: 'bottom',
-        data: ['currentJobs', 'freejobs']
-      },
-      calculable: true,
-      series: [
-        {
-          name: 'area',
-          type: 'pie',
-          radius: [110, 30],
-          roseType: 'area',
-          data: [
-            { value: currentJobs, name: 'currentJobs' },
-            { value: freeJobs, name: 'freejobs' },
-          ]
-        }
-      ]
-    };
-  }
-
 }

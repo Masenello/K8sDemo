@@ -29,6 +29,7 @@
     "jwt-decode": "^3.1.2",
     "linq-to-typescript": "^10.0.0",
     "ngx-echarts": "^8.0.1",
+    "ngx-gauge": "^5.0.0",
     "ngx-log-monitor": "^1.2.0",
     "ngx-toastr": "^14.2.2",
     "rxjs": "~6.6.0",
