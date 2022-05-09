@@ -36,6 +36,7 @@ namespace K8sDemoDirector.Jobs
         {
             _logger.LogInfo($"Starting director cycle with id {uniqueId}");
             openJobs = _jobRepo.GetOpenJobs();
+            ReassignRestartedWorkersJobs(openJobs);
             await AssignJobsToWorkersAsync();
             _registryManager.UpdateJobCounts(openJobs);
             _workersScaler.MonitorWorkersScaling(openJobs.Count);
@@ -68,7 +69,7 @@ namespace K8sDemoDirector.Jobs
                         JobId = createdJob.Id,
                         JobType = createdJob.Type,
                     });
-                    _registryManager.AssignJobToWorker(targetWorker.WorkerId);
+                    _registryManager.AddJobToWorkerJobCount(targetWorker.WorkerId);
                     _logger.LogInfo($"Director assigned job: {createdJob.Id} to worker: {targetWorker.WorkerId}");
                 }
             }
@@ -102,6 +103,16 @@ namespace K8sDemoDirector.Jobs
                 MaxConcurrentTasks = _workersScaler.SystemCurrentJobsCapacity,
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
+        }
+
+        private void ReassignRestartedWorkersJobs(List<JobEntity> openJobs)
+        {
+            string workerId = "";
+            while (_registryManager.RestartedWorkers.TryDequeue(out workerId))
+            {
+                _registryManager.ResetWorkerJobCount(workerId);
+                _jobRepo.UnAssignOpenWorkerJobs(workerId,openJobs);
+            }
         }
 
 

@@ -80,10 +80,9 @@ namespace K8sDataMongo.Repository.JobRepository
             return new JobStatusMessage(targetJob, $"{targetJob.GenerateJobDescriptor()}. Job Timeout");
         }
 
-        public async Task UnAssignOpenWorkerJobs(string workerId)
+        public async Task UnAssignOpenWorkerJobs(string workerId, List<JobEntity> openJobs)
         {
-            var targetJobs = GetOpenJobs();
-            foreach (JobEntity job in GetOpenJobs().Where(x=>x.WorkerId == workerId))
+            foreach (JobEntity job in openJobs.Where(x=>x.WorkerId == workerId))
             {
                 job.AssignmentDate = null;
                 job.StartDate = null;

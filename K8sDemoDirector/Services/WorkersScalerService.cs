@@ -12,7 +12,7 @@ namespace K8sDemoDirector.Services
         public int MaxJobsPerWorker { get; private set;} = 20;
         public int MaxWorkers { get; private set; } = 5;
         private bool ScalingEnabled { get; set; } = true;
-
+        private int IdleCyclesBeforeScaleDown { get; set; } = 30;
 
 
         public bool SystemIsScaling { get; private set; }
@@ -109,18 +109,26 @@ namespace K8sDemoDirector.Services
             
         }
 
+        private int idleCyclesBeforeScaleDownCounter = 0;
+
         private void WorkersScaleDown(int currentWorkers)
         {
-
+            
             //Always leave at least one worker 
-            if (currentWorkers > 1)
+            if (currentWorkers == 1) return;
+            if (idleCyclesBeforeScaleDownCounter >= IdleCyclesBeforeScaleDown) 
             {
                 {
+                    idleCyclesBeforeScaleDownCounter = 0;
                     SystemIsScaling = true;
                     scalingTarget = currentWorkers - 1;
                     _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
                     _logger.LogInfo($"Scaling down workers to: {scalingTarget}");
                 }
+            }
+            else
+            {
+                idleCyclesBeforeScaleDownCounter +=1;
             }
         }
     }

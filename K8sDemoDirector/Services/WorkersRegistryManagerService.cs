@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.Utils;
 using K8sCore.DTOs;
 using K8sCore.Entities.Mongo;
 using K8sCore.Interfaces.Mongo;
@@ -10,19 +11,21 @@ using K8sDemoDirector.Interfaces;
 
 namespace K8sDemoDirector.Services
 {
-    public class WorkersRegistryManagerService:IWorkersRegistryManager
+    public class WorkersRegistryManagerService : IWorkersRegistryManager
     {
         public ConcurrentDictionary<int, WorkerDescriptorDto> WorkersRegistry { get; private set; } = new ConcurrentDictionary<int, WorkerDescriptorDto>();
 
         private readonly IRabbitConnector _rabbitConnector;
         private readonly ILogger _logger;
-        private readonly IJobRepository _jobRepo;
 
-        public WorkersRegistryManagerService(IJobRepository jobRepo, IRabbitConnector rabbitConnector, ILogger logger)
+        public ThreadedQueue<string> RestartedWorkers { get; private set; } = new ThreadedQueue<string>();
+
+
+        public WorkersRegistryManagerService(IRabbitConnector rabbitConnector, ILogger logger)
         {
             _rabbitConnector = rabbitConnector;
             _logger = logger;
-            _jobRepo = jobRepo;
+
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
@@ -39,11 +42,16 @@ namespace K8sDemoDirector.Services
             }
         }
 
-        public void AssignJobToWorker(string workerId)
+        public void AddJobToWorkerJobCount(string workerId)
         {
-            WorkersRegistry.Values.FirstOrDefault(x=>x.WorkerId == workerId).CurrentJobs +=1;
+            WorkersRegistry.Values.FirstOrDefault(x => x.WorkerId == workerId).CurrentJobs += 1;
         }
-    
+
+        public void ResetWorkerJobCount(string workerId)
+        {
+            WorkersRegistry.Values.FirstOrDefault(x => x.WorkerId == workerId).CurrentJobs = 0;
+        }
+
 
         private void HandleWorkerRegisterMessage(WorkerRegisterToDirectorMessage msg)
         {
@@ -53,12 +61,8 @@ namespace K8sDemoDirector.Services
                 if (WorkerIsRegistered(msg.WorkerId))
                 {
                     _logger.LogWarning($"Worker with id: {msg.WorkerId} restarted after error. Pending jobs will be reassigned");
-                    //If worker is restarted after errors:
-                    //Reset its jobs count.
-                    WorkersRegistry.Values.FirstOrDefault(x=>x.WorkerId == msg.WorkerId).CurrentJobs = 0;
-                    //Unassign his jobs
-                    _jobRepo.UnAssignOpenWorkerJobs(msg.WorkerId);
-
+                    //If worker is restarted after errors add to workers restarted queue
+                    RestartedWorkers.Enqueue(msg.WorkerId);
                 }
                 else
                 {
