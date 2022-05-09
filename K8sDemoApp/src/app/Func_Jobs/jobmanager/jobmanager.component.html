@@ -24,9 +24,15 @@
     <app-director-set-parameters></app-director-set-parameters>
   </div>
 
-
   <!-- Job Queue -->
   <div class="grid-child-element-jobsQueue">
+    <app-director-status-load></app-director-status-load>
+
+  </div>
+
+
+  <!-- Job Queue -->
+  <!-- <div class="grid-child-element-jobsQueue">
     <div class="cdk-virtual-scroll-data-source-example">
       <div *ngIf="(internalJobsListActiveJobsNumber|async)==0">
         No jobs in queue
@@ -39,6 +45,6 @@
       </cdk-virtual-scroll-viewport>
     </div>
 
-  </div>
+  </div> -->
 
 </div>

@@ -52,6 +52,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { DirectorStatusChartComponent } from './Func_Jobs/director-status-chart/director-status-chart.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DirectorSetParametersComponent } from './Func_Jobs/director-set-parameters/director-set-parameters.component';
+import { DirectorStatusLoadComponent } from './Func_Jobs/director-status-load/director-status-load.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { DirectorSetParametersComponent } from './Func_Jobs/director-set-paramet
     JobhistoricalComponent,
     DirectorStatusChartComponent,
     DirectorSetParametersComponent,
+    DirectorStatusLoadComponent,
   ],
   imports: [
     BrowserModule,
