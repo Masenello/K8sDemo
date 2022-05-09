@@ -21,5 +21,7 @@ namespace K8sCore.Interfaces.Mongo
         public Task<JobStatusMessage> SetJobInErrorAsync(string jobId, string workerId, Exception ex);
         public Task<JobStatusMessage> SetJobInTimeOutAsync(string jobId, string workerId);
 
+        public Task UnAssignOpenWorkerJobs(string workerId);
+
     }
 }

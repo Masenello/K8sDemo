@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using K8sBackendShared.Logging;
 using K8sCore.Entities.Mongo;
@@ -77,6 +78,19 @@ namespace K8sDataMongo.Repository.JobRepository
             targetJob.WorkerId = workerId;
             await UpdateAsync(jobId, targetJob);
             return new JobStatusMessage(targetJob, $"{targetJob.GenerateJobDescriptor()}. Job Timeout");
+        }
+
+        public async Task UnAssignOpenWorkerJobs(string workerId)
+        {
+            var targetJobs = GetOpenJobs();
+            foreach (JobEntity job in GetOpenJobs().Where(x=>x.WorkerId == workerId))
+            {
+                job.AssignmentDate = null;
+                job.StartDate = null;
+                job.Status = JobStatus.created;
+                job.WorkerId = null;
+                await UpdateAsync(job.Id, job);
+            }
         }
     }
 }

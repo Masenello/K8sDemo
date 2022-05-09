@@ -4,6 +4,7 @@ using System.Linq;
 using K8sBackendShared.Interfaces;
 using K8sCore.DTOs;
 using K8sCore.Entities.Mongo;
+using K8sCore.Interfaces.Mongo;
 using K8sCore.Messages;
 using K8sDemoDirector.Interfaces;
 
@@ -15,11 +16,13 @@ namespace K8sDemoDirector.Services
 
         private readonly IRabbitConnector _rabbitConnector;
         private readonly ILogger _logger;
+        private readonly IJobRepository _jobRepo;
 
-        public WorkersRegistryManagerService(IRabbitConnector rabbitConnector, ILogger logger)
+        public WorkersRegistryManagerService(IJobRepository jobRepo, IRabbitConnector rabbitConnector, ILogger logger)
         {
             _rabbitConnector = rabbitConnector;
             _logger = logger;
+            _jobRepo = jobRepo;
 
             _rabbitConnector.Subscribe<WorkerRegisterToDirectorMessage>(HandleWorkerRegisterMessage);
             _rabbitConnector.Subscribe<WorkerUnRegisterToDirectorMessage>(HandleWorkerUnregisterMessage);
@@ -49,7 +52,13 @@ namespace K8sDemoDirector.Services
                 var target = WorkersRegistry.FirstOrDefault(x => x.Value.WorkerId == msg.WorkerId);
                 if (WorkerIsRegistered(msg.WorkerId))
                 {
-                    _logger.LogWarning($"Worker with id: {msg.WorkerId} restarted after error");
+                    _logger.LogWarning($"Worker with id: {msg.WorkerId} restarted after error. Pending jobs will be reassigned");
+                    //If worker is restarted after errors:
+                    //Reset its jobs count.
+                    WorkersRegistry.Values.FirstOrDefault(x=>x.WorkerId == msg.WorkerId).CurrentJobs = 0;
+                    //Unassign his jobs
+                    _jobRepo.UnAssignOpenWorkerJobs(msg.WorkerId);
+
                 }
                 else
                 {

@@ -14,6 +14,7 @@ namespace K8sDemoDirector.Services
         private bool ScalingEnabled { get; set; } = true;
 
 
+
         public bool SystemIsScaling { get; private set; }
         public bool SystemIsScalingDown { get
         {
@@ -73,7 +74,7 @@ namespace K8sDemoDirector.Services
 
                 if (_registryManager.WorkersRegistry.All(x => x.Value.CurrentJobs == 0)) //All workers are idle
                 {
-                    //WorkersScaleDown(currentWorkers);
+                    WorkersScaleDown(currentWorkers);
                 }
             }
         }
