@@ -31,17 +31,15 @@ export class JobmanagerComponent implements OnInit {
     private toastr: ToastrService,
     private hub: HubService,
     private jobTypeEnumNamePipe: JobTypeEnumNamePipe) {
-    //Subscribe to Job updates from HUB
-    this.hub.receivedNewJobStatusEvent.subscribe((jobStatus: JobStatusMessage) => {
-      //console.log(jobStatus);
-      if (jobStatus.status == JobStatusEnum.error) {
-        this.toastr.error(`${jobStatus.userMessage}`)
-      }
-      this.updateInternalJobsList(jobStatus);
-    })
 
-
-
+     this.jobService.newJobStatus.subscribe((newStatus:JobStatusMessage)=>
+     {
+        if (newStatus.status == JobStatusEnum.error) {
+          this.toastr.error(`${newStatus.userMessage}`)
+        }
+        this.updateInternalJobsList(newStatus);
+     }) 
+   
   }
 
   ngOnInit(): void {

@@ -6,6 +6,8 @@ import { JobCreationResult } from '../_models/API_Messages/JobCreationResult';
 import { TestJobCreationRequest} from '../_models/API_Messages/JobCreationRequest';
 import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 import { Job } from '../_models/API_Messages/Job';
+import { HubService } from '../services/hub.service';
+import { JobStatusEnum } from '../_enum/JobStatusEnum';
 
 
 
@@ -15,11 +17,15 @@ import { Job } from '../_models/API_Messages/Job';
 export class JobService {
 
   baseUrl = environment.apiUrl + "Job/";
+  public newJobStatus : Subject<JobStatusMessage> = new Subject<JobStatusMessage> ();
 
-
-  constructor(private http: HttpClient) 
+  constructor(private http: HttpClient, private hub: HubService) 
   {
-    
+     //Subscribe to Job updates from HUB
+     this.hub.receivedNewJobStatusEvent.subscribe((newJobStatus: JobStatusMessage) => {
+       //console.log(newJobStatus);
+      this.newJobStatus.next(newJobStatus);
+    })
   }
 
   getUserPendingJobs(username: string): Observable<JobStatusMessage[]>{
