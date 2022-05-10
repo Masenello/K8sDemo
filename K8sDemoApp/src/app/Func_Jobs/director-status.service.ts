@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 import { AccountService } from '../Func_Login/account.service';
 import { HubService } from '../services/hub.service';
 import { JobTypeEnum } from '../_enum/JobTypeEnum';
-import { SetDirectorParametersRequest } from '../_models/API_Messages/SetDirectorParameters';
+import { SetDirectorParametersRequest } from '../_models/API_Messages/SetDirectorParametersRequest';
 import { DirectorStatusMessage } from '../_models/Hub_Messages/DirectorStatusMessage';
 import { jobChartDescriptor } from '../_models/jobChartDescriptor';
 

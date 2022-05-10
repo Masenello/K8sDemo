@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SetDirectorParametersRequest } from 'src/app/_models/API_Messages/SetDirectorParameters';
+import { SetDirectorParametersRequest } from 'src/app/_models/API_Messages/SetDirectorParametersRequest';
 import { DirectorStatusService } from '../director-status.service';
 
 @Component({
