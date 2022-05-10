@@ -23,5 +23,7 @@ namespace K8sCore.Interfaces.Mongo
 
         public Task UnAssignOpenWorkerJobs(string workerId,List<JobEntity> openJobs);
 
+        public int CalculateMaxOpenJobDuration(List<JobEntity> openJobs);
+
     }
 }

@@ -4,5 +4,6 @@
 - K8sDemoHubManager refactor for UOW pattern currently has direct access to DataContext
 - K8sDemoApi refactor for UOW pattern currently has direct access to DataContext
 - Use secrets and config map on containers
-- Unified logs collection with
+- Move connected applications tables to Mongo
+- Change scale down logic to use priority base pod-deletion-cost
 

@@ -9,25 +9,31 @@ import { DirectorStatusService } from '../director-status.service';
 })
 export class DirectorStatusLoadComponent implements OnInit {
 
-  gaugeValue = 0;
-  gaugeLabel = "Jobs";
-  foregroundColor = "#2ecc71";
+  jobsGaugeValue = 0;
+  jobsGaugeLabel = "Jobs Number";
+  jobsGaugeForegroundColor = "#2ecc71";
+
+  durationGaugeValue = 0;
+  durationGaugeLabel = "Job Duration [s]";
+  durationGaugeForegroundColor = "#2ecc71";
 
 
   constructor(private directorStatusService: DirectorStatusService) {
 
     directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage) => {
-      var freejobs = status.maxConcurrentTasks - status.totalJobs;
+      //Jobs gauge
       if (status.totalJobs > status.maxConcurrentTasks)
       {
-        this.foregroundColor = "#e74c3c"
+        this.jobsGaugeForegroundColor = "#e74c3c"
       }
       else
       {
-        this.foregroundColor = "#2ecc71"
+        this.jobsGaugeForegroundColor = "#2ecc71"
       }
 
-      this.gaugeValue= status.totalJobs
+      this.jobsGaugeValue= status.totalJobs
+      //duration gauge
+      this.durationGaugeValue= status.maxOpenJobDuration
     })
   }
 

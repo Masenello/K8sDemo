@@ -7,6 +7,7 @@ export interface DirectorStatusMessage{
     totalJobs:number,
     maxConcurrentTasks:number,
     maxWorkers:number,
+    maxOpenJobDuration:number,
 }
 
 export interface WorkerDescriptor{

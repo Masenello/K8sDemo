@@ -12,6 +12,7 @@ using System.Linq;
 using K8sCore.Enums;
 using System.Threading.Tasks;
 using K8sBackendShared.Utils;
+using System.Timers;
 
 namespace K8sDemoDirector.Jobs
 {
@@ -34,7 +35,7 @@ namespace K8sDemoDirector.Jobs
 
         public override async Task DoWorkAsync()
         {
-            _logger.LogInfo($"Starting director cycle with id {uniqueId}");
+            //_logger.LogInfo($"Starting director cycle with id {uniqueId}");
             openJobs = _jobRepo.GetOpenJobs();
             ReassignRestartedWorkersJobs(openJobs);
             await AssignJobsToWorkersAsync();
@@ -42,7 +43,7 @@ namespace K8sDemoDirector.Jobs
             _workersScaler.MonitorWorkersScaling(openJobs.Count);
             await MonitorJobsForTimeoutsAsync();
             UpdateDirectorStatus();
-            _logger.LogInfo($"Completing director cycle with id {uniqueId}");
+            //_logger.LogInfo($"Completing director cycle with id {uniqueId}");
 
         }
 
@@ -101,8 +102,10 @@ namespace K8sDemoDirector.Jobs
                 TotalJobs = openJobs.Count(),
                 MaxWorkers = _workersScaler.MaxWorkers,
                 MaxConcurrentTasks = _workersScaler.SystemCurrentJobsCapacity,
+                MaxOpenJobDuration = _jobRepo.CalculateMaxOpenJobDuration(openJobs),
             };
             _rabbitConnector.Publish<DirectorStatusMessage>(newStatus);
+            //_logger.LogInfo($"Max open job duration {newStatus.MaxOpenJobDuration} [s]");
         }
 
         private void ReassignRestartedWorkersJobs(List<JobEntity> openJobs)

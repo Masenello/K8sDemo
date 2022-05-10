@@ -1,8 +1,30 @@
+<div class="grid-container-element">
+    <!-- Jobs -->
+    <div class="grid-child-element-jobsGauge">
+        <ngx-gauge 
+        [size]=250 
+        [value]="jobsGaugeValue" 
+        [label]="jobsGaugeLabel" 
+        [foregroundColor]="jobsGaugeForegroundColor"
+    >
+    </ngx-gauge>
+    </div>
 
-<ngx-gauge [size] = 250
-           [value]="gaugeValue" 
-           [label]="gaugeLabel"  
-           [foregroundColor]="foregroundColor"
->
-</ngx-gauge>
+<div class="grid-child-element-durationGauge">
+    <ngx-gauge 
+        [size]=250 
+        [value]="durationGaugeValue" 
+        [label]="durationGaugeLabel"
+        [foregroundColor]="durationGaugeForegroundColor" 
+        [min]="9"
+        [max]="60">
+    </ngx-gauge>
+</div>
+
+
+</div>
+
+
+
+
 

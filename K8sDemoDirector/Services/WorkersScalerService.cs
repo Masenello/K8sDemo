@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Timers;
 using K8sBackendShared.Interfaces;
 using K8sBackendShared.K8s;
 using K8sCore.DTOs;
@@ -56,6 +57,8 @@ namespace K8sDemoDirector.Services
         private readonly IWorkersRegistryManager _registryManager;
         private readonly IRabbitConnector _rabbitConnector;
 
+        private Timer _scaleDownFilterTimer = new Timer();
+
         public WorkersScalerService(IWorkersRegistryManager registryManager, IRabbitConnector rabbitConnector, IK8s k8sConnector, ILogger logger)
         {
             _k8sConnector = k8sConnector;
@@ -63,8 +66,14 @@ namespace K8sDemoDirector.Services
             _registryManager = registryManager;
             _rabbitConnector = rabbitConnector;
 
+            _scaleDownFilterTimer.AutoReset = false;
+            _scaleDownFilterTimer.Enabled = false;
+            _scaleDownFilterTimer.Elapsed += new ElapsedEventHandler(ScaleDownFilterTimerElapsed);
+
             _rabbitConnector.Subscribe<SetDirectorParametersMessage>(SetDirectorParametersMessageHandler);
         }
+
+
 
         private void SetDirectorParametersMessageHandler(SetDirectorParametersMessage msg)
         {
@@ -95,10 +104,19 @@ namespace K8sDemoDirector.Services
                     WorkersScaleUp(openJobsCount);
                 }
 
-                if (_registryManager.WorkersRegistry.All(x => x.Value.CurrentJobs == 0)) //All workers are idle
+                // _logger.LogInfo($"Open jobs count: {openJobsCount} current workers {currentWorkers} timer enabled: {_scaleDownFilterTimer.Enabled}");
+                if ((openJobsCount == 0) && (currentWorkers > 1) && (!_scaleDownFilterTimer.Enabled))
                 {
-                    WorkersScaleDown(currentWorkers);
+                    _scaleDownFilterTimer.Interval = IdleSecondsBeforeScaleDown * 1000;
+                    _scaleDownFilterTimer.Start();
                 }
+            
+                if ((openJobsCount != 0) || (currentWorkers == 1))
+                {
+                    //If load changes while timer is running, disable filter timer
+                    _scaleDownFilterTimer.Stop();
+                }
+                
             }
         }
 
@@ -128,33 +146,20 @@ namespace K8sDemoDirector.Services
                 _logger.LogInfo($"Scaling up workers to: {scalingTarget}");
             }
 
-
-
         }
 
-        private DateTime? idleTimeStart;
-
-        private void WorkersScaleDown(int currentWorkers)
+        private void ScaleDownFilterTimerElapsed(object sender, ElapsedEventArgs e)
         {
+            _logger.LogInfo($"Scale down timer elapsed");
+            WorkersScaleDown();
+        }
 
-            //Always leave at least one worker 
-            if (currentWorkers == 1) return;
-            if (idleTimeStart.HasValue)
-            {
-                //Scale down only after idle time has passed
-                if ((DateTime.Now - idleTimeStart.Value).TotalSeconds >= IdleSecondsBeforeScaleDown)
-                {
-                    idleTimeStart = null;
-                    SystemIsScaling = true;
-                    scalingTarget = currentWorkers - 1;
-                    _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
-                    _logger.LogInfo($"Scaling down workers to: {scalingTarget}");
-                }
-            }
-            else
-            {
-                idleTimeStart = DateTime.Now;
-            }
+        private void WorkersScaleDown()
+        {
+            SystemIsScaling = true;
+            scalingTarget = _registryManager.WorkersRegistry.Count - 1;
+            _k8sConnector.ScaleDeployment(K8sNamespace.defaultNamespace, Deployment.worker, scalingTarget);
+            _logger.LogInfo($"Scaling down workers to: {scalingTarget}");
         }
     }
 

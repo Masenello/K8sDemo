@@ -12,6 +12,7 @@ namespace K8sCore.Messages
         public int TotalJobs { get; set; }
         public int MaxConcurrentTasks { get; set; }
         public int MaxWorkers { get; set; }
+        public int MaxOpenJobDuration { get; set; }
         
         
     }

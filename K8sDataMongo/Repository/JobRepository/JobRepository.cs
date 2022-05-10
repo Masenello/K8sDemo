@@ -91,5 +91,12 @@ namespace K8sDataMongo.Repository.JobRepository
                 await UpdateAsync(job.Id, job);
             }
         }
+
+        public int CalculateMaxOpenJobDuration(List<JobEntity> openJobs)
+        {
+            JobEntity oldestCreatedJob = openJobs.OrderBy(y=>y.CreationDate).FirstOrDefault();
+            if (oldestCreatedJob == null) return 0;
+            return Convert.ToInt32((DateTime.UtcNow - oldestCreatedJob.CreationDate).TotalSeconds);
+        }
     }
 }
