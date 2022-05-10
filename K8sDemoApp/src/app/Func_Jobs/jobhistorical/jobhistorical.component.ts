@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { GuiColumn, GuiDataType, GuiPaging, GuiPagingDisplay, GuiSorting, GuiSortingOrder } from '@generic-ui/ngx-grid';
+import { GuiColumn, GuiDataType, GuiPaging, GuiPagingDisplay, GuiSearching, GuiSorting, GuiSortingOrder } from '@generic-ui/ngx-grid';
 import { from } from 'linq-to-typescript';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/Func_Login/account.service';
@@ -18,11 +18,13 @@ export class JobhistoricalComponent implements OnInit {
   
   datePipe = new DatePipe('en-US');
   jobsSource =new Array<Job>();
+
   jobGridcolumns: Array<GuiColumn> = [
     {
       header: 'Id',
       field: 'jobId',
-      type: GuiDataType.NUMBER,
+      width :200,
+      type: GuiDataType.STRING,
       sorting: {
         enabled: true,
         order:GuiSortingOrder.DESC
@@ -32,35 +34,44 @@ export class JobhistoricalComponent implements OnInit {
     {
       header: 'Job Type',
       field: 'jobType',
-      formatter: (v) => this.jobTypeEnumsPipe.transform(v)
+      type: GuiDataType.STRING,
+      formatter: (v) => this.jobTypeEnumsPipe.transform(v),
+      width :100
     },
     {
       header: 'Status',
       field: 'status',
-      formatter: (v) => this.jobStatusEnumsPipe.transform(v)
+      type: GuiDataType.STRING,
+      formatter: (v) => this.jobStatusEnumsPipe.transform(v),
+      width :100
     },
     {
       header: 'Creation Date',
       field: 'creationDate',
-      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat),
+      width :180
     },
     {
       header: 'Start Date',
       field: 'startDate',
-      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat),
+      width :180
     },
     {
       header: 'End Date',
       field: 'endDate',
-      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat)
+      formatter: (v) => this.datePipe.transform(v,environment.dateTimeFormat),
+      width :180
     },
     {
       header: 'Errors',
-      field: 'errors'
+      field: 'errors',
+      type: GuiDataType.STRING,
     },
     {
       header: 'Worker',
-      field: 'workerId'
+      field: 'workerId',
+      type: GuiDataType.STRING,
     },
 ];
 
@@ -76,6 +87,12 @@ paging: GuiPaging = {
 
 sorting: GuiSorting = {
   enabled: true
+};
+
+searching: GuiSearching = {
+  enabled: true,
+  placeholder: 'Search grid data',
+  highlighting: true
 };
 
 
