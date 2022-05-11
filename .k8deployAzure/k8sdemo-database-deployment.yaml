@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-app
-  name: k8sdemo-app
+    io.kompose.service: k8sdemo-database
+  name: k8sdemo-database
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: k8sdemo-app
+      io.kompose.service: k8sdemo-database
   strategy:
     type: Recreate
   template:
@@ -23,22 +23,25 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/identity-network: "true"
-        io.kompose.service: k8sdemo-app
+        io.kompose.service: k8sdemo-database
     spec:
       containers:
-        - image: masenellomarco/k8sdemoapp:latest
-          name: k8sdemoappcontainer
+        - env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              value: "Pass@Word1"
+          image: masenellomarco/k8sdemosqlserver:latest
+          name: k8sdemoapidbcontainer
           ports:
-            - containerPort: 80
-            - containerPort: 443
-            - containerPort: 8080
+            - containerPort: 1433
           resources: {}
           volumeMounts:
-            - mountPath: /etc/nginx/certs
-              name: k8sdemo-app-claim0
+            - mountPath: /var/opt/mssql
+              name: k8sdemo-database-claim0
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-app-claim0
+        - name: k8sdemo-database-claim0
           persistentVolumeClaim:
-            claimName: k8sdemo-app-claim0
+            claimName: pvc-sqldatabase
 status: {}

@@ -1,0 +1,13 @@
+#Claims database 
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-sqldatabase
+spec:
+  storageClassName: k8sdemo-standard-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-app
-  name: k8sdemo-app
+    io.kompose.service: k8sdemo-rabbitmq
+  name: k8sdemo-rabbitmq
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: k8sdemo-app
+      io.kompose.service: k8sdemo-rabbitmq
   strategy:
     type: Recreate
   template:
@@ -23,22 +23,15 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/identity-network: "true"
-        io.kompose.service: k8sdemo-app
+        io.kompose.service: k8sdemo-rabbitmq
     spec:
       containers:
-        - image: masenellomarco/k8sdemoapp:latest
-          name: k8sdemoappcontainer
+        - image: masenellomarco/k8sdemorabbitmq:latest
+          name: k8sdemorabbitmqcontainer
           ports:
-            - containerPort: 80
-            - containerPort: 443
-            - containerPort: 8080
+            - containerPort: 5672
+            - containerPort: 15672
           resources: {}
-          volumeMounts:
-            - mountPath: /etc/nginx/certs
-              name: k8sdemo-app-claim0
+      hostname: k8sdemo-rabbitmq
       restartPolicy: Always
-      volumes:
-        - name: k8sdemo-app-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-app-claim0
 status: {}

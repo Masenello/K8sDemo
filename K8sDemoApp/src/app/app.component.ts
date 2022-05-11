@@ -23,7 +23,7 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'K8sDemoApp';
+  title = 'K8sDemoApp ';
   response = "No data loaded, yet";
   baseUrl = environment.apiUrl;
 

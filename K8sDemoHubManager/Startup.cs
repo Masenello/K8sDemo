@@ -24,8 +24,11 @@ namespace K8sDemoHubManager
 {
     public class Startup
     {
+
+        string version = "0.0.8";
         public Startup(IConfiguration configuration)
         {
+            Console.WriteLine($"Running version: {version}");
             Configuration = configuration;
         }
 
@@ -85,7 +88,12 @@ namespace K8sDemoHubManager
         {
             app.UseCors(builder =>
             {
-                builder.WithOrigins("localhost")
+                builder.WithOrigins(new string[]
+                                {
+                                    "localhost",
+                                    "20.23.193.177",
+                                }
+                            )
                     .AllowAnyHeader()
                     .WithMethods("GET", "POST")
                     .SetIsOriginAllowed((x) => true)

@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: k8sdemo-app
   name: k8sdemo-app
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       io.kompose.service: k8sdemo-app
@@ -26,7 +26,7 @@ spec:
         io.kompose.service: k8sdemo-app
     spec:
       containers:
-        - image: masenellomarco/k8sdemoapp:latest
+        - image: masenellomarco/k8sdemoapp:v0.0.1
           name: k8sdemoappcontainer
           ports:
             - containerPort: 80
@@ -35,10 +35,13 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /etc/nginx/certs
-              name: k8sdemo-app-claim0
+              name: azurefileshare
       restartPolicy: Always
+      imagePullPolicy: Always
       volumes:
-        - name: k8sdemo-app-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-app-claim0
+        - name: azurefileshare
+          azureFile:
+            secretName: azure-secret
+            shareName: aksshare/certificates
+            readOnly: false
 status: {}

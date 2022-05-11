@@ -80,7 +80,12 @@ namespace K8sDemoApi
             app.UseCors(builder =>
                     {
                         builder
-                            .WithOrigins("localhost")
+                            .WithOrigins(new string[]
+                                {
+                                    "localhost",
+                                    "20.23.193.177",
+                                }
+                            )
                             .SetIsOriginAllowed((x) => true)
                             .AllowAnyHeader()
                             .AllowAnyMethod();

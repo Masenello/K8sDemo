@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-app
-  name: k8sdemo-app
+    io.kompose.service: k8sdemo-logmanager
+  name: k8sdemo-logmanager
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: k8sdemo-app
+      io.kompose.service: k8sdemo-logmanager
   strategy:
     type: Recreate
   template:
@@ -23,22 +23,18 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/identity-network: "true"
-        io.kompose.service: k8sdemo-app
+        io.kompose.service: k8sdemo-logmanager
     spec:
       containers:
-        - image: masenellomarco/k8sdemoapp:latest
-          name: k8sdemoappcontainer
-          ports:
-            - containerPort: 80
-            - containerPort: 443
-            - containerPort: 8080
+        - image: masenellomarco/k8sdemologmanager:latest
+          name: k8sdemologmanagercontainer
           resources: {}
           volumeMounts:
-            - mountPath: /etc/nginx/certs
-              name: k8sdemo-app-claim0
+            - mountPath: /app/Logs
+              name: k8sdemo-logmanager-claim0
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-app-claim0
+        - name: k8sdemo-logmanager-claim0
           persistentVolumeClaim:
-            claimName: k8sdemo-app-claim0
+            claimName: pvc-logmanager
 status: {}

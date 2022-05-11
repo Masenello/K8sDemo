@@ -6,6 +6,9 @@ import { LoggedUser } from '../../_models/user';
 import { MenuColor, MenuEntry, MenuIconType, MenuLocation } from '../menu-entry.model';
 import { NavigationService } from '../navigation.service';
 import { appMenus } from '../../Func_Navigation/nav-menus';
+import { environment } from 'src/environments/environment';
+
+
 
 @Component({
   selector: 'app-nav',
@@ -17,12 +20,14 @@ export class NavComponent implements OnInit {
 
   navBarOpen: boolean;
   menus: MenuEntry[];
+
+  guiVersion: string = require('../../../../package.json').version
   
 
   constructor(public accountService: AccountService, 
     private toastr:ToastrService,
     public navigationService:NavigationService) {
-    
+
     this.menus = appMenus;
 
     this.accountService.userLoggedIn.subscribe((user:any) =>{

@@ -31,17 +31,19 @@ spec:
               value: Password
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
-          image: masenellomarco/k8sdemohubmanager:0.0.8
+          image: masenellomarco/k8sdemohubmanager:0.0.1
           name: k8sdemohubmanagercontainer
           ports:
             - containerPort: 5001
           resources: {}
           volumeMounts:
             - mountPath: /app/Infrastructure/Certificate
-              name: k8sdemo-hub-manager-claim0
+              name: azurefileshare
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-hub-manager-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-hub-manager-claim0
+        - name: azurefileshare
+          azureFile:
+            secretName: azure-secret
+            shareName: aksshare/certificates
+            readOnly: false
 status: {}

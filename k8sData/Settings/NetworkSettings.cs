@@ -6,7 +6,11 @@ namespace K8sData.Settings
     {
         private static readonly string SqlServerDockerHost = "k8sDemo-database";
         //private static readonly string SqlServerDebugHost = "host.docker.internal";
+        //LocalHost
         private static readonly string SqlServerDebugHost = "127.0.0.1";
+        //Azure cluster
+        //private static readonly string SqlServerDebugHost = "20.71.23.87";
+        
 
         public static bool RunningInDocker()
         {
