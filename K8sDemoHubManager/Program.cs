@@ -1,5 +1,8 @@
+using System;
+using K8sBackendShared.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+[assembly: System.Reflection.AssemblyVersion("0.1.*")]
 
 namespace K8sDemoHubManager
 {
@@ -7,6 +10,7 @@ namespace K8sDemoHubManager
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine($"Started: {AppProperties.Instance.ApplicationName} with version: {AppProperties.Instance.ApplicationVersion}");
             CreateHostBuilder(args).Build().Run();
         }
 
