@@ -54,6 +54,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DirectorSetParametersComponent } from './Func_Jobs/director-set-parameters/director-set-parameters.component';
 import { DirectorStatusLoadComponent } from './Func_Jobs/director-status-load/director-status-load.component';
 import { NgxGaugeModule } from 'ngx-gauge';
+import { PodsInfoComponent } from './Func_k8s/pods-info/pods-info.component';
+import { PodstatusComponent } from './Func_k8s/podstatus/podstatus.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +76,8 @@ import { NgxGaugeModule } from 'ngx-gauge';
     DirectorStatusChartComponent,
     DirectorSetParametersComponent,
     DirectorStatusLoadComponent,
+    PodsInfoComponent,
+    PodstatusComponent,
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  appVersion: require('../../package.json').version + '-dev',
   apiUrl: "https://localhost:5501/api/",
   hubUrl: "http://localhost:5001/hubs/",
   dateTimeFormat: 'dd/MM/yyyy - HH:mm:ss',

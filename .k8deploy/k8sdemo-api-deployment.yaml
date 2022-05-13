@@ -31,13 +31,16 @@ spec:
               value: Password
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
-          image: masenellomarco/k8sdemoapi:latest
+          image: masenellomarco/k8sdemoapi:0.1.8168.30714
           name: k8sdemoapicontainer
           ports:
             - containerPort: 5501
           resources: {}
           volumeMounts:
             - mountPath: /app/Infrastructure/Certificate
+              name: k8sdemo-api-claim0
+              #mount also Kube config file from certificates folder
+            - mountPath: /root/.kube/
               name: k8sdemo-api-claim0
       restartPolicy: Always
       volumes:

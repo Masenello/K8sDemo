@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out .kompose
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: k8sdemo-app
+  name: k8sdemo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: k8sdemo-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --out .kompose
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/identity-network: "true"
+        io.kompose.service: k8sdemo-app
+    spec:
+      containers:
+        - image: masenellomarco/k8sdemoapp:v0.0.1
+          name: k8sdemoappcontainer
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/nginx/certs
+              name: azurefileshare
+      restartPolicy: Always
+      imagePullPolicy: Always
+      volumes:
+        - name: azurefileshare
+          azureFile:
+            secretName: azure-secret
+            shareName: aksshare/certificates
+            readOnly: false
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out .kompose
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: k8sdemo-app
+  name: k8sdemo-app
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+    - name: "443"
+      port: 443
+      targetPort: 443
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    io.kompose.service: k8sdemo-app
+  type: LoadBalancer
+status:
+  loadBalancer: {}

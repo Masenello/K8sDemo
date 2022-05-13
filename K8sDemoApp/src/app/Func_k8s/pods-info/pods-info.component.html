@@ -1,0 +1,6 @@
+<h2>Pod Info</h2>
+<div class="podinfo" style ="max-height: 80vh; overflow: scroll; margin-top: 2vh;">
+  <div *ngFor="let pod of podInfoList">
+    <app-podstatus [pod]="pod"></app-podstatus>
+  </div>
+</div>

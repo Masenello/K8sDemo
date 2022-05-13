@@ -1,2 +1,6 @@
 //Update deployment image to new version pulling from hub 
 kubectl set image deployment.apps/k8sdemo-worker k8sdemoworkercontainer=masenellomarco/k8sdemoworker:0.1.8167.21407
+
+
+//Scale replicas
+kubectl scale --replicas=0 deployment.apps/k8sdemo-api

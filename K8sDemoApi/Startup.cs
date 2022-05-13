@@ -1,5 +1,6 @@
 
 using K8sBackendShared.Interfaces;
+using K8sBackendShared.K8s;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
 using K8sCore.Interfaces.Mongo;
@@ -51,6 +52,7 @@ namespace K8sDemoApi
 
             services.AddTransient(typeof(IGenericMongoRepository<>), typeof(GenericMongoRepository<>));
             services.AddTransient<IJobRepository, JobRepository>();
+            services.AddSingleton<IK8s, KubernetesConnectorService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

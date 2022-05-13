@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: k8sdemo-hub-manager
-  name: k8sdemo-hub-manager
+    io.kompose.service: k8sdemo-api
+  name: k8sdemo-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: k8sdemo-hub-manager
+      io.kompose.service: k8sdemo-api
   strategy:
     type: Recreate
   template:
@@ -23,7 +23,7 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/identity-network: "true"
-        io.kompose.service: k8sdemo-hub-manager
+        io.kompose.service: k8sdemo-api
     spec:
       containers:
         - env:
@@ -31,13 +31,15 @@ spec:
               value: Password
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
-          image: masenellomarco/k8sdemohubmanager:0.0.1
-          name: k8sdemohubmanagercontainer
+          image: masenellomarco/k8sdemoapi
+          name: k8sdemoapicontainer
           ports:
-            - containerPort: 5001
+            - containerPort: 5501
           resources: {}
           volumeMounts:
             - mountPath: /app/Infrastructure/Certificate
+              name: azurefileshare
+            - mountPath: /root/.kube/
               name: azurefileshare
       restartPolicy: Always
       volumes:
@@ -47,3 +49,24 @@ spec:
             shareName: aksshare/certificates
             readOnly: false
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out .kompose
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: k8sdemo-api
+  name: k8sdemo-api
+spec:
+  ports:
+    - name: "5501"
+      port: 5501
+      targetPort: 5501
+  selector:
+    io.kompose.service: k8sdemo-api
+  type: LoadBalancer
+status:
+  loadBalancer: {}

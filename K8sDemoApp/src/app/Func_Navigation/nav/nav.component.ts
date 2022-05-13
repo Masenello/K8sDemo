@@ -21,7 +21,7 @@ export class NavComponent implements OnInit {
   navBarOpen: boolean;
   menus: MenuEntry[];
 
-  guiVersion: string = require('../../../../package.json').version
+  guiVersion: string = environment.appVersion
   
 
   constructor(public accountService: AccountService, 

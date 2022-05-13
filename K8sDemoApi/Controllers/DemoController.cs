@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace K8sDemoApi.Controllers
 {
 
-    [ApiController]
+
     public class DemoController :BaseApiController
     {
         private readonly IRabbitConnector _rabbitConnector;
