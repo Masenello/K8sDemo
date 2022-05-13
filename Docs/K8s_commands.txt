@@ -1,2 +1,2 @@
 //Update deployment image to new version pulling from hub 
-kubectl set image deployment.apps/k8sdemo-app k8sdemoappcontainer=masenellomarco/k8sdemoapp:v0.0.1
+kubectl set image deployment.apps/k8sdemo-worker k8sdemoworkercontainer=masenellomarco/k8sdemoworker:0.1.8167.21407

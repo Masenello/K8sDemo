@@ -31,10 +31,12 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /app/Logs
-              name: k8sdemo-logmanager-claim0
+              name: azurefileshare
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-logmanager-claim0
-          persistentVolumeClaim:
-            claimName: pvc-logmanager
+        - name: azurefileshare
+          azureFile:
+            secretName: azure-secret
+            shareName: aksshare/logs
+            readOnly: false
 status: {}
