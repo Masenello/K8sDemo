@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: "https://localhost:5501/api/",
-  hubUrl: "https://localhost:5001/hubs/",
+  hubUrl: "http://localhost:5001/hubs/",
   dateTimeFormat: 'dd/MM/yyyy - HH:mm:ss',
 };
 
