@@ -2,11 +2,14 @@
 .grid-container-element{ 
     display: grid; 
     grid-template-columns: 1fr 5fr;
-    grid-template-rows: 30vh; 
+    grid-template-rows: 1fr; 
     grid-gap: 2px; 
     /* border: 1px solid black;  */
     width: 100%; 
     height: 100%; 
+    border: 1px solid black ;
+    border-radius:5px;
+    margin: 2px;   
 } 
 
 .grid-child-element-podicon { 
@@ -15,8 +18,9 @@
     grid-column-end: span 1;
     grid-row-start: 1;
     grid-row-end: span 1;
-    border: 1px solid black ;
-    border-radius:5px 
+    align-self: center;
+    justify-self: center;
+
 }
 
 .grid-child-element-poddata { 
@@ -25,8 +29,6 @@
     grid-column-end: span 2;
     grid-row-start: 1;
     grid-row-end: span 1;
-    border: 1px solid black ;
-    border-radius:5px;
     
 }
 

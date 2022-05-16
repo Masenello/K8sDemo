@@ -1,0 +1,14 @@
+.podInfoListContainer{
+    max-height: 84vh; 
+    overflow: scroll; 
+    margin-top: 2vh;
+    overflow-x: hidden; 
+}
+
+.podInfoList{
+margin-right: 10px;
+}
+
+.podInfo{
+    
+}
