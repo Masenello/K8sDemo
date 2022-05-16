@@ -29,6 +29,14 @@ namespace K8sDemoApi.Controllers
         {
             return _K8sController.GetPodInfo(K8sBackendShared.K8s.K8sNamespace.defaultNamespace);
         }
+
+        
+        [Authorize]
+        [HttpGet ("GetPodLog/{podName}")]
+        public Task<PodLogDto> GetPodLog(string podName)
+        {
+            return _K8sController.GetPodLog(K8sBackendShared.K8s.K8sNamespace.defaultNamespace,podName);
+        }
     }
 
 }

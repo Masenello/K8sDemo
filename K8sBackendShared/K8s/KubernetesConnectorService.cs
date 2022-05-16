@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Serialization;
+using System.Linq;
+using System.IO;
 
 namespace K8sBackendShared.K8s
 {
@@ -75,7 +77,8 @@ namespace K8sBackendShared.K8s
                 var podList = await _client.ListNamespacedPodAsync(kubernetesNameSpace.Value);
                 foreach (var item in podList.Items)
                 {
-                    podInfoList.Add(new PodInfoDto(){
+                    podInfoList.Add(new PodInfoDto()
+                    {
                         Name = item.Metadata.Name,
                         Status = item.Status.Phase,
                         Image = item.Spec.Containers[0].Image,
@@ -92,6 +95,56 @@ namespace K8sBackendShared.K8s
             }
 
         }
+
+        public async Task<PodLogDto> GetPodLog(K8sNamespace kubernetesNameSpace, string podName)
+        {
+            try
+            {
+
+                V1PodList podList = await _client.ListNamespacedPodAsync(kubernetesNameSpace.Value);
+                var myPod = podList.Items.FirstOrDefault(x => x.Name() == podName);
+                if (myPod is null)
+                {
+                    throw new Exception($"Pod: {podName} not found in cluster");
+                }
+
+                var response = await _client.ReadNamespacedPodLogWithHttpMessagesAsync(
+                    myPod.Metadata.Name,
+                    myPod.Metadata.NamespaceProperty, follow: true).ConfigureAwait(false);
+                var stream = response.Body;
+
+                _logger.LogInfo($"Log stream acquired for pod {podName}");
+                var sr = new StreamReader(stream);
+                string log ="";
+                string tmp = "";
+                do
+                {
+                    tmp= sr.ReadLine();
+                    if (tmp != null)
+                    {
+                        //_logger.LogInfo($"Logline :  {tmp}");
+                        log += tmp;
+                    }
+                }
+                while(tmp != "");
+                _logger.LogInfo($"Log:  {log}");
+
+                PodLogDto podLog = new PodLogDto()
+                {
+                    PodName = podName,
+                    //Log = await (new StreamReader(stream)).ReadToEndAsync(),
+                    Log = log,
+                };
+                return podLog;
+
+            }
+            catch (System.Exception e)
+            {
+                _logger.LogError($"Failed to retrieve log for pod: {podName} in namespace: {kubernetesNameSpace.Value}".AddException(e));
+                return null;
+            }
+
+}
 
 
 

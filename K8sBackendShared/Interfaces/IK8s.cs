@@ -10,5 +10,6 @@ namespace K8sBackendShared.Interfaces
     {
         Task ScaleDeployment(K8sNamespace kubernetesNameSpace, Deployment dep, int targetReplicas);
         Task<List<PodInfoDto>> GetPodInfo(K8sNamespace kubernetesNameSpace);
+        Task<PodLogDto> GetPodLog(K8sNamespace kubernetesNameSpace, string podName);
     }
 }

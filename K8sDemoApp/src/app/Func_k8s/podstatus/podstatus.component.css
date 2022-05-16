@@ -29,7 +29,35 @@
     grid-column-end: span 2;
     grid-row-start: 1;
     grid-row-end: span 1;
-    
+
+    display: grid; 
+    grid-template-columns: 0.5fr 1fr 8fr;
+    grid-template-rows:  1fr 1fr 1fr 1fr;    
+}
+
+.grid-child-element-poddata-smallicon{
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    margin-left: 2px;
+    margin-right: 2px;
+
+}
+
+.grid-child-element-poddata-description{
+    margin-top: 4px;
+    grid-column-start: 2;
+    grid-column-end: span 1;
+    font-weight: bold;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.grid-child-element-poddata-text{
+    margin-top: 4px;
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .podIconImage{
