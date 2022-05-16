@@ -58,6 +58,8 @@ import { PodsInfoComponent } from './Func_k8s/pods-info/pods-info.component';
 import { PodstatusComponent } from './Func_k8s/podstatus/podstatus.component';
 import { PodUtils } from './_shared/Utils/PodUtils';
 import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.component';
+import { AwaiterPopUpComponent } from './_shared/Components/awaiter-pop-up/awaiter-pop-up.component';
+import { HttpLoadingInterceptor } from './_shared/Interceptors/http-loading.interceptor';
 
 @NgModule({
   declarations: [
@@ -81,6 +83,7 @@ import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.c
     PodsInfoComponent,
     PodstatusComponent,
     PodlogsviewerComponent,
+    AwaiterPopUpComponent,
   ],
   imports: [
     BrowserModule,
@@ -131,6 +134,7 @@ import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.c
     JobTypeEnumNamePipe,
     PodUtils,
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpLoadingInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

@@ -86,7 +86,12 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item disabled style="text-align: center;">{{accountService.currentUserValue?.username}}</button> -->
 
-  
+        <!-- Global awaiter popup -->
+        <app-awaiter-pop-up
+        [message]="awaiterInfo?.message"
+        [msStartDelay]="awaiterInfo?.msStartDelay"
+        [show]="awaiterInfo != null" >
+      </app-awaiter-pop-up>
     
     <!-- Component output of routing -->
     <ng-content></ng-content>

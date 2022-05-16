@@ -1,0 +1,39 @@
+.absolute-centered {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 999 !important;
+  }
+  
+  .with-menu {
+    margin-left: 100px !important;
+  }
+  
+  .loading-box {
+    width:fit-content;
+    border: 1px solid black;
+  }
+  
+  .loading-logo {
+    color: black;
+    font-size: 70px;
+    margin: 0px;
+    padding-top: 0px;
+  }
+  
+  .loading-animated {
+    transform: scale(1);
+      animation: fadeOut 1s infinite alternate;
+  }
+
+    
+  
+  @keyframes fadeOut {
+      0% {
+          transform: scale(1);
+      }
+      100% {
+          transform: scale(0.7);
+      }
+  }
