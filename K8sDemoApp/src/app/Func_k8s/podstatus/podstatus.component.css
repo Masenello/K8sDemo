@@ -12,16 +12,7 @@
     margin: 2px;   
 } 
 
-.grid-child-element-podicon { 
-    margin: 2px; 
-    grid-column-start: 1;
-    grid-column-end: span 1;
-    grid-row-start: 1;
-    grid-row-end: span 1;
-    align-self: center;
-    justify-self: center;
 
-}
 
 .grid-child-element-poddata { 
     margin: 2px; 
@@ -60,9 +51,35 @@
     margin-right: 2px;
 }
 
+.grid-child-element-podicon { 
+    margin: 2px; 
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    grid-row-start: 1;
+    grid-row-end: span 1;
+    align-self: center;
+    justify-self: center;
+
+    display: grid; 
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows:  6fr 3fr;  
+}
+
 .podIconImage{
+    grid-column-start: 1;
+    grid-column-end: span 2;
+    grid-row-start: 1;
+    grid-row-end: span 1;
     margin: 4px;
     width: 60px;
+}
+
+.podIconButtons{
+    grid-row-start: 2;
+    grid-row-end: span 1;
+    width: 10px;
+    height: 10px;
+    margin-bottom: 4;
 }
 
 .icon{

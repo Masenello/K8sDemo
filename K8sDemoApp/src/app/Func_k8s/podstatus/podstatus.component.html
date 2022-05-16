@@ -1,34 +1,37 @@
 <div class="grid-container-element">
   <div class="grid-child-element-podicon">
     <img class="podIconImage" src={{iconPath}}>
+
+
+      <button class="podIconButtons" mat-icon-button color="primary" (click)="getPodLog()"  style="grid-column-start: 1; grid-column-end: span 1;">
+        <mat-icon>feed</mat-icon>
+      </button>
+
   </div>
 
   <div class="grid-child-element-poddata">
+    <!-- pod-name -->
+    <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 1;grid-row-end: span 1;">badge
+    </mat-icon>
+    <span class="grid-child-element-poddata-description" style="grid-row-start: 1;grid-row-end: span 1;">Id: </span>
+    <span class="grid-child-element-poddata-text" style="grid-row-start: 1;grid-row-end: span 1;">{{pod.name}}</span>
+    <!-- pod-image -->
+    <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 2;grid-row-end: span 1;">image
+    </mat-icon>
+    <span class="grid-child-element-poddata-description" style="grid-row-start: 2;grid-row-end: span 1;">Image: </span>
+    <span class="grid-child-element-poddata-text" style="grid-row-start: 2;grid-row-end: span 1;">{{pod.image}}</span>
+    <!-- pod-status -->
+    <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 3;grid-row-end: span 1;">monitor_heart
+    </mat-icon>
+    <span class="grid-child-element-poddata-description" style="grid-row-start: 3;grid-row-end: span 1;">Status: </span>
+    <span class="grid-child-element-poddata-text" style="grid-row-start: 3;grid-row-end: span 1;">{{pod.status}}</span>
+    <!-- pod-node -->
+    <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 4;grid-row-end: span 1;">dns
+    </mat-icon>
+    <span class="grid-child-element-poddata-description" style="grid-row-start: 4;grid-row-end: span 1;">Node: </span>
+    <span class="grid-child-element-poddata-text" style="grid-row-start: 4;grid-row-end: span 1;">{{pod.node}}</span>
 
 
-      <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 1;grid-row-end: span 1;">badge</mat-icon>
-      <span class="grid-child-element-poddata-description" style="grid-row-start: 1;grid-row-end: span 1;">Id: </span>
-      <span class="grid-child-element-poddata-text" style="grid-row-start: 1;grid-row-end: span 1;">{{pod.name}}</span>
-
-
-  
-      <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 2;grid-row-end: span 1;">image</mat-icon>
-      <span class="grid-child-element-poddata-description" style="grid-row-start: 2;grid-row-end: span 1;">Image: </span>
-      <span class="grid-child-element-poddata-text" style="grid-row-start: 2;grid-row-end: span 1;">{{pod.image}}</span>
- 
-
-
-      <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 3;grid-row-end: span 1;">monitor_heart</mat-icon>
-      <span class="grid-child-element-poddata-description" style="grid-row-start: 3;grid-row-end: span 1;">Status: </span>
-      <span class="grid-child-element-poddata-text" style="grid-row-start: 3;grid-row-end: span 1;">{{pod.status}}</span>
- 
-
-
-      <mat-icon class="grid-child-element-poddata-smallicon" style="grid-row-start: 4;grid-row-end: span 1;">dns</mat-icon>
-      <span class="grid-child-element-poddata-description" style="grid-row-start: 4;grid-row-end: span 1;">Node: </span>
-      <span class="grid-child-element-poddata-text" style="grid-row-start: 4;grid-row-end: span 1;">{{pod.node}}</span>
-
-  
   </div>
 
 

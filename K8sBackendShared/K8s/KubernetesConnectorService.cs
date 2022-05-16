@@ -123,16 +123,14 @@ namespace K8sBackendShared.K8s
                     if (tmp != null)
                     {
                         //_logger.LogInfo($"Logline :  {tmp}");
-                        log += tmp;
+                        log += $"{tmp}{Environment.NewLine}";
                     }
                 }
                 while(tmp != "");
-                _logger.LogInfo($"Log:  {log}");
 
                 PodLogDto podLog = new PodLogDto()
                 {
                     PodName = podName,
-                    //Log = await (new StreamReader(stream)).ReadToEndAsync(),
                     Log = log,
                 };
                 return podLog;

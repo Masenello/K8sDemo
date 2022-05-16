@@ -31,10 +31,11 @@ namespace K8sDemoApi.Controllers
         }
 
         
-        [Authorize]
+        //[Authorize]
         [HttpGet ("GetPodLog/{podName}")]
         public Task<PodLogDto> GetPodLog(string podName)
         {
+            _logger.LogInfo($"Received log request for pod: {podName}");
             return _K8sController.GetPodLog(K8sBackendShared.K8s.K8sNamespace.defaultNamespace,podName);
         }
     }

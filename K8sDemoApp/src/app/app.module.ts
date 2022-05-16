@@ -57,6 +57,7 @@ import { NgxGaugeModule } from 'ngx-gauge';
 import { PodsInfoComponent } from './Func_k8s/pods-info/pods-info.component';
 import { PodstatusComponent } from './Func_k8s/podstatus/podstatus.component';
 import { PodUtils } from './_shared/Utils/PodUtils';
+import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { PodUtils } from './_shared/Utils/PodUtils';
     DirectorStatusLoadComponent,
     PodsInfoComponent,
     PodstatusComponent,
+    PodlogsviewerComponent,
   ],
   imports: [
     BrowserModule,
