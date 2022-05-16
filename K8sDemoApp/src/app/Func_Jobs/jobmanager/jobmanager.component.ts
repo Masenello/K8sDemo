@@ -24,7 +24,7 @@ export class JobmanagerComponent implements OnInit {
   currentJobsTmp: Array<JobStatusMessage> = new Array<JobStatusMessage>();
   jobsListHeader: string;
   internalJobsListActiveJobsNumber = new BehaviorSubject<number>(0);
-  jobsToAdd: number = 50
+
 
   constructor(public accountService: AccountService,
     public jobService: JobService,
@@ -94,38 +94,7 @@ export class JobmanagerComponent implements OnInit {
     this.internalJobsListActiveJobsNumber.next(from(this.currentJobsTmp).where(x => x.endDate == null).count())
   }
 
-  sendTestJobRequest() {
-
-    for (let i = 0; i < this.jobsToAdd; i++) {
-      this.addNewTestJob();
-    }
 
 
-  }
-
-  addNewTestJob() {
-    let jobRequest: TestJobCreationRequest =
-    {
-      user: this.accountService.currentUser.getValue()?.username!,
-      requestDateTime: new Date(),
-      requestJobType: 0
-    };
-    this.jobService.sendJobCreationRequest(jobRequest).subscribe(result => {
-      //this.toastr.info(`Job with id ${result.jobId} created by user ${result.user}`);
-      this.updateInternalJobsList(
-        {
-          jobId: result.jobId,
-          jobType: result.jobType,
-          status: result.jobStatus,
-          user: result.user,
-          progressPercentage: 0,
-          userMessage: result.userMessage,
-          endDate: null,
-        });
-
-    }, error => {
-      console.log(error);
-      this.toastr.error(error.error);
-    });
-  }
+  
 }

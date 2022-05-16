@@ -8,6 +8,7 @@ import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
 import { Job } from '../_models/API_Messages/Job';
 import { HubService } from '../services/hub.service';
 import { JobStatusEnum } from '../_enum/JobStatusEnum';
+import { AccountService } from '../Func_Login/account.service';
 
 
 
@@ -18,6 +19,7 @@ export class JobService {
 
   baseUrl = environment.apiUrl + "Job/";
   public newJobStatus : Subject<JobStatusMessage> = new Subject<JobStatusMessage> ();
+
 
   constructor(private http: HttpClient, private hub: HubService) 
   {
@@ -35,7 +37,7 @@ export class JobService {
   getUserJobs(username: string): Observable<Job[]>{
     return this.http.get<Job[]>(this.baseUrl + "GetUserJobs/"+username, {responseType: 'json'});
   }
-  
+
 
   sendJobCreationRequest(jobRequest: TestJobCreationRequest) : Observable<JobCreationResult>{
         

@@ -1,18 +1,4 @@
 <div class="grid-container-element">
-  <!-- Job commands -->
-  <div class="grid-child-element-jobsCommands">
-    <div>
-      <button mat-mini-fab color="primary" matTooltip="Send test job request" (click)="sendTestJobRequest()"
-        style="margin: 2px;">
-        <mat-icon>add</mat-icon>
-      </button>
-      <!-- {{jobsListHeader}} -->
-      <button mat-mini-fab color="primary" matTooltip="Refresh data from database" (click)="getUserPendingJobs()"
-        style="margin: 2px;">
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-  </div>
 
   <!-- Job status chart -->
   <div class="grid-child-element-jobStatusChart">
@@ -25,7 +11,7 @@
 
   </div>
 
-  <!-- Job Queue -->
+  <!-- Director Load -->
   <div class="grid-child-element-loadGauge">
     <app-director-status-load></app-director-status-load>
 
