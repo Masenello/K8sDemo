@@ -56,6 +56,7 @@ import { DirectorStatusLoadComponent } from './Func_Jobs/director-status-load/di
 import { NgxGaugeModule } from 'ngx-gauge';
 import { PodsInfoComponent } from './Func_k8s/pods-info/pods-info.component';
 import { PodstatusComponent } from './Func_k8s/podstatus/podstatus.component';
+import { PodUtils } from './_shared/Utils/PodUtils';
 
 @NgModule({
   declarations: [
@@ -126,6 +127,7 @@ import { PodstatusComponent } from './Func_k8s/podstatus/podstatus.component';
     LogViewerPipe,
     JobStatusEnumNamePipe,
     JobTypeEnumNamePipe,
+    PodUtils,
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

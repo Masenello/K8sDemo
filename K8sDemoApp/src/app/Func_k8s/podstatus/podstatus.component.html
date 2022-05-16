@@ -1,30 +1,32 @@
-<mat-card class="job-card"  style ="width: 50vh; margin-top: 1vh; ">
-  <mat-card-content>
+<div class="grid-container-element">
+  <div class="grid-child-element-podicon">
+    <img class="podIconImage"   src={{iconPath}}>
+  </div>
+
+  <div class="grid-child-element-poddata">
     <div mat-line>
       <div>
-        <mat-icon>badge</mat-icon>
-        <span style="font-weight: bold">Name: </span>
+        <mat-icon class="icon">badge</mat-icon>
+        <span class="label">Name: </span>
         {{pod.name}}
       </div>
       <div mat-line>
-        <mat-icon mat-list-icon>handyman</mat-icon>
-        <span style="font-weight: bold">Image: </span>
+        <mat-icon class="icon">image</mat-icon>
+        <span class="label">Image: </span>
         {{pod.image}}
       </div>
       <div mat-line>
-        <mat-icon mat-list-icon>monitor_heart</mat-icon>
-        <span style="font-weight: bold">Status: </span>
+        <mat-icon class="icon">monitor_heart</mat-icon>
+        <span class="label">Status: </span>
         {{pod.status}}
       </div>
       <div mat-line>
-        <mat-icon mat-list-icon>face</mat-icon>
-        <span style="font-weight: bold">Node: </span>
+        <mat-icon class="icon">dns</mat-icon>
+        <span class="label">Node: </span>
         {{pod.node}}
       </div>
-
-
-
     </div>
 
-  </mat-card-content>
-</mat-card>
+
+  </div>
+</div>

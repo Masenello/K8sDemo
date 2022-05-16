@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8sdemo-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: masenello.it
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: k8sdemo-app
+                port:
+                  number: 80
+            path: /

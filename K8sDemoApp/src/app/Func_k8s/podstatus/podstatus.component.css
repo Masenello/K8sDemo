@@ -1,0 +1,44 @@
+
+.grid-container-element{ 
+    display: grid; 
+    grid-template-columns: 1fr 5fr;
+    grid-template-rows: 30vh; 
+    grid-gap: 2px; 
+    /* border: 1px solid black;  */
+    width: 100%; 
+    height: 100%; 
+} 
+
+.grid-child-element-podicon { 
+    margin: 2px; 
+    grid-column-start: 1;
+    grid-column-end: span 1;
+    grid-row-start: 1;
+    grid-row-end: span 1;
+    border: 1px solid black ;
+    border-radius:5px 
+}
+
+.grid-child-element-poddata { 
+    margin: 2px; 
+    grid-column-start: 2;
+    grid-column-end: span 2;
+    grid-row-start: 1;
+    grid-row-end: span 1;
+    border: 1px solid black ;
+    border-radius:5px;
+    
+}
+
+.podIconImage{
+    margin: 4px;
+    width: 60px;
+}
+
+.icon{
+    margin: 4px;
+}
+
+.label{
+    font-weight: bold;
+}

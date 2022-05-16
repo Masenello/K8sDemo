@@ -70,5 +70,3 @@ spec:
   selector:
     io.kompose.service: k8sdemo-app
   type: LoadBalancer
-status:
-  loadBalancer: {}
