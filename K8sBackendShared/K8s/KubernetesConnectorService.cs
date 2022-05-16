@@ -110,29 +110,39 @@ namespace K8sBackendShared.K8s
 
                 var response = await _client.ReadNamespacedPodLogWithHttpMessagesAsync(
                     myPod.Metadata.Name,
-                    myPod.Metadata.NamespaceProperty, follow: true).ConfigureAwait(false);
-                var stream = response.Body;
+                    myPod.Metadata.NamespaceProperty, 
+                    follow: false).ConfigureAwait(false);
 
-                _logger.LogInfo($"Log stream acquired for pod {podName}");
-                var sr = new StreamReader(stream);
-                string log ="";
-                string tmp = "";
-                do
+                //_logger.LogInfo($"Log stream acquired for pod {podName}");
+
+                string log = "";
+                using (var sr = new StreamReader(response.Body))
                 {
-                    tmp= sr.ReadLine();
-                    if (tmp != null)
+                    string tmp = "";
+                    do
                     {
-                        //_logger.LogInfo($"Logline :  {tmp}");
-                        log += $"{tmp}{Environment.NewLine}";
+                        tmp = await sr.ReadLineAsync();
+                        if (!string.IsNullOrEmpty(tmp))
+                        {
+                            //_logger.LogInfo($"Logline :  {tmp}");
+                            log += $"{tmp}{Environment.NewLine}";
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
+                    while (!sr.EndOfStream);
                 }
-                while(tmp != "");
+
+
 
                 PodLogDto podLog = new PodLogDto()
                 {
                     PodName = podName,
                     Log = log,
                 };
+                _logger.LogInfo($"Log content acquired from pod :  {podName}");
                 return podLog;
 
             }
@@ -142,7 +152,7 @@ namespace K8sBackendShared.K8s
                 return null;
             }
 
-}
+        }
 
 
 
