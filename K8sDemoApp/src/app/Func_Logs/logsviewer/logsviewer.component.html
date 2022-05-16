@@ -1,22 +1,26 @@
-<div class="container">
+<div class="divWithHorizontalContent">
+  <h2>Application Logs</h2>
 
-  <mat-button-toggle-group #group="matButtonToggleGroup">
-    <mat-button-toggle value="visibility_on" aria-label="Text align left" (click)="enableLogview()" matTooltip="Connect viewer to log stream">
-      <mat-icon>visibility_on</mat-icon>
-    </mat-button-toggle>
-    <mat-button-toggle value="visibility_off" aria-label="Text align center" (click)="disableLogview()" matTooltip="Disconnect viewer from log stream">
-      <mat-icon>visibility_off</mat-icon>
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+  <button class="podIconButtons" mat-icon-button color="primary" (click)="enableLogview()" 
+  matTooltip="Connect viewer to log stream">
+<mat-icon>visibility_on</mat-icon>
+</button>
 
-  <div style ="max-height: 80vh; overflow: scroll; margin-top: 2vh;">
-    <log-monitor 
-        [logStream]="logmessage" 
-        theme="dark" 
-        title="Docker cluster logs" 
-        [animated]="true" 
-        [icons]="true"
-        [history]="logViewerService.historyMessages">
-    </log-monitor>
-  </div>
+<button class="podIconButtons" mat-icon-button color="primary" (click)="disableLogview()" 
+matTooltip="Disconnect viewer from log stream">
+<mat-icon>visibility_off</mat-icon>
+</button>
 </div>
+
+
+<div class="logViewerContainer">
+    <log-monitor 
+    [logStream]="logmessage" 
+    theme="dark" 
+    title="Docker cluster logs" 
+    [animated]="true" 
+    [icons]="true"
+    [history]="logViewerService.historyMessages">
+  </log-monitor>
+</div>
+

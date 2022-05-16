@@ -1,0 +1,11 @@
+.divWithHorizontalContent{
+    display:flex; 
+    flex-direction: row;
+}
+
+.logViewerContainer{
+    overflow: scroll;
+    overflow-x: hidden; 
+    margin: 4px;
+    max-height: 84vh;
+}
