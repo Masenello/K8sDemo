@@ -15,6 +15,11 @@ export class PodsInfoComponent implements OnInit {
   constructor(private k8sInfoService: K8sinfoService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    this.getPodInfo()
+  }
+
+  getPodInfo()
+  {
     this.k8sInfoService.getPodInfo().subscribe((info) => {
       this.podInfoList = info
     }, (error) => {
