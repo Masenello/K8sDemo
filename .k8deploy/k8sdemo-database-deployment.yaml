@@ -30,7 +30,10 @@ spec:
             - name: ACCEPT_EULA
               value: "Y"
             - name: SA_PASSWORD
-              value: "Pass@Word1"
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-password
           image: masenellomarco/k8sdemosqlserver:latest
           name: k8sdemoapidbcontainer
           ports:

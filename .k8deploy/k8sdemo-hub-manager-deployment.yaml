@@ -31,6 +31,16 @@ spec:
               value: Password
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
+            - name: SQL_SERVER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-user
+            - name: SQL_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-password
           image: masenellomarco/k8sdemohubmanager:0.0.8
           name: k8sdemohubmanagercontainer
           ports:

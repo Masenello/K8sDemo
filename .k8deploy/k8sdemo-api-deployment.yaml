@@ -41,6 +41,16 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: mongo-password
+            - name: SQL_SERVER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-user
+            - name: SQL_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-password
           image: masenellomarco/k8sdemoapi:0.1.8168.30714
           name: k8sdemoapicontainer
           ports:

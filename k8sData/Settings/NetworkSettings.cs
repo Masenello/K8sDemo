@@ -23,13 +23,23 @@ namespace K8sData.Settings
 
         public static string DatabaseConnectionStringResolver()
         {
-            string hostName = SqlServerDockerHost;
-            if (!RunningInDocker())
+            string hostName = "";
+            string user = "";
+            string password = "";
+            if (RunningInDocker())
             {
-                hostName = SqlServerDebugHost;
+                hostName = SqlServerDockerHost;
+                user = Environment.GetEnvironmentVariable("SQL_SERVER_USERNAME");
+                password = Environment.GetEnvironmentVariable("SQL_SERVER_PASSWORD");
+            }
+            else
+            {
+                hostName = SqlServerDebugHost;  
+                user = "sa";
+                password = "PassWord1";    
             }
 
-            return $"server={hostName};initial catalog=TestDatabase;persist security info=True;user id=sa;password=Pass@Word1;MultipleActiveResultSets=True;App=EntityFramework";
+            return $"server={hostName};initial catalog=TestDatabase;persist security info=True;user id={user};password={password};MultipleActiveResultSets=True;App=EntityFramework";
             
         }
     }
