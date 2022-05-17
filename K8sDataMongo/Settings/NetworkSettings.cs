@@ -4,9 +4,6 @@ namespace K8sDataMongo.Settings
 {
     public class NetworkSettings
     {
-        private static readonly string MongoServerDockerHost = "k8sDemo-mongodatabase";
-        //private static readonly string SqlServerDebugHost = "host.docker.internal";
-        private static readonly string MongoServerDebugHost = "127.0.0.1";
 
         public static bool RunningInDocker()
         {
@@ -19,14 +16,23 @@ namespace K8sDataMongo.Settings
 
         public static string DatabaseConnectionStringResolver()
         {
-            string hostName = MongoServerDockerHost;
-            if (!RunningInDocker())
+            string hostName = "";
+            string user = "";
+            string password = "";
+            if (RunningInDocker())
             {
-                hostName = MongoServerDebugHost;
+                hostName = "k8sDemo-mongodatabase";
+                user = Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ;
+                password = Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ;
+            }
+            else
+            {
+                hostName = "127.0.0.1";
+                user="sa";
+                password="PassWord1";
             }
 
-            //return $"mongodb://sa:Pass%40Word1@{hostName}:27017/?authMechanism=DEFAULT";
-            return $"mongodb://sa:Pass%40Word1@{hostName}:27017/";
+            return $"mongodb://{user}:{password}@{hostName}:27017/";
         }
     }
 }

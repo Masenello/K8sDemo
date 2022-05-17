@@ -31,6 +31,16 @@ spec:
               value: Password
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
           image: masenellomarco/k8sdemoapi:0.1.8168.30714
           name: k8sdemoapicontainer
           ports:

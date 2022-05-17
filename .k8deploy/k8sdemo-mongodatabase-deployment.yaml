@@ -28,9 +28,15 @@ spec:
       containers:
         - env:
             - name: MONGO_INITDB_ROOT_USERNAME
-              value: "sa"
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
             - name: MONGO_INITDB_ROOT_PASSWORD
-              value: "Pass@Word1"
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
           #image: masenellomarco/k8sdemomongo:latest
           image: mongo
           name: k8smongodbcontainer
