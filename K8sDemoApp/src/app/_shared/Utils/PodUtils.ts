@@ -35,6 +35,10 @@ export class PodUtils {
         {
             return "./assets/images/icon-worker.png"
         }
+        else if(podImageName.includes("k8sdemo-app"))
+        {
+            return "./assets/images/icon-app.png"
+        }
         return "";
     }
 }
