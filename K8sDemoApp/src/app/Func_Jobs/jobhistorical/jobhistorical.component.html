@@ -1,12 +1,20 @@
+
+
+
 <div  class="grid-container-element">
-    <!-- Commands -->
-    <div class="grid-child-element-jobsCommands">
-        <button mat-mini-fab color="primary" aria-label="Refresh data from database" (click)="manualLoadData()" style="margin: 2px;">
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
+
+
+
     <!-- Table -->
     <div class="grid-child-element-table">
+      <div class="divWithHorizontalContent">
+        <h2>Jobs historical for user: {{jobsUser}}</h2>
+        <button mat-icon-button  color="primary" aria-label="Refresh data from database" (click)="manualLoadData()" style="margin: 2px;">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+
+
       <gui-grid style="margin: 2px;"
             [source]="jobsSource"
             [columns]="jobGridcolumns"

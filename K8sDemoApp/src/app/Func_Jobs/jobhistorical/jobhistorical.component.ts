@@ -18,6 +18,7 @@ export class JobhistoricalComponent implements OnInit {
   
   datePipe = new DatePipe('en-US');
   jobsSource =new Array<Job>();
+  jobsUser:string;
 
   jobGridcolumns: Array<GuiColumn> = [
     {
@@ -107,6 +108,7 @@ searching: GuiSearching = {
 
   ngOnInit(): void {
     this.loadData();
+    this.jobsUser = this.accountService.currentUser.value.username
   }
 
   manualLoadData()
