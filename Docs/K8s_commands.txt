@@ -4,3 +4,7 @@ kubectl set image deployment.apps/k8sdemo-worker k8sdemoworkercontainer=masenell
 
 //Scale replicas
 kubectl scale --replicas=0 deployment.apps/k8sdemo-api
+
+//Azure get kube credentials
+az aks get-credentials --resource-group aks-getting-started --name k8sdemo --file kubeconfig
+
