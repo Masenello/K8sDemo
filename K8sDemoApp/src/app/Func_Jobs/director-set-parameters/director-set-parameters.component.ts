@@ -25,7 +25,13 @@ export class DirectorSetParametersComponent implements OnInit {
 
   onSubmit(){
     //console.log("Sending paramters" )
-    this.directorService.sendSetDirectorParameters(this.parameters).subscribe();
+    this.directorService.sendSetDirectorParameters(this.parameters).subscribe(result=>{
+      this.toastr.success("Settings sent to director")
+    }, error=>{
+      console.log(error)
+      this.toastr.error("Failed to send settings to director")
+    });
+    ;
     
   }
 

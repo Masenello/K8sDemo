@@ -96,8 +96,6 @@ searching: GuiSearching = {
 };
 
 
-loading = true
-
   constructor(private jobService:JobService, private accountService:AccountService,
     private jobStatusEnumsPipe : JobStatusEnumNamePipe,
     private jobTypeEnumsPipe : JobTypeEnumNamePipe,
@@ -114,20 +112,19 @@ loading = true
   manualLoadData()
   {
     this.loadData()
-    this.toastr.info("Jobs historical data loaded from database")
+    this.toastr.success("Jobs historical data loaded from database")
   }
 
 
   loadData()
   {
-    this.loading = true
     this.jobService.getUserJobs(this.accountService.currentUser.value.username).subscribe((userJobs)=> 
     {
       this.jobsSource = userJobs;
+    }, error=>{
+      this.toastr.error("Failed to load jobs from database")
+      console.log(error)
     })
-    this.loading = false
-
-    
   }
 
 }

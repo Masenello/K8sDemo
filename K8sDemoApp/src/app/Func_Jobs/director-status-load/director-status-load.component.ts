@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/Func_Login/account.service';
 import { TestJobCreationRequest } from 'src/app/_models/API_Messages/JobCreationRequest';
 import { DirectorStatusMessage } from 'src/app/_models/Hub_Messages/DirectorStatusMessage';
@@ -23,7 +24,7 @@ export class DirectorStatusLoadComponent implements OnInit {
   jobsToAdd: number = 50
 
 
-  constructor(private directorStatusService: DirectorStatusService, private accountService:AccountService, private jobService:JobService) {
+  constructor(private directorStatusService: DirectorStatusService, private accountService:AccountService, private jobService:JobService, private toastr:ToastrService) {
 
     directorStatusService.newDirectorStatus.subscribe((status: DirectorStatusMessage) => {
       //Jobs gauge
@@ -47,11 +48,15 @@ export class DirectorStatusLoadComponent implements OnInit {
 
   sendTestJobRequest() {
 
-    for (let i = 0; i < this.jobsToAdd; i++) {
-      this.addNewTestJob();
-    }
-
-
+      try {
+        for (let i = 0; i < this.jobsToAdd; i++) {
+          this.addNewTestJob();
+        }
+        this.toastr.success(`Created ${this.jobsToAdd} new jobs`)
+      } catch (error) {
+        this.toastr.error(`"Error creating new jobs"`)
+        console.log(error)
+      }
   }
 
   addNewTestJob() {
@@ -75,8 +80,7 @@ export class DirectorStatusLoadComponent implements OnInit {
       //   });
 
     }, error => {
-      console.log(error);
-      // this.toastr.error(error.error);
+      throw new Error(error);
     });
   }
 }

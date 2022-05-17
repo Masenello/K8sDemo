@@ -22,6 +22,7 @@ export class PodsInfoComponent implements OnInit {
   {
     this.k8sInfoService.getPodInfo().subscribe((info) => {
       this.podInfoList = info
+      this.toastr.success("Pod information retrieved from Kubernetes API")
     }, (error) => {
       console.log(error)
       this.toastr.error("Failed to read pod information")
