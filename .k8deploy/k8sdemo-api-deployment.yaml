@@ -48,3 +48,24 @@ spec:
           persistentVolumeClaim:
             claimName: k8sdemo-api-claim0
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out .kompose
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: k8sdemo-api
+  name: k8sdemo-api
+spec:
+  ports:
+    - name: "5501"
+      port: 5501
+      targetPort: 5501
+  selector:
+    io.kompose.service: k8sdemo-api
+  type: LoadBalancer
+status:
+  loadBalancer: {}
