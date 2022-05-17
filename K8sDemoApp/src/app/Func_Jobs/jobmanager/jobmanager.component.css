@@ -2,8 +2,10 @@
 .grid-container-element{ 
     display: grid; 
     grid-template-columns: 2fr 1fr 1fr; 
-    grid-template-rows: 45vh 45vh; 
+    grid-template-rows: 43vh 43vh; 
     grid-gap: 2px; 
+    overflow-y: hidden; 
+    margin: 4px;
 } 
 
 .grid-child-element-jobStatusChart { 

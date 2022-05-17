@@ -102,6 +102,7 @@ namespace K8sBackendShared.K8s
             {
 
                 V1PodList podList = await _client.ListNamespacedPodAsync(kubernetesNameSpace.Value);
+
                 var myPod = podList.Items.FirstOrDefault(x => x.Name() == podName);
                 if (myPod is null)
                 {
@@ -110,7 +111,8 @@ namespace K8sBackendShared.K8s
 
                 var response = await _client.ReadNamespacedPodLogWithHttpMessagesAsync(
                     myPod.Metadata.Name,
-                    myPod.Metadata.NamespaceProperty, 
+                    myPod.Metadata.NamespaceProperty,
+                    sinceSeconds:24*60*60,   //last day
                     follow: false).ConfigureAwait(false);
 
                 //_logger.LogInfo($"Log stream acquired for pod {podName}");
@@ -135,7 +137,7 @@ namespace K8sBackendShared.K8s
                     while (!sr.EndOfStream);
                 }
 
-
+                //_logger.LogInfo($"{log}");
 
                 PodLogDto podLog = new PodLogDto()
                 {

@@ -27,7 +27,7 @@ namespace K8sDemoApi.Controllers
 
         
 
-        //TODO Do with unito of work!!!
+        //TODO Do with unit of work!!!
         public JobController( IJobRepository jobRepo, ILogger logger):base(logger)
         {
             _jobRepo = jobRepo;
