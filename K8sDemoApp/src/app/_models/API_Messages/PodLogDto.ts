@@ -1,4 +1,5 @@
-export class PodLogoDto{
+export class PodLogDto{
     podName: string;
     log:string;
+    logsStartDate:Date;
 }

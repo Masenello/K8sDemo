@@ -31,7 +31,7 @@ export class PodstatusComponent implements OnInit {
     this.k8sinfoservice.getPodLog(this.pod.name).subscribe((podLog)=>{
       console.log(podLog.log)
       const dialogRef = this.dialog.open(PodlogsviewerComponent, {
-        data: { title: podLog.podName, log: podLog.log},
+        data: { title: podLog.podName, log: podLog.log,  logsStartDate: podLog.logsStartDate },
       });
     }, (erorr)=>
     {

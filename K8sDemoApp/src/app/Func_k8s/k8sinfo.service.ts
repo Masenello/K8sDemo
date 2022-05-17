@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PodInfoDto } from '../_models/API_Messages/PodInfo';
-import { PodLogoDto } from '../_models/API_Messages/PodLogDto';
+import { PodLogDto } from '../_models/API_Messages/PodLogDto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class K8sinfoService {
   }
 
   
-  getPodLog(podname:string):Observable<PodLogoDto>{
-    return this.http.get<PodLogoDto>(this.baseUrl + "k8s/GetPodLog/"+podname,{});
+  getPodLog(podname:string):Observable<PodLogDto>{
+    return this.http.get<PodLogDto>(this.baseUrl + "k8s/GetPodLog/"+podname,{});
   }
 }

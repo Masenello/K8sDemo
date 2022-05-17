@@ -96,11 +96,11 @@ namespace K8sBackendShared.K8s
 
         }
 
-        public async Task<PodLogDto> GetPodLog(K8sNamespace kubernetesNameSpace, string podName)
+        public async Task<PodLogDto> GetPodLog(K8sNamespace kubernetesNameSpace, string podName, int sinceSeconds = 24*60*60)
         {
             try
             {
-
+                
                 V1PodList podList = await _client.ListNamespacedPodAsync(kubernetesNameSpace.Value);
 
                 var myPod = podList.Items.FirstOrDefault(x => x.Name() == podName);
@@ -143,6 +143,7 @@ namespace K8sBackendShared.K8s
                 {
                     PodName = podName,
                     Log = log,
+                    LogsStartDate = DateTime.Now.AddSeconds(-1 * sinceSeconds),
                 };
                 _logger.LogInfo($"Log content acquired from pod :  {podName}");
                 return podLog;
