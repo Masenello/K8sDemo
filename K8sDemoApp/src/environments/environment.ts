@@ -8,6 +8,7 @@ export const environment = {
   apiUrl: "https://localhost:5501/api/",
   hubUrl: "https://localhost:5001/hubs/",
   dateTimeFormat: 'dd/MM/yyyy - HH:mm:ss',
+  kubernetesDashboard: "http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login"
 };
 
 /*

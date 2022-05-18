@@ -1,15 +1,18 @@
 <div class="divWithHorizontalContent">
   <h2>Pod Info</h2>
 
-  <button class="podIconButtons" mat-icon-button color="primary" (click)="getPodInfo()" 
-      matTooltip="Refresh pod info">
-  <mat-icon>refresh</mat-icon>
-</button>
+  <button class="podIconButtons" mat-icon-button color="primary" (click)="getPodInfo()" matTooltip="Refresh pod info">
+    <mat-icon>refresh</mat-icon>
+  </button>
+
+  <button class="podIconButtons" mat-icon-button color="primary" (click)="openKubernetesDashboard()" matTooltip="Opne kubernetes dashboard">
+    <mat-icon>speed</mat-icon>
+  </button>
 </div>
 
 
 <div class="podInfoListContainer">
   <div class="podInfoList" *ngFor="let pod of podInfoList">
-    <app-podstatus class="podInfo" [pod]="pod" ></app-podstatus>
+    <app-podstatus class="podInfo" [pod]="pod"></app-podstatus>
   </div>
 </div>
