@@ -28,7 +28,10 @@ spec:
       containers:
         - env:
             - name: ASPNETCORE_Kestrel__Certificates__Default__Password
-              value: Password
+              valueFrom:
+                secretKeyRef:
+                  name: k8sdemo-kestrel-secret-certificate-password
+                  key: certificate-password 
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
             - name: SQL_SERVER_USERNAME
@@ -41,19 +44,19 @@ spec:
                 secretKeyRef:
                   name: database-secret
                   key: database-password
-          image: masenellomarco/k8sdemohubmanager:0.0.8
+          image: masenellomarco/k8sdemohubmanager:0.1.8173.25712
           name: k8sdemohubmanagercontainer
           ports:
             - containerPort: 5001
           resources: {}
           volumeMounts:
             - mountPath: /app/Infrastructure/Certificate
-              name: k8sdemo-hub-manager-claim0
+              name: k8sdemo-kestrel-secret-certificate
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-hub-manager-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-hub-manager-claim0
+        - name: k8sdemo-kestrel-secret-certificate
+          secret:
+            secretName: k8sdemo-kestrel-secret-certificate
 status: {}
 ---
 apiVersion: v1

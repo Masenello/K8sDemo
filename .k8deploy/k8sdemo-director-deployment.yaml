@@ -36,15 +36,15 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: mongo-password
-          image: masenellomarco/k8sdemodirector:latest
+          image: masenellomarco/k8sdemodirector:0.1.8172.26860
           name: k8sdemodirectorcontainer
           resources: {}
           volumeMounts:
             - mountPath: /root/.kube/
-              name: k8sdemo-director-claim0
+              name: kube-secret
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-director-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-director-claim0
+        - name: kube-secret
+          secret:
+            secretName: kube-secret
 status: {}

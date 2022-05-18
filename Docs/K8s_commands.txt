@@ -8,3 +8,6 @@ kubectl scale --replicas=0 deployment.apps/k8sdemo-api
 //Azure get kube credentials
 az aks get-credentials --resource-group aks-getting-started --name k8sdemo --file kubeconfig
 
+//open bash inside docker container
+kubectl exec -it k8sdemo-api-86bccc988c-w627m bash
+

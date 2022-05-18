@@ -28,7 +28,10 @@ spec:
       containers:
         - env:
             - name: ASPNETCORE_Kestrel__Certificates__Default__Password
-              value: Password
+              valueFrom:
+                secretKeyRef:
+                  name: k8sdemo-kestrel-secret-certificate-password
+                  key: certificate-password 
             - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: /app/Infrastructure/Certificate/certificate.pfx
             - name: MONGO_INITDB_ROOT_USERNAME
@@ -51,22 +54,25 @@ spec:
                 secretKeyRef:
                   name: database-secret
                   key: database-password
-          image: masenellomarco/k8sdemoapi:0.1.8168.30714
+          image: masenellomarco/k8sdemoapi:0.1.8172.17521
           name: k8sdemoapicontainer
           ports:
             - containerPort: 5501
           resources: {}
           volumeMounts:
             - mountPath: /app/Infrastructure/Certificate
-              name: k8sdemo-api-claim0
-              #mount also Kube config file from certificates folder
+              name: k8sdemo-kestrel-secret-certificate
             - mountPath: /root/.kube/
-              name: k8sdemo-api-claim0
+              name: kube-secret
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-api-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-api-claim0
+        - name: k8sdemo-kestrel-secret-certificate
+          secret:
+            secretName: k8sdemo-kestrel-secret-certificate
+        - name: kube-secret
+          secret:
+            secretName: kube-secret
+
 status: {}
 ---
 apiVersion: v1
