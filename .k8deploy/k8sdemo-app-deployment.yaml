@@ -26,7 +26,7 @@ spec:
         io.kompose.service: k8sdemo-app
     spec:
       containers:
-        - image: masenellomarco/k8sdemoapp:latest
+        - image: masenellomarco/k8sdemoapp:0.0.10
           name: k8sdemoappcontainer
           ports:
             - containerPort: 80
@@ -35,12 +35,12 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /etc/nginx/certs
-              name: k8sdemo-app-claim0
+              name: k8sdemo-nginx-secret-certificate
       restartPolicy: Always
       volumes:
-        - name: k8sdemo-app-claim0
-          persistentVolumeClaim:
-            claimName: k8sdemo-app-claim0
+        - name: k8sdemo-nginx-secret-certificate
+          secret:
+            secretName: k8sdemo-nginx-secret-certificate
 status: {}
 ---
 apiVersion: v1
