@@ -28,7 +28,6 @@ namespace K8sDemoHubManager
         string version = "0.0.8";
         public Startup(IConfiguration configuration)
         {
-            Console.WriteLine($"Running version: {version}");
             Configuration = configuration;
         }
 

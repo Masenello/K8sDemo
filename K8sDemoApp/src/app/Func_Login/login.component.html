@@ -1,7 +1,8 @@
+<div class="absolute-centered">
+  <mat-card  style="width: 300px;">
 
-<mat-card id="staceppa" class="text-center" style="width: 300px;">
     <mat-card-title>Login</mat-card-title>
-    <mat-card-subtitle>Insert username and password to enter</mat-card-subtitle>
+
     <form (ngSubmit)="onSubmit()" class="vertical low-margin">
       <mat-form-field appearance="outline" style="width: 250px;">
         <mat-label>Username</mat-label>
@@ -12,7 +13,11 @@
         <input name="password" matInput [type]="hidePassword ? 'password' : 'text'" [(ngModel)]="user.password" required>
         <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </mat-form-field>
-      <button mat-flat-button class="btn-primary" style="margin-top: 20px;" type="submit">Login</button>
+      <button mat-fab color="primary"  type="submit">
+        <mat-icon>key</mat-icon>
+      </button>
     </form>
 </mat-card>
+</div>
+
   
