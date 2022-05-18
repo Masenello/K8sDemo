@@ -369,4 +369,5 @@ FodyWeavers.xsd
 DbMount/*
 MongoDbMount/*
 .k8deploy/Secrets/*
+.k8deploy/Certificates/*
 
