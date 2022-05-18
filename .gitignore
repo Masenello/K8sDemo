@@ -368,4 +368,5 @@ FodyWeavers.xsd
 #Database mount for SQL Server docker
 DbMount/*
 MongoDbMount/*
+.k8deploy/Secrets/*
 
