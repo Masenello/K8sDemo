@@ -12,6 +12,7 @@ namespace K8sCore.Interfaces.Ef
         Task<T> GetByIdAsync(int id);
         Task<List<T>> GetAllAsync();
         Task<List<T>>  FindAsync(Expression<Func<T, bool>> expression);
+        Task<T> FindFirstOrDefaultAsync(Expression<Func<T, bool>> expression);
         void AddAsync(T entity);
         void AddRangeAsync(IEnumerable<T> entities);
         void Remove(T entity);

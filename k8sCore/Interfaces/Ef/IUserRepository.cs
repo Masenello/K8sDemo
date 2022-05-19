@@ -8,12 +8,14 @@ namespace K8sCore.Interfaces.Ef
     public interface IUserRepository
     {
         public  Task<int> RegisterUserAsync(RegisterDto registerDto);
-
         public  Task<List<UserDto>> GetUsersAsync();
         public  Task DeleteUserAsync(string username);
         public Task<bool> CheckIfUserExistsAsync(string username);
         public Task<UserDto> GetUserByIdAsync(int id);
-
         public Task<UserDto> LoginUserAsync(LoginDto loginDto);
+        public Task CreateRole(string roleName);
+        public Task AddRoleToUser(string roleName, string username);
+        public Task RemoveRoleFromUser(string roleName, string username);
+        public Task<List<RoleDto>> GetRolesAsync();
     }
 }

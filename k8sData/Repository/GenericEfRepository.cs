@@ -35,6 +35,11 @@ namespace K8sData.Repository
             return _context.Set<T>().Where(expression).ToListAsync();
         }
 
+        public Task<T> FindFirstOrDefaultAsync(Expression<Func<T, bool>> expression)
+        {
+            return _context.Set<T>().FirstOrDefaultAsync(expression);
+        }
+
         public Task<List<T>> GetAllAsync()
         {
             return _context.Set<T>().ToListAsync();
