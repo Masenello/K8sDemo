@@ -2,16 +2,9 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { DemoService } from './services/demoservice';
-import { LoggedUser } from './_models/user';
 import { AccountService } from './Func_Login/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
-import { JobService } from './Func_Jobs/job.service';
-import { TestJobCreationRequest } from './_models/API_Messages/JobCreationRequest';
-import { HubService } from './services/hub.service';
-import {LogMessage, LogMessage as NgxLogMessage} from 'ngx-log-monitor';
-import { Observable, timer } from 'rxjs';
-import { map, take } from 'rxjs/operators';
 import { NavigationService } from './Func_Navigation/navigation.service';
 import { RouterOutlet } from '@angular/router';
 

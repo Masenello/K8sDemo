@@ -6,11 +6,11 @@
     <form (ngSubmit)="onSubmit()" class="vertical low-margin">
       <mat-form-field appearance="outline" style="width: 250px;">
         <mat-label>Username</mat-label>
-        <input type="text" name="username" [(ngModel)]="user.username" matInput required>
+        <input type="text" name="username" [(ngModel)]="loginRequest.username" matInput required>
       </mat-form-field>
       <mat-form-field appearance="outline" style="width: 250px;">
         <mat-label>Password</mat-label>
-        <input name="password" matInput [type]="hidePassword ? 'password' : 'text'" [(ngModel)]="user.password" required>
+        <input name="password" matInput [type]="hidePassword ? 'password' : 'text'" [(ngModel)]="loginRequest.password" required>
         <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </mat-form-field>
       <button mat-fab color="primary"  type="submit">

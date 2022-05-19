@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
 import { AccountService } from '../../Func_Login/account.service';
-import { LoggedUser } from '../../_models/user';
-import { MenuColor, MenuEntry, MenuIconType, MenuLocation } from '../menu-entry.model';
 import { NavigationService } from '../navigation.service';
 import { appMenus } from '../../Func_Navigation/nav-menus';
 import { environment } from 'src/environments/environment';
 import { AwaiterInfo, LoadingPopUpManagerService } from 'src/app/_shared/Services/loading-pop-up-manager.service';
+import { MenuEntry } from '../menu-entry.model';
 
 
 

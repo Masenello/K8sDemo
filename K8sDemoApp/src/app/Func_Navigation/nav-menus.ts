@@ -1,5 +1,4 @@
 import { MenuColor, MenuEntry, MenuIconType, MenuLocation, MenuSection } from './menu-entry.model';
-import { RoleEnum } from '../_enum/RoleEnum';
 
 export const settingsSection: MenuSection =
 {

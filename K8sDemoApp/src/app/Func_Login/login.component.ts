@@ -11,7 +11,7 @@ import { AccountService } from './account.service';
 })
 export class LoginComponent implements OnInit {
   
-  user = <LoginRequest>{};
+  loginRequest = <LoginRequest>{};
   hidePassword = true;
 
   constructor(private accountService:AccountService,
@@ -25,13 +25,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
     //console.log("Request log in user: " + this.user.username + "password: "+ this.user.password )
-    this.accountService.login(this.user).subscribe(response => {
-      console.log(response);
-    }, error=>
-    {
-      console.log(error)
-      this.toastr.error("Login failed");
-    });
+    this.accountService.login(this.loginRequest)
     
   }
 

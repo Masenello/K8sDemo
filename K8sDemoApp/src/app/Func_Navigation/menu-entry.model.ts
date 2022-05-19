@@ -1,4 +1,5 @@
-import { RoleEnum } from "../_enum/RoleEnum";
+import { RoleDto } from "../_models/API_Messages/RoleDto";
+
 
 export class MenuEntry {
   name: string;
@@ -10,7 +11,7 @@ export class MenuEntry {
   bigIcon?: boolean;            // default: false
   color?: MenuColor;            // default: Orange
   subMenus?: MenuEntry[];       // default: none
-  roles?: RoleEnum[];               // default: all roles
+  roles?: RoleDto[];               // default: all roles
   locations?: MenuLocation[];   // default: all locations
   section?: MenuSection;        // default: none
 }

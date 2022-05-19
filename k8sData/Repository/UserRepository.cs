@@ -53,15 +53,7 @@ namespace K8sData.Repository
             List<UserDto> userList = new List<UserDto>();
             foreach (var user in await _context.Users.ToListAsync())
             {
-                userList.Add(new UserDto()
-                {
-                    Username = user.UserName,
-                    Mail = user.Mail,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Department = user.Department,
-                    Roles = await GetUserRolesAsync(user.UserName),
-                });
+                userList.Add(await GetUserByIdAsync(user.Id));
             }
             return userList;
         }
@@ -89,10 +81,8 @@ namespace K8sData.Repository
         {
             var targetUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (targetUser is null) return null;
-            return new UserDto()
-            {
-                Username = targetUser.UserName,
-            };
+            return new UserDto(targetUser, await GetUserRolesAsync(targetUser.UserName));
+
         }
 
         public async Task CreateRole(string roleName)

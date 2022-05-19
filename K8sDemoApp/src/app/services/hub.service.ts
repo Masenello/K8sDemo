@@ -4,10 +4,10 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { environment } from 'src/environments/environment';
+import { UserDto } from '../_models/API_Messages/UserDto';
 import { DirectorStatusMessage } from '../_models/Hub_Messages/DirectorStatusMessage';
 import { ForwardLogMessage } from '../_models/Hub_Messages/ForwardLogMessage';
 import { JobStatusMessage } from '../_models/Hub_Messages/JobStatusMessage';
-import { LoggedUser } from '../_models/user';
 
 
 @Injectable({
@@ -35,7 +35,7 @@ export class HubService {
     this.hubConnectionStatus = new BehaviorSubject<boolean>(false);
   }
 
-  public async createHubConnection(user: LoggedUser)
+  public async createHubConnection(user: UserDto)
   {
     //Create connection
     this.hubConnection = new HubConnectionBuilder()
@@ -94,7 +94,7 @@ export class HubService {
   }
 
   //Called at user log out
-  public stopHubConnection(user: LoggedUser)
+  public stopHubConnection(user: UserDto)
   {
     //Notify to Hub user has connected
     this.hubSend("UserAppLogOff", user.username)

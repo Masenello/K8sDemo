@@ -4,19 +4,20 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
-import { LoginRequest, LoggedUser } from '../_models/user';
+import { LoginRequest} from '../_models/user';
 import { HubService } from '../services/hub.service';
-import { RoleEnum } from '../_enum/RoleEnum';
 import jwt_decode from 'jwt-decode';
+import { UserDto } from '../_models/API_Messages/UserDto';
+import { RoleDto } from '../_models/API_Messages/RoleDto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  currentUser : BehaviorSubject<LoggedUser | null>;
+  currentUser : BehaviorSubject<UserDto | null>;
   public userPressedLogOutButton:boolean = false;
-  public userLoggedIn =new Subject<LoggedUser>();
+  public userLoggedIn =new Subject<UserDto>();
   public userLoggedOut =new Subject();
 
 
@@ -25,7 +26,7 @@ export class AccountService {
     private toastr: ToastrService,
     private hubService: HubService) 
     {
-      this.currentUser = new BehaviorSubject<LoggedUser | null>(null);
+      this.currentUser = new BehaviorSubject<UserDto | null>(null);
       
       this.hubService.hubClosedEvent.subscribe(()=>{this.manageHubClosed();});
 
@@ -39,25 +40,22 @@ export class AccountService {
 
   login(request: LoginRequest)
   {
-      return this.http.post(this.baseUrl + "account/login", request).pipe(
-        map((response: any)=>{
-          let user:LoggedUser = response;
-          if (user)
-          {
-            //TODO Remove this!
-            user.roles =[]
-            user.roles[0] = RoleEnum.Admin
-
-            console.log("User " + user.username + " logged in");
-            localStorage.setItem("user", JSON.stringify(user));
-            this.setCurrentUser(user);
-            this.userLoggedIn.next(user);
-          }
-        }))
+      return this.http.post<UserDto>(this.baseUrl + "account/login", request).subscribe(loggedUser=>{
+        console.log("User " + loggedUser.username + " logged in")
+        //console.log(loggedUser)
+        localStorage.setItem("user", JSON.stringify(loggedUser))
+        this.setCurrentUser(loggedUser)
+        this.userLoggedIn.next(loggedUser)
+        this.toastr.success(`Welcome ${loggedUser.username}`)
+      }, error =>{
+        console.log(error)
+        this.toastr.error("Log in failed")
+      })
+    
   }
 
   //Called also on application init to restore user data if present in local storage
-  private async setCurrentUser(user:LoggedUser)
+  private async setCurrentUser(user:UserDto)
   {
     try
     {
@@ -103,7 +101,7 @@ export class AccountService {
     return false;
   }
 
-  private getStoredUserData():LoggedUser | null
+  private getStoredUserData():UserDto | null
   {
     var savedUser = JSON.parse(localStorage.getItem('user')|| '{}');
     if (savedUser != null && savedUser.username != undefined)
@@ -133,12 +131,12 @@ export class AccountService {
 
 
   //Roles management
-  public getTokenInformation(token: string) : LoggedUser
+  public getTokenInformation(token: string) : UserDto
   {
 
 
     let tokenInfo = this.getDecodedJWT(token);
-    let loggedUser:LoggedUser;
+    let loggedUser:UserDto;
 
     loggedUser.roles = tokenInfo.role;
     loggedUser.username = tokenInfo.unique_name;
@@ -148,15 +146,15 @@ export class AccountService {
 
   }
 
-  public get roles(): typeof RoleEnum {
-    return RoleEnum;
-  }
+  // public get roles(): typeof RoleEnum {
+  //   return RoleEnum;
+  // }
 
-  public isInRole(role: RoleEnum): boolean {
+  public isInRole(role: RoleDto): boolean {
     return this.currentUser?.value.roles?.includes(role);
   }
 
-  public hasRole(roles: RoleEnum[]): boolean {
+  public hasRole(roles: RoleDto[]): boolean {
     return !roles || roles.filter(x => this.currentUser?.value.roles?.includes(x)).length > 0;
   }
 
