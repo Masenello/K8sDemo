@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using K8sBackendShared.Interfaces;
 using K8sCore.DTOs;
 using K8sCore.Entities.Ef;
+using K8sCore.Interfaces.Ef;
 using K8sData.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,60 +14,38 @@ namespace K8sDemoApi.Controllers
     
     public class AccountController:BaseApiController
     {
-        private readonly DataContext _context;
+        private readonly IUserRepository _userRepo;
         private readonly ITokenService _tokenService;
         
 
-        public AccountController(DataContext context, ITokenService tokenService, ILogger logger):base(logger)
+        public AccountController(IUserRepository userRepo, ITokenService tokenService, ILogger logger):base(logger)
         {
-            _context = context;
+            _userRepo = userRepo;
             _tokenService = tokenService;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        public async Task<ActionResult> Register(RegisterDto registerDto)
         {
-            if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+            if (await _userRepo.CheckIfUserExistsAsync(registerDto.Username)) return BadRequest($"Username: {registerDto.Username} is taken");
 
+            await _userRepo.RegisterUserAsync(registerDto);
 
-            using var hmac = new HMACSHA512();
-            var user = new AppUserEntity
-            {
-                UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
-            _context.Add(user);
-            await _context.SaveChangesAsync();
-            return new UserDto
-            {
-                Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
-            };
+            return Ok($"Username: {registerDto.Username} created");
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x=>x.UserName == loginDto.Username.ToLower());
-            if (user is null) return Unauthorized("Invalid username");
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-            for (int i=0; i< computedHash.Length; i++)
-            {
-                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
-            }
+            var targetUser = await _userRepo.LoginUserAsync(loginDto);
+            if (targetUser is null) return BadRequest("Login failed, wrong user or password");
+
+            targetUser.Token = _tokenService.CreateToken(targetUser.Username);
+
+            return Ok(targetUser);
             
-            return new UserDto
-            {
-                Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
-            };
         }
 
-        private async Task<bool> UserExists(string username)
-        {
-            return await _context.Users.AnyAsync(x=>x.UserName == username.ToLower());
-        }
+
     }
 }

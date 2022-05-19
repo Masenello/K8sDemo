@@ -4,15 +4,14 @@
   <span class="example-spacer"></span>
 
   <!-- Logged user icon and name -->
-  <button mat-icon-button [matMenuTriggerFor]="menu"
-   *ngIf="accountService.currentUser|async as loggedInUser"
-   class="userIcon">
+  <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="accountService.currentUser|async as loggedInUser"
+    class="userIcon">
     <mat-icon>face</mat-icon>
     <span>{{loggedInUser.username}}</span>
   </button>
-  
+
   <!-- User functions menu -->
-  <mat-menu #menu="matMenu" >
+  <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Log out</span>
@@ -23,30 +22,36 @@
 </mat-toolbar>
 
 <!-- SideNav -->
-<mat-sidenav-container class="example-container" >
-  <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64"  >
-    
-      <!-- menus built based on configuration in nav-menus.ts -->
-      <mat-nav-list>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64">
+
+    <!-- menus built based on configuration in nav-menus.ts -->
+    <mat-nav-list>
       <ng-container *ngFor="let menu of menus">
-        <a class="menu-primary" mat-list-item [routerLink]="[menu.subMenus ? '/' : '/' + menu.pageName]" [queryParams]="menu.subMenus ? {route: menu.pageName} : {}" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }"
-        *ngIf="accountService.hasRole(menu.roles) && navigationService.isMenuAccessible(menu, navigationService.menuLocations.Navbar) && (navigationService.accessibleSubmenus(menu, navigationService.menuLocations.Navbar)?.length > 0 || !menu.subMenus)">
-        <span [ngSwitch]="menu.iconType" *ngIf="menu.iconName">
-          <i style="margin-right: 10px;" class="{{menu.iconName}}" *ngSwitchCase="navigationService.menuIconTypes.Custom"></i>
-          <mat-icon style="margin-right: 5px;" *ngSwitchDefault>{{menu.iconName}}</mat-icon>
-        </span>
-        {{menu.name}}
+        <a class="menu-primary" mat-list-item [routerLink]="[menu.subMenus ? '/' : '/' + menu.pageName]"
+          [queryParams]="menu.subMenus ? {route: menu.pageName} : {}" [routerLinkActive]="['link-active']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          *ngIf="accountService.hasRole(menu.roles) && navigationService.isMenuAccessible(menu, navigationService.menuLocations.Navbar) && (navigationService.accessibleSubmenus(menu, navigationService.menuLocations.Navbar)?.length > 0 || !menu.subMenus)">
+          <span [ngSwitch]="menu.iconType" *ngIf="menu.iconName">
+            <i style="margin-right: 10px;" class="{{menu.iconName}}"
+              *ngSwitchCase="navigationService.menuIconTypes.Custom"></i>
+            <mat-icon style="margin-right: 5px;" *ngSwitchDefault>{{menu.iconName}}</mat-icon>
+          </span>
+          {{menu.name}}
         </a>
         <ng-container *ngFor="let submenu of menu.subMenus">
-          <a class="menu-secondary" mat-list-item [routerLink]="[submenu.subMenus ? '/' : '/' + submenu.pageName]" [queryParams]="submenu.subMenus ? {route: submenu.pageName} : {}" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }"
-          *ngIf="accountService.hasRole(submenu.roles) && navigationService.isMenuAccessible(submenu, navigationService.menuLocations.Navbar) && (navigationService.accessibleSubmenus(submenu, navigationService.menuLocations.Navbar)?.length > 0 || !submenu.subMenus)">
-          <div style="width: 10px;"></div>
-          <span [ngSwitch]="submenu.iconType" *ngIf="submenu.iconName">
-            <i style="margin-right: 10px;" class="{{submenu.iconName}}" *ngSwitchCase="navigationService.menuIconTypes.Custom"></i>
-            <mat-icon style="margin-right: 5px;" *ngSwitchDefault>{{submenu.iconName}}</mat-icon>
-          </span>
-          {{submenu.name}}
-        </a>
+          <a class="menu-secondary" mat-list-item [routerLink]="[submenu.subMenus ? '/' : '/' + submenu.pageName]"
+            [queryParams]="submenu.subMenus ? {route: submenu.pageName} : {}" [routerLinkActive]="['link-active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            *ngIf="accountService.hasRole(submenu.roles) && navigationService.isMenuAccessible(submenu, navigationService.menuLocations.Navbar) && (navigationService.accessibleSubmenus(submenu, navigationService.menuLocations.Navbar)?.length > 0 || !submenu.subMenus)">
+            <div style="width: 10px;"></div>
+            <span [ngSwitch]="submenu.iconType" *ngIf="submenu.iconName">
+              <i style="margin-right: 10px;" class="{{submenu.iconName}}"
+                *ngSwitchCase="navigationService.menuIconTypes.Custom"></i>
+              <mat-icon style="margin-right: 5px;" *ngSwitchDefault>{{submenu.iconName}}</mat-icon>
+            </span>
+            {{submenu.name}}
+          </a>
         </ng-container>
       </ng-container>
 
@@ -86,19 +91,12 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item disabled style="text-align: center;">{{accountService.currentUserValue?.username}}</button> -->
 
-        <!-- Global awaiter popup -->
-        <app-awaiter-pop-up
-        [message]="awaiterInfo?.message"
-        [msStartDelay]="awaiterInfo?.msStartDelay"
-        [show]="awaiterInfo != null" >
-      </app-awaiter-pop-up>
-    
+    <!-- Global awaiter popup -->
+    <app-awaiter-pop-up [message]="awaiterInfo?.message" [msStartDelay]="awaiterInfo?.msStartDelay"
+      [show]="awaiterInfo != null">
+    </app-awaiter-pop-up>
+
     <!-- Component output of routing -->
     <ng-content style="padding:10px ;"></ng-content>
-  </mat-sidenav-content>  
+  </mat-sidenav-content>
 </mat-sidenav-container>
-
-
-
-
-

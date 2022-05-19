@@ -16,24 +16,23 @@ export const testsSection: MenuSection = {
 
 export const appMenus: MenuEntry[] = [
   {
+    name: 'Users Management',
+    description: 'Manage user data',
+    pageName: 'usermanagement',
+    iconName: 'face',
+    color: MenuColor.Green,
+  },
+  {
     name: 'System Test',
-    pageName: 'catalogs',
-    description: 'Manage catalogs',
-    iconName: 'quiz',
+    pageName: '',
+    description: 'Test system functions',
+    iconName: 'science',
     color: MenuColor.Orange,
     subMenus: [
       {
-        name: 'Database',
-        pageName: 'databaseTest',
-        description: 'Database test functions',
-        iconName: 'storage',
-        color: MenuColor.Orange,
-        //roles: [ RoleEnum.Admin ]
-      },
-      {
-        name: 'Async Jobs',
+        name: 'Jobs Director',
         pageName: 'asyncJobTest',
-        description: 'Async jobs test functions',
+        description: 'Job Director test',
         iconName: 'construction',
         color: MenuColor.Orange,
         //roles: [ RoleEnum.Admin ]

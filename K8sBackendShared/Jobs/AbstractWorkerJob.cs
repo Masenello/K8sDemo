@@ -8,9 +8,6 @@ namespace K8sBackendShared.Jobs
 {
     public abstract class AbstractWorkerJob
     {
-        
-        public delegate void JobProgressChangedHandler(object sender, JobProgressEventArgs e);
-        public event JobProgressChangedHandler JobProgressChanged;
 
         protected readonly ILogger _logger;
 

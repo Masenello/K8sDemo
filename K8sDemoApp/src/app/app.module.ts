@@ -40,7 +40,6 @@ import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component
 import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component';
 import { HomeComponent } from './Pages/home/home.component';
 import { ClusterMonitoringComponent } from './Pages/clusterMonitoring/cluster-monitoring.component';
-import { DatabaseTestComponent } from './Pages/SystemTest/database-test/database-test.component';
 import { AsyncJobsTestComponent } from './Pages/SystemTest/async-jobs-test/async-jobs-test.component';
 import { JobstatusComponent } from './Func_Jobs/jobstatus/jobstatus.component';
 import { JobStatusEnumNamePipe, JobTypeEnumNamePipe } from './Func_Jobs/jobEnumsPipes';
@@ -71,7 +70,6 @@ import { UsersComponent } from './Pages/UserManagement/users/users.component';
     JobmanagerComponent,
     HomeComponent,
     ClusterMonitoringComponent,
-    DatabaseTestComponent,
     AsyncJobsTestComponent,
     JobstatusComponent,
     JobStatusEnumNamePipe,

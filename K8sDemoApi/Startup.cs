@@ -3,8 +3,10 @@ using K8sBackendShared.Interfaces;
 using K8sBackendShared.K8s;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
+using K8sCore.Interfaces.Ef;
 using K8sCore.Interfaces.Mongo;
 using K8sData.Data;
+using K8sData.Repository;
 using K8sData.Settings;
 using K8sDataMongo.Repository;
 using K8sDataMongo.Repository.JobRepository;
@@ -42,14 +44,14 @@ namespace K8sDemoApi
         {
 
             services.AddScoped<ITokenService, TokenService>();
-
-            Console.WriteLine($"Db connection string: {NetworkSettings.DatabaseConnectionStringResolver()}");
+            //EF Repositories
             services.AddDbContext<DataContext>(options =>
                 {
                     options.UseSqlServer(NetworkSettings.DatabaseConnectionStringResolver(),
                             sqlServerOptions => sqlServerOptions.CommandTimeout(180));
                 });
-
+            services.AddTransient<IUserRepository, UserRepository>();
+            //Mongo repositories
             services.AddTransient(typeof(IGenericMongoRepository<>), typeof(GenericMongoRepository<>));
             services.AddTransient<IJobRepository, JobRepository>();
             services.AddSingleton<IK8s, KubernetesConnectorService>();
