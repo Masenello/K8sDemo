@@ -9,6 +9,7 @@ import { HubService } from '../services/hub.service';
 import jwt_decode from 'jwt-decode';
 import { UserDto } from '../_models/API_Messages/UserDto';
 import { RoleDto } from '../_models/API_Messages/RoleDto';
+import { RoleEnum } from '../_enum/RoleEnum';
 
 @Injectable({
   providedIn: 'root'
@@ -150,12 +151,39 @@ export class AccountService {
   //   return RoleEnum;
   // }
 
-  public isInRole(role: RoleDto): boolean {
-    return this.currentUser?.value.roles?.includes(role);
+  public isInRole(role: RoleEnum): boolean {
+    //get user roles from token role1,role2,...
+    if (this.currentUser == undefined) return false
+    let tokenRoles:string[]
+    try {
+      tokenRoles= this.getDecodedJWT(this.currentUser?.value.token).role
+      for (let i=0; i<tokenRoles.length; i++ )
+      {
+        if (tokenRoles[i] == RoleEnum[role])
+        {
+          console.log(`User: ${this.currentUser?.value.username} has role ${RoleEnum[role]}`)
+          return true;
+        }
+      }
+      return false
+    } catch (error) {
+      //console.error(`No roles defined for current user`)
+      return false
+    }
   }
 
-  public hasRole(roles: RoleDto[]): boolean {
-    return !roles || roles.filter(x => this.currentUser?.value.roles?.includes(x)).length > 0;
+  public hasRole(requestedRoles: RoleEnum[]): boolean {
+    //If no role is specified any role is ok
+    if (requestedRoles == undefined) return true
+    //Check if any of the requested roles are active for user
+    for (let i=0; i<requestedRoles.length; i++)
+    {
+      if (this.isInRole(requestedRoles[i]))
+      {
+        return true
+      }
+    }
+    return false
   }
 
   public isTokenExpired(): boolean {

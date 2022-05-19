@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using K8sBackendShared.Interfaces;
+using K8sCore.DTOs;
 using K8sCore.Entities.Ef;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,12 +19,17 @@ namespace K8sDemoApi.Services
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
-        public string CreateToken(string username)
+        public string CreateToken(UserDto userDto)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, username)
+                new Claim(JwtRegisteredClaimNames.NameId, userDto.Username),
             };
+
+            foreach (var role in userDto.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+            }
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {

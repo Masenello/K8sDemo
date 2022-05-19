@@ -1,3 +1,5 @@
+import { RoleEnum } from '../_enum/RoleEnum';
+import { RoleDto } from '../_models/API_Messages/RoleDto';
 import { MenuColor, MenuEntry, MenuIconType, MenuLocation, MenuSection } from './menu-entry.model';
 
 export const settingsSection: MenuSection =
@@ -34,7 +36,7 @@ export const appMenus: MenuEntry[] = [
         description: 'Job Director test',
         iconName: 'construction',
         color: MenuColor.Orange,
-        //roles: [ RoleEnum.Admin ]
+        roles: [RoleEnum.admin]
       },
     ]
   },

@@ -41,7 +41,7 @@ namespace K8sDemoApi.Controllers
             if (targetUser is null) return BadRequest("Login failed, wrong user or password");
 
             //Add Token to user
-            targetUser.Token = _tokenService.CreateToken(targetUser.Username);
+            targetUser.Token = _tokenService.CreateToken(targetUser);
 
             return Ok(targetUser);
             
