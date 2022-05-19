@@ -1,6 +1,6 @@
 <mat-tab-group mat-align-tabs="start" animationDuration="0ms"
 (selectedTabChange)="tabChanged($event)">
-    <mat-tab label={{targetJobType1|jobTypeEnumNamePipe}}>
+    <mat-tab label="Director Status">
         <app-jobmanager [targetJobType]="targetJobType1"></app-jobmanager>
     </mat-tab>
     <mat-tab label="Jobs Historical"><app-jobhistorical></app-jobhistorical></mat-tab>

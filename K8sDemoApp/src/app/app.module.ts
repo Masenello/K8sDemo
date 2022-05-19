@@ -60,6 +60,7 @@ import { PodUtils } from './_shared/Utils/PodUtils';
 import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.component';
 import { AwaiterPopUpComponent } from './_shared/Components/awaiter-pop-up/awaiter-pop-up.component';
 import { HttpLoadingInterceptor } from './_shared/Interceptors/http-loading.interceptor';
+import { UsersComponent } from './Pages/UserManagement/users/users.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { HttpLoadingInterceptor } from './_shared/Interceptors/http-loading.inte
     PodstatusComponent,
     PodlogsviewerComponent,
     AwaiterPopUpComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,
