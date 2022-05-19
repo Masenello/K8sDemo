@@ -21,9 +21,3 @@
     grid-row-end: span 1;
 }
 
-.divWithHorizontalContent{
-    display:flex; 
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-}

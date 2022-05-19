@@ -24,10 +24,3 @@
     border-radius:5px; 
     
 }
-
-.divWithHorizontalContent{
-    display:flex; 
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-}

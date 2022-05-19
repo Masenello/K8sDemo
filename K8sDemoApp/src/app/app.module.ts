@@ -60,6 +60,10 @@ import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.c
 import { AwaiterPopUpComponent } from './_shared/Components/awaiter-pop-up/awaiter-pop-up.component';
 import { HttpLoadingInterceptor } from './_shared/Interceptors/http-loading.interceptor';
 import { UsersComponent } from './Pages/UserManagement/users/users.component';
+import { NotAllowedComponent } from './Pages/Generic/not-allowed/not-allowed.component';
+import { NotFoundComponent } from './Pages/Generic/not-found/not-found.component';
+import { NotWorkingComponent } from './Pages/Generic/not-working/not-working.component';
+import { SystemArchitectureComponent } from './Pages/SystemTest/system-architecture/system-architecture.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +88,10 @@ import { UsersComponent } from './Pages/UserManagement/users/users.component';
     PodlogsviewerComponent,
     AwaiterPopUpComponent,
     UsersComponent,
+    NotAllowedComponent,
+    NotFoundComponent,
+    NotWorkingComponent,
+    SystemArchitectureComponent,
   ],
   imports: [
     BrowserModule,

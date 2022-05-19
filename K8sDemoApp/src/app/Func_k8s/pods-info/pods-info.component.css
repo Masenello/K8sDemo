@@ -3,12 +3,7 @@
     overflow-x: hidden; 
     max-height: 84vh;
 }
-.divWithHorizontalContent{
-    display:flex; 
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-}
+
 
 .podInfoList{
 margin-right: 10px;

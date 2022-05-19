@@ -17,18 +17,27 @@ export const testsSection: MenuSection = {
 
 export const appMenus: MenuEntry[] = [
   {
+    name: 'Home',
+    description: 'Home page',
+    pageName: 'home',
+    iconName: 'home',
+    color: MenuColor.Green,
+  },
+  {
     name: 'Users Management',
     description: 'Manage user data',
     pageName: 'usermanagement',
     iconName: 'face',
     color: MenuColor.Green,
+    roles: [RoleEnum.admin],
   },
   {
     name: 'System Test',
-    pageName: '',
+    pageName: 'systemArchitecture',
     description: 'Test system functions',
     iconName: 'science',
     color: MenuColor.Orange,
+    roles: [RoleEnum.admin],
     subMenus: [
       {
         name: 'Jobs Director',
@@ -36,7 +45,7 @@ export const appMenus: MenuEntry[] = [
         description: 'Job Director test',
         iconName: 'construction',
         color: MenuColor.Orange,
-        roles: [RoleEnum.admin]
+        roles: [RoleEnum.admin],
       },
     ]
   },
@@ -46,6 +55,7 @@ export const appMenus: MenuEntry[] = [
     pageName: 'clusterMonitoring',
     iconName: 'monitor_heart',
     color: MenuColor.Green,
+    roles: [RoleEnum.admin],
   }
   
 ]

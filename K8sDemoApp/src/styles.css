@@ -3,3 +3,37 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
+
+
+.absolute-centered {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 999 !important;
+    background-color: white;
+}
+
+.divWithHorizontalContent{
+    display:flex; 
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+}
+
+.divWithCenterAlignedContent{
+    text-align: center;
+}
+
+.text-danger {
+    color: red !important;
+  }
+.text-warning {
+    color: yellow !important;
+  }
+.text-success {
+    color: green !important;
+  }
+.text-info {
+    color: blue !important;
+  }

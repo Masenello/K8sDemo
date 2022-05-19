@@ -33,7 +33,7 @@ export class NavComponent implements OnInit {
     this.menus = appMenus;
 
     this.accountService.userLoggedIn.subscribe((user: any) => {
-      this.navigationService.navigate("");
+      this.navigationService.navigate("home");
       this.navBarOpen = true;
     });
 

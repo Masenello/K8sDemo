@@ -161,7 +161,7 @@ export class AccountService {
       {
         if (tokenRoles[i] == RoleEnum[role])
         {
-          console.log(`User: ${this.currentUser?.value.username} has role ${RoleEnum[role]}`)
+          //console.log(`User: ${this.currentUser?.value.username} has role ${RoleEnum[role]}`)
           return true;
         }
       }
