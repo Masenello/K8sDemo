@@ -52,6 +52,7 @@ export class NavComponent implements OnInit {
 
   }
 
+
   ngOnInit(): void {
     //When application is loaded try to restore current user 
     //if existing user data is present in localstorage

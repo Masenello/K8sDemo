@@ -22,14 +22,13 @@
 </mat-toolbar>
 
 <!-- SideNav -->
-<mat-sidenav-container class="example-container">
+<mat-sidenav-container class="example-container"    autosize="true">
   <mat-sidenav #sidenav mode="side" [(opened)]="navBarOpen" fixedInViewport fixedTopGap="64">
 
     <!-- menus built based on configuration in nav-menus.ts -->
     <mat-nav-list>
       <ng-container *ngFor="let menu of menus">
-        <a class="menu-primary" mat-list-item [routerLink]="[menu.subMenus ? '/' : '/' + menu.pageName]"
-          [queryParams]="menu.subMenus ? {route: menu.pageName} : {}" [routerLinkActive]="['link-active']"
+        <a class="menu-primary" mat-list-item [routerLink]="['/' + menu.pageName]" [routerLinkActive]="['link-active']"
           [routerLinkActiveOptions]="{ exact: true }"
           *ngIf="accountService.hasRole(menu.roles) && navigationService.isMenuAccessible(menu, navigationService.menuLocations.Navbar) && (navigationService.accessibleSubmenus(menu, navigationService.menuLocations.Navbar)?.length > 0 || !menu.subMenus)">
           <span [ngSwitch]="menu.iconType" *ngIf="menu.iconName">
@@ -98,5 +97,7 @@
 
     <!-- Component output of routing -->
     <ng-content style="padding:10px ;"></ng-content>
+
+
   </mat-sidenav-content>
 </mat-sidenav-container>
