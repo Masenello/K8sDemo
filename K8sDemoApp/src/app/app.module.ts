@@ -67,6 +67,8 @@ import { SystemArchitectureComponent } from './Pages/SystemTest/system-architect
 import { UsersManagementComponent } from './Pages/UserManagement/users-management/users-management.component';
 import { UsersComponent } from './Func_Users/users/users.component';
 import { RoleToLongStringPipe, RoleToShortStringPipe } from './_shared/Pipes/role-tostring.pipe';
+import { DialogContent } from './_shared/Services/dialog.service';
+
 
 @NgModule({
   declarations: [
@@ -98,6 +100,7 @@ import { RoleToLongStringPipe, RoleToShortStringPipe } from './_shared/Pipes/rol
     UsersComponent,
     RoleToShortStringPipe,
     RoleToLongStringPipe,
+    DialogContent,
   ],
   imports: [
     BrowserModule,

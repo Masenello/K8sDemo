@@ -27,36 +27,36 @@ namespace K8sDemoApi.Controllers
             return Ok(await _userRepo.GetUsersAsync());
         }
 
-        [HttpPost("DeleteUser{username}")]
+        [HttpDelete("DeleteUser/{username}")]
         public async Task<ActionResult> DeleteUser(string username)
         {
             await _userRepo.DeleteUserAsync(username);
             _logger.LogInfo($"User: {username} deleted");
-            return Ok($"User: {username} deleted");
+            return Ok();
         }
 
-        [HttpPost("AddRoleToUSer{username},{rolename}")]
-        public async Task<ActionResult> AddRoleToUSer(string username, RolesEnum role)
+        [HttpPost("AddRoleToUser/{username},{role}")]
+        public async Task<ActionResult> AddRoleToUser(string username, RolesEnum role)
         {
             await _userRepo.AddRoleToUser(role, username);
             _logger.LogInfo($"Role: {role} assigned to user:{username}");
-            return Ok($"Role: {role} added to user: {username}");
+            return Ok();
         }
 
-        [HttpPost("RemoveRoleFromUser{username},{rolename}")]
+        [HttpPost("RemoveRoleFromUser/{username},{role}")]
         public async Task<ActionResult> RemoveRoleFromUser(string username, RolesEnum role)
         {
             await _userRepo.RemoveRoleFromUser(role, username);
             _logger.LogInfo($"Role: {role} removed from user:{username}");
-            return Ok($"Role: {role} removed from user: {username}");
+            return Ok();
         }
 
-        [HttpPost("CreateRole{rolename}")]
+        [HttpPost("CreateRole/{rolename}")]
         public async Task<ActionResult> CreateRole(string rolename)
         {
             await _userRepo.CreateRole(rolename);
             _logger.LogInfo($"Role: {rolename} created");
-            return Ok($"Role: {rolename} created");
+            return Ok();
         }
 
         [HttpGet("GetRoles")]
