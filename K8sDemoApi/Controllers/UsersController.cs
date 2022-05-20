@@ -29,7 +29,7 @@ namespace K8sDemoApi.Controllers
             return Ok(await _userRepo.GetUsersAsync());
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = nameof(RolesEnum.admin))]
         [HttpDelete("DeleteUser/{username}")]
         public async Task<ActionResult> DeleteUser(string username)
         {
@@ -38,7 +38,7 @@ namespace K8sDemoApi.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = nameof(RolesEnum.admin))]
         [HttpPost("AddRoleToUser/{username},{role}")]
         public async Task<ActionResult> AddRoleToUser(string username, RolesEnum role)
         {
@@ -47,7 +47,7 @@ namespace K8sDemoApi.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = nameof(RolesEnum.admin))]
         [HttpPost("RemoveRoleFromUser/{username},{role}")]
         public async Task<ActionResult> RemoveRoleFromUser(string username, RolesEnum role)
         {
@@ -56,7 +56,7 @@ namespace K8sDemoApi.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = nameof(RolesEnum.admin))]
         [HttpPost("CreateRole/{rolename}")]
         public async Task<ActionResult> CreateRole(string rolename)
         {
@@ -65,7 +65,7 @@ namespace K8sDemoApi.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = nameof(RolesEnum.admin))]
         [HttpGet("GetRoles")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetRoles()
         {

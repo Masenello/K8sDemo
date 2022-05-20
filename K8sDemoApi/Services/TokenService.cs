@@ -6,6 +6,7 @@ using System.Text;
 using K8sBackendShared.Interfaces;
 using K8sCore.DTOs;
 using K8sCore.Entities.Ef;
+using K8sCore.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,7 +29,7 @@ namespace K8sDemoApi.Services
 
             foreach (var role in userDto.Roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, Convert.ToString((int)role.Role)));
+                claims.Add(new Claim(ClaimTypes.Role, Enum.GetName(typeof(RolesEnum), role.Role)));
             }
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
