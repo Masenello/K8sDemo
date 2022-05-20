@@ -4,6 +4,7 @@ using K8sBackendShared.Interfaces;
 using K8sCore.DTOs;
 using K8sCore.Entities;
 using K8sCore.Entities.Ef;
+using K8sCore.Enums;
 using K8sCore.Interfaces.Ef;
 using K8sData.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -35,19 +36,19 @@ namespace K8sDemoApi.Controllers
         }
 
         [HttpPost("AddRoleToUSer{username},{rolename}")]
-        public async Task<ActionResult> AddRoleToUSer(string username, string rolename)
+        public async Task<ActionResult> AddRoleToUSer(string username, RolesEnum role)
         {
-            await _userRepo.AddRoleToUser(rolename, username);
-            _logger.LogInfo($"Role: {rolename} assigned to user:{username}");
-            return Ok($"Role: {rolename} added to user: {username}");
+            await _userRepo.AddRoleToUser(role, username);
+            _logger.LogInfo($"Role: {role} assigned to user:{username}");
+            return Ok($"Role: {role} added to user: {username}");
         }
 
         [HttpPost("RemoveRoleFromUser{username},{rolename}")]
-        public async Task<ActionResult> RemoveRoleFromUser(string username, string rolename)
+        public async Task<ActionResult> RemoveRoleFromUser(string username, RolesEnum role)
         {
-            await _userRepo.RemoveRoleFromUser(rolename, username);
-            _logger.LogInfo($"Role: {rolename} removed from user:{username}");
-            return Ok($"Role: {rolename} removed from user: {username}");
+            await _userRepo.RemoveRoleFromUser(role, username);
+            _logger.LogInfo($"Role: {role} removed from user:{username}");
+            return Ok($"Role: {role} removed from user: {username}");
         }
 
         [HttpPost("CreateRole{rolename}")]

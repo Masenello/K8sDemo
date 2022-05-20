@@ -28,7 +28,7 @@ namespace K8sDemoApi.Services
 
             foreach (var role in userDto.Roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                claims.Add(new Claim(ClaimTypes.Role, Convert.ToString((int)role.Role)));
             }
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor

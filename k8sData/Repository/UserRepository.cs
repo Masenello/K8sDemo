@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using K8sCore.DTOs;
 using K8sCore.Entities.Ef;
+using K8sCore.Enums;
 using K8sCore.Interfaces.Ef;
 using K8sData.Data;
 using Microsoft.EntityFrameworkCore;
@@ -87,32 +89,34 @@ namespace K8sData.Repository
 
         public async Task CreateRole(string roleName)
         {
+
+
             await _context.Roles.AddAsync(new AppRoleEntity()
             {
-                Role = roleName.ToLower(),
+                Role = ResolveRolesEnum(roleName),
             });
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddRoleToUser(string roleName, string userName)
+        public async Task AddRoleToUser(RolesEnum role, string userName)
         {
-            var user = await GetUserByNameAsync(userName);
-            var role = await GetRoleByNameAsync(roleName);
+            var userEntity = await GetUserByNameAsync(userName);
+            var roleEntity = await GetRoleAsync(role);
 
             await _context.UserRolesMapper.AddAsync(new AppUserRoleMapperEntity()
             {
-                UserId = user.Id,
-                RoleId = role.Id,
+                UserId = userEntity.Id,
+                RoleId = roleEntity.Id,
             });
             await _context.SaveChangesAsync();
         }
 
 
-        public async Task RemoveRoleFromUser(string roleName, string userName)
+        public async Task RemoveRoleFromUser(RolesEnum role, string userName)
         {
 
-            var roleMap = await GetRoleMapAsync(roleName, userName);
-            if (roleMap is null) throw new System.Exception($"User: {userName} does not have role: {roleName}");
+            var roleMap = await GetRoleMapAsync(role, userName);
+            if (roleMap is null) throw new System.Exception($"User: {userName} does not have role: {role}");
 
             _context.UserRolesMapper.Remove(roleMap);
             await _context.SaveChangesAsync();
@@ -125,7 +129,7 @@ namespace K8sData.Repository
             {
                 roleList.Add(new RoleDto()
                 {
-                    RoleName = role.Role,
+                    Role = role.Role,
                 });
 
             }
@@ -136,22 +140,22 @@ namespace K8sData.Repository
 
         private async Task<AppUserEntity> GetUserByNameAsync(string username)
         {
-            var targetUser = await _context.Users.Include(m=>m.UserRoles).ThenInclude(r=>r.Role).FirstOrDefaultAsync(x => x.UserName == username.ToLower());
+            var targetUser = await _context.Users.Include(m => m.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync(x => x.UserName == username.ToLower());
             if (targetUser is null) throw new System.Exception($"User: {username} not found in database");
             return targetUser;
         }
 
 
-        private async Task<AppRoleEntity> GetRoleByNameAsync(string roleName)
+        private async Task<AppRoleEntity> GetRoleAsync(RolesEnum role)
         {
-            var targetRole = await _context.Roles.FirstOrDefaultAsync(x => x.Role == roleName.ToLower());
-            if (targetRole is null) throw new System.Exception($"Role: {roleName} not found in database");
+            var targetRole = await _context.Roles.FirstOrDefaultAsync(x => x.Role == role);
+            if (targetRole is null) throw new System.Exception($"Role: {role} not found in database");
             return targetRole;
         }
 
-        private async Task<AppUserRoleMapperEntity> GetRoleMapAsync(string roleName, string username)
+        private async Task<AppUserRoleMapperEntity> GetRoleMapAsync(RolesEnum role, string username)
         {
-            var roleMap = await _context.UserRolesMapper.Include(u => u.User).Include(r => r.Role).FirstOrDefaultAsync(x => x.User.UserName == username.ToLower() && x.Role.Role == roleName.ToLower());
+            var roleMap = await _context.UserRolesMapper.Include(u => u.User).Include(r => r.Role).FirstOrDefaultAsync(x => x.User.UserName == username.ToLower() && x.Role.Role == role);
             return roleMap;
         }
 
@@ -161,11 +165,26 @@ namespace K8sData.Repository
             List<RoleDto> userRolesList = new List<RoleDto>();
             foreach (var map in targetUser.UserRoles)
             {
-                userRolesList.Add(new RoleDto(){
-                    RoleName = map.Role.Role,
+                userRolesList.Add(new RoleDto()
+                {
+                    Role = map.Role.Role,
                 });
             }
             return userRolesList;
+        }
+
+        private RolesEnum ResolveRolesEnum(string roleName)
+        {
+            try
+            {
+                return (RolesEnum)Enum.Parse(typeof(RolesEnum), roleName.ToLower());
+            }
+            catch (System.Exception)
+            {
+
+                throw new Exception($"Role: {roleName} does not exist as enum in application");
+            }
+
         }
 
     }

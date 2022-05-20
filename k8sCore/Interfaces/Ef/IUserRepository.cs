@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using K8sCore.DTOs;
-
+using K8sCore.Enums;
 
 namespace K8sCore.Interfaces.Ef
 {
@@ -14,8 +14,8 @@ namespace K8sCore.Interfaces.Ef
         public Task<UserDto> GetUserByIdAsync(int id);
         public Task<UserDto> LoginUserAsync(LoginDto loginDto);
         public Task CreateRole(string roleName);
-        public Task AddRoleToUser(string roleName, string username);
-        public Task RemoveRoleFromUser(string roleName, string username);
+        public Task AddRoleToUser(RolesEnum role, string username);
+        public Task RemoveRoleFromUser(RolesEnum role, string username);
         public Task<List<RoleDto>> GetRolesAsync();
     }
 }

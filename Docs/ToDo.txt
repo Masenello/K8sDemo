@@ -1,10 +1,4 @@
-
-- Dare possibilità di rimuovere job da Historical
 - K8sDemoHubManager refactor for UOW pattern currently has direct access to DataContext
-- K8sDemoApi refactor for UOW pattern currently has direct access to DataContext
-- Use secrets and config map on containers 
 - Move connected applications tables from SQL Server to Mongo
 - Change scale down logic to use priority base pod-deletion-cost
-- Manage certificates for Kestrel as secrets
-- Manage certificates for NGINX as secrets
-
+- Add global error handling in app

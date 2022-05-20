@@ -1,9 +1,22 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { environment } from 'src/environments/environment';
+import { UserDto } from '../_models/API_Messages/UserDto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
 
-  constructor() { }
+  
+  baseUrl = environment.apiUrl + "Users/";
+
+  constructor(private http: HttpClient) { }
+
+  
+  getUsers(): Observable<UserDto[]> {
+    return this.http.get<UserDto[]>(this.baseUrl + 'GetUsers');
+  }
+  
 }

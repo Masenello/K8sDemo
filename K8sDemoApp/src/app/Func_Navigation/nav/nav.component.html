@@ -1,6 +1,6 @@
 <!-- upper bar -->
 <mat-toolbar class="app-toolbar">
-  <span>K8sDemoApp {{guiVersion}}</span>
+  <span>K8sDemoApp</span>
   <span class="example-spacer"></span>
 
   <!-- Logged user icon and name -->
@@ -56,18 +56,17 @@
 
     </mat-nav-list>
 
-    <!-- TODO Add API version -->
-
-    <!-- <mat-nav-list class="sidenav-bottom" style="width: 100%;">
+    <!-- Bottom info version -->
+    <mat-nav-list class="sidenav-bottom" style="width: 100%; position: absolute; bottom: 0;">
       <mat-divider></mat-divider>
       <div style="padding: 10px;" class="text-center">
         <span class="text-secondary" style="font-size:small;">
-          GUI v{{guiVersion}} -
-          <span class="{{signalRService.connectionStatusValue ? 'text-success' : 'text-danger'}}"
-          matTooltip="{{signalRService.connectionStatusValue ? 'SignalR connected' : 'SignalR disconnected'}}">API v{{apiVersion}}</span>
-        </span>
+          App {{guiVersion}}
+          <!-- <span class="{{signalRService.connectionStatusValue ? 'text-success' : 'text-danger'}}"
+          matTooltip="{{signalRService.connectionStatusValue ? 'SignalR connected' : 'SignalR disconnected'}}">API v{{apiVersion}}</span>-->
+        </span> 
       </div>
-    </mat-nav-list> -->
+    </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
 

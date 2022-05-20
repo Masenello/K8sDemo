@@ -35,6 +35,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 import { LogsviewerComponent } from './Func_Logs/logsviewer/logsviewer.component';
 import { JobmanagerComponent } from './Func_Jobs/jobmanager/jobmanager.component';
@@ -59,11 +60,13 @@ import { PodUtils } from './_shared/Utils/PodUtils';
 import { PodlogsviewerComponent } from './Func_k8s/podlogsviewer/podlogsviewer.component';
 import { AwaiterPopUpComponent } from './_shared/Components/awaiter-pop-up/awaiter-pop-up.component';
 import { HttpLoadingInterceptor } from './_shared/Interceptors/http-loading.interceptor';
-import { UsersComponent } from './Pages/UserManagement/users/users.component';
 import { NotAllowedComponent } from './Pages/Generic/not-allowed/not-allowed.component';
 import { NotFoundComponent } from './Pages/Generic/not-found/not-found.component';
 import { NotWorkingComponent } from './Pages/Generic/not-working/not-working.component';
 import { SystemArchitectureComponent } from './Pages/SystemTest/system-architecture/system-architecture.component';
+import { UsersManagementComponent } from './Pages/UserManagement/users-management/users-management.component';
+import { UsersComponent } from './Func_Users/users/users.component';
+import { RoleToLongStringPipe, RoleToShortStringPipe } from './_shared/Pipes/role-tostring.pipe';
 
 @NgModule({
   declarations: [
@@ -87,11 +90,14 @@ import { SystemArchitectureComponent } from './Pages/SystemTest/system-architect
     PodstatusComponent,
     PodlogsviewerComponent,
     AwaiterPopUpComponent,
-    UsersComponent,
     NotAllowedComponent,
     NotFoundComponent,
     NotWorkingComponent,
     SystemArchitectureComponent,
+    UsersManagementComponent,
+    UsersComponent,
+    RoleToShortStringPipe,
+    RoleToLongStringPipe,
   ],
   imports: [
     BrowserModule,
@@ -127,6 +133,7 @@ import { SystemArchitectureComponent } from './Pages/SystemTest/system-architect
     MatCheckboxModule,
     MatButtonToggleModule,
     MatProgressBarModule,
+    MatGridListModule,
     GuiGridModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
@@ -140,6 +147,8 @@ import { SystemArchitectureComponent } from './Pages/SystemTest/system-architect
     LogViewerPipe,
     JobStatusEnumNamePipe,
     JobTypeEnumNamePipe,
+    RoleToShortStringPipe,
+    RoleToLongStringPipe,
     PodUtils,
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpLoadingInterceptor, multi: true },

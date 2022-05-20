@@ -25,9 +25,6 @@ namespace K8sDemoApi.Controllers
     {
         private readonly IJobRepository _jobRepo;
 
-        
-
-        //TODO Do with unit of work!!!
         public JobController( IJobRepository jobRepo, ILogger logger):base(logger)
         {
             _jobRepo = jobRepo;

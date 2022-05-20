@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using K8sCore.Enums;
 
 namespace K8sCore.DTOs
 {
     public class RoleDto
     {
-        public string RoleName { get; set; }
+        public RolesEnum Role { get; set; }
     }
 }

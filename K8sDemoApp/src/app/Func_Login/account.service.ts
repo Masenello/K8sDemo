@@ -154,12 +154,12 @@ export class AccountService {
   public isInRole(role: RoleEnum): boolean {
     //get user roles from token role1,role2,...
     if (this.currentUser == undefined) return false
-    let tokenRoles:string[]
+    let tokenRoles:RoleEnum[]
     try {
       tokenRoles= this.getDecodedJWT(this.currentUser?.value.token).role
       for (let i=0; i<tokenRoles.length; i++ )
       {
-        if (tokenRoles[i] == RoleEnum[role])
+        if (tokenRoles[i] == role)
         {
           //console.log(`User: ${this.currentUser?.value.username} has role ${RoleEnum[role]}`)
           return true;
