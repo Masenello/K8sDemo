@@ -68,6 +68,7 @@ import { UsersManagementComponent } from './Pages/UserManagement/users-managemen
 import { UsersComponent } from './Func_Users/users/users.component';
 import { RoleToLongStringPipe, RoleToShortStringPipe } from './_shared/Pipes/role-tostring.pipe';
 import { DialogContent } from './_shared/Services/dialog.service';
+import { UserInfoComponent } from './Func_Users/user-info/user-info.component';
 
 
 @NgModule({
@@ -101,6 +102,7 @@ import { DialogContent } from './_shared/Services/dialog.service';
     RoleToShortStringPipe,
     RoleToLongStringPipe,
     DialogContent,
+    UserInfoComponent,
   ],
   imports: [
     BrowserModule,

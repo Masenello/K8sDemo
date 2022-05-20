@@ -3,6 +3,7 @@ using K8sBackendShared.Interfaces;
 using K8sBackendShared.K8s;
 using K8sBackendShared.Logging;
 using K8sBackendShared.RabbitConnector;
+using K8sBackendShared.Utils;
 using K8sCore.Interfaces.Ef;
 using K8sCore.Interfaces.Mongo;
 using K8sData.Data;
@@ -59,10 +60,38 @@ namespace K8sDemoApi
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "K8sDemoApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "K8sDemoApi", Version = AppProperties.Instance.ApplicationVersion });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @$"JWT Authorization header using the Bearer scheme.
+                      Enter 'Bearer' [space] and then your token in the text input below.{Environment.NewLine}
+                      Example: 'Bearer oiod29so83cosad2uhai82jfattodjl'estated2scorsa'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options=>
+            .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
@@ -73,14 +102,14 @@ namespace K8sDemoApi
                 };
             });
 
-            services.AddSingleton<ILogger,RabbitLoggerService>();
+            services.AddSingleton<ILogger, RabbitLoggerService>();
             services.AddSingleton<IRabbitConnector, RabbitConnectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-    
+
             app.UseCors(builder =>
                     {
                         builder
